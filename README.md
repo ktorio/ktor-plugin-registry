@@ -25,3 +25,10 @@ The version ranges use the same syntax as [node-semver](https://github.com/npm/n
 most cases, you can simply use a range like `^2.0.0` annotation for any release under a major version, or `>=1` if you
 want to include all Ktor versions.  If a plugin breaks after a release, we'll update the supported versions and notify
 the author from the contact information listed in the plugin manifest.
+
+
+## Running
+
+To resolve plugins from the `/plugins` folder, run `./gradlew resolvePlugins`.  Then, you may run `./gradlew run` to 
+generate the registry.  This will validate all plugin references and slot them into the appropriate Ktor release 
+versions. 
