@@ -1,0 +1,45 @@
+{
+  "id": "ktor-websockets",
+  "name": "WebSockets",
+  "copyright": "Apache 2.0",
+  "short_description": "Adds WebSockets support for bidirectional communication with the client",
+  "vendor": {
+    "name": "Ktor",
+    "url": "https://ktor.io/"
+  },
+  "github": "https://github.com/ktorio/ktor/blob/4a50c76c3264b0121b91a203d38473bb4aafbace/ktor-features/ktor-websockets/jvm/src/io/ktor/websocket/WebSockets.kt",
+  "group": "Sockets",
+  "version": "1.5.2",
+  "ktor_version": "1.4.0",
+  "required_feature_ids": [
+    "routing"
+  ],
+  "documentation": {
+    "description": "This plugin adds WebSockets support to Ktor. WebSockets are a mechanism to keep a bi-directional real-time ordered connection between the server and the client. Each message from this channel is called Frame: a frame can be a text or binary message, or a close or ping/pong message. Frames can be marked as incomplete or final.\n\n",
+    "usage": "## Installation\n\nIn order to use the `WebSockets` functionality you first have to install it:\n\n```kotlin\ninstall(WebSockets)\n```\n\nYou can adjust a few parameters when installing if required:\n\n```kotlin\ninstall(WebSockets) {\n    pingPeriod = Duration.ofSeconds(60) // Disabled (null) by default\n    timeout = Duration.ofSeconds(15)\n    maxFrameSize = Long.MAX_VALUE // Disabled (max value). The connection will be closed if surpassed this length.\n    masking = false\n}\n```\n\n## Basic usage\n\nOnce installed, you can define the `webSocket` routes for the `routing` plugin:\n\nInstead of the short-lived normal route handlers, webSocket handlers are meant to be long-lived. And all the relevant\nWebSocket methods are suspended so that the function will be suspended in a non-blocking way while receiving or sending\nmessages.\n\n`webSocket` methods receive a callback with a `WebSocketSession` instance as the receiver. That interface defines\nan `incoming` (`ReceiveChannel`) property and an `outgoing` (`SendChannel`) property, as well as a close method.\n\n### Usage as a suspend actor\n\n```kotlin\nrouting {\n    webSocket(\"/ws\") { // websocketSession\n        for (frame in incoming) {\n            if (frame is Frame.Text) {\n                val text = frame.readText()\n                outgoing.send(Frame.Text(\"YOU SAID: $text\"))\n                if (text.equals(\"bye\", ignoreCase = true)) {\n                    close(CloseReason(CloseReason.Codes.NORMAL, \"Client said BYE\"))\n                }\n            }\n        }\n    }\n}\n```\n\n### Usage as a Channel\n\nSince the `incoming` property is a `ReceiveChannel`, you can use it with its stream-like interface:\n\n```kotlin\nrouting {\n    webSocket(\"/ws\") { // websocketSession\n        for (frame in incoming.mapNotNull { it as? Frame.Text }) {\n            val text = frame.readText()\n            outgoing.send(Frame.Text(\"YOU SAID $text\"))\n            if (text.equals(\"bye\", ignoreCase = true)) {\n                close(CloseReason(CloseReason.Codes.NORMAL, \"Client said BYE\"))\n            }\n        }\n    }\n}\n```\n",
+    "options": "* `pingPeriod` -- duration between pings or null to disable pings.\n* `timeout` -- write/ping timeout after that a connection will be closed\n* `maxFrameSize` -- maximum frame that could be received or sent\n* `masking` -- whether masking need to be enabled (useful for security)"
+  },
+  "install_recipe": {
+    "install_block": "install(WebSockets) {\n    pingPeriod = Duration.ofSeconds(15)\n    timeout = Duration.ofSeconds(15)\n    maxFrameSize = Long.MAX_VALUE\n    masking = false\n}",
+    "imports": [
+      "io.ktor.routing.*",
+      "io.ktor.http.cio.websocket.*",
+      "io.ktor.websocket.*",
+      "java.time.*"
+    ],
+    "test_imports": [],
+    "templates": [
+      {
+        "position": "in_routing",
+        "text": "webSocket(\"/ws\") { // websocketSession\n    for (frame in incoming) {\n        if (frame is Frame.Text) {\n            val text = frame.readText()\n            outgoing.send(Frame.Text(\"YOU SAID: $text\"))\n            if (text.equals(\"bye\", ignoreCase = true)) {\n                close(CloseReason(CloseReason.Codes.NORMAL, \"Client said BYE\"))\n            }\n        }\n    }\n}"
+      }
+    ]
+  },
+  "dependencies": [
+    {
+      "group": "io.ktor",
+      "artifact": "ktor-websockets",
+      "version": "$ktor_version"
+    }
+  ]
+}

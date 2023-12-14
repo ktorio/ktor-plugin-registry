@@ -1,0 +1,2 @@
+^1.4.0: ktor-websockets:==
+">=2.0.0": ktor-server-websockets-jvm:==

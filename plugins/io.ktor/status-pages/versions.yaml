@@ -1,0 +1,4 @@
+^1.4.0: ktor-server-host-common:==
+">=2.0.0": 
+  - io.ktor:ktor-server-host-common-jvm:==
+  - io.ktor:ktor-server-status-pages-jvm:==

@@ -1,0 +1,42 @@
+{
+  "id": "status-pages",
+  "name": "Status Pages",
+  "version": "2.0.0",
+  "ktor_version": "2.0.0",
+  "short_description": "Allow to respond to thrown exceptions.",
+  "github": "https://github.com/ktorio/ktor/blob/7e78e715cec3ff039cd628f8ff8ce875c35cde4c/ktor-server/ktor-server-core/jvm/src/io/ktor/features/StatusPages.kt",
+  "copyright": "Apache 2.0",
+  "vendor": {
+    "name": "Ktor",
+    "url": "https://ktor.io/"
+  },
+  "group": "Routing",
+  "required_feature_ids": [
+    "routing"
+  ],
+  "install_recipe": {
+    "imports": [
+      "io.ktor.server.plugins.statuspages.*",
+      "io.ktor.http.*"
+    ],
+    "install_block": "install(StatusPages) {\n    exception<Throwable> { call, cause ->\n        call.respondText(text = \"500: $cause\" , status = HttpStatusCode.InternalServerError)\n    }\n}",
+    "templates": []
+  },
+  "dependencies": [
+    {
+      "group": "io.ktor",
+      "artifact": "ktor-server-host-common-jvm",
+      "version": "$ktor_version"
+    },
+    {
+      "group": "io.ktor",
+      "artifact": "ktor-server-status-pages-jvm",
+      "version": "$ktor_version"
+    }
+  ],
+  "documentation": {
+    "description": "The [StatusPages](https://ktor.io/docs/status-pages.html) plugin allows Ktor applications to respond appropriately to any failure state.",
+    "usage": "There are three main configuration options provided by `StatusPages`:\n* `exceptions` - Configures a response based on the mapped exception classes.\n* `status` - Configures a response to a status code value.\n* `statusFile` - Configures standard a file response from the classpath.\n\nTo learn more, see [Status pages](https://ktor.io/docs/status-pages.html).",
+    "options": ""
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "id": "css-dsl",
+  "name": "CSS DSL",
+  "version": "2.0.0",
+  "ktor_version": "2.0.0",
+  "short_description": "Generate CSS using Kotlin code",
+  "github": "https://github.com/JetBrains/kotlin-wrappers/tree/master/kotlin-css",
+  "copyright": "Apache 2.0",
+  "vendor": {
+    "name": "Ktor",
+    "url": "https://ktor.io/"
+  },
+  "group": "Templating",
+  "required_feature_ids": [
+    "html-dsl"
+  ],
+  "install_recipe": {
+    "imports": [
+      "kotlinx.css.*",
+      "io.ktor.http.*",
+      "io.ktor.server.response.*"
+    ],
+    "install_block": "",
+    "templates": [
+      {
+        "position": "in_routing",
+        "text": "get(\"/styles.css\") {\n    call.respondCss {\n        body {\n            backgroundColor = Color.darkBlue\n            margin(0.px)\n        }\n        rule(\"h1.page-title\") {\n            color = Color.white\n        }\n    }\n}\n\nget(\"/html-css-dsl\") {\n    call.respondHtml {\n        head {\n            link(rel = \"stylesheet\", href = \"/styles.css\", type = \"text/css\")\n        }\n        body {\n            h1(classes = \"page-title\") {\n                +\"Hello from Ktor!\"\n            }\n        }\n    }\n}"
+      },
+      {
+        "position": "outside_app",
+        "text": "suspend inline fun ApplicationCall.respondCss(builder: CSSBuilder.() -> Unit) {\n   this.respondText(CSSBuilder().apply(builder).toString(), ContentType.Text.CSS)\n}\n"
+      }
+    ]
+  },
+  "gradle_install": {
+    "repositories": [
+      {
+        "type": "url_based",
+        "url": "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers"
+      }
+    ]
+  },
+  "maven_install": {
+    "repositories": [
+      {
+        "id": "kotlin_js",
+        "url": "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers"
+      }
+    ]
+  },
+  "dependencies": [
+    {
+      "group": "org.jetbrains",
+      "artifact": "kotlin-css-jvm",
+      "version": "1.0.0-pre.129-kotlin-1.4.20"
+    }
+  ],
+  "documentation": {
+    "description": "[CSS DSL](https://ktor.io/docs/css-dsl.html) extends HTML DSL and allows you to author stylesheets in Kotlin by using the `kotlin-css` wrapper.",
+    "usage": "Serving CSS for a specific route might look as follows:\n```kotlin\nget(\"/styles.css\") {\n    call.respondCss {\n        body {\n            backgroundColor = Color.darkBlue\n            margin(0.px)\n        }\n        rule(\"h1.page-title\") {\n            color = Color.white\n        }\n    }\n}\n```\n\nYou can learn more from [CSS DSL](https://ktor.io/docs/css-dsl.html).",
+    "options": ""
+  }
+}

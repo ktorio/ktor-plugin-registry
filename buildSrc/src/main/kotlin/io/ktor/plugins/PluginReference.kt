@@ -1,5 +1,6 @@
 package io.ktor.plugins
 
+import com.vdurmont.semver4j.Semver
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -13,47 +14,91 @@ import java.io.File
 data class PluginReference(
     val id: String,
     val group: String,
-    val artifacts: Map<String, ArtifactReference>,
+    val versions: Map<String, Artifacts>,
 )
+
+typealias Artifacts = List<ArtifactReference>
+typealias ResolvedJarMap = Map<String, Map<ArtifactReference, @Serializable(with = FilePathSerializer::class) File>>
+
+val PluginReference.artifacts: List<ArtifactReference> get() = versions.values.flatten()
+val PluginReference.manifest: String get() = formatManifestName(versions.keys.single())
+fun PluginReference.formatManifestName(version: String) = "$id${version}.json"
+fun PluginReference.allArtifactsForVersion(ktorVersion: String): Artifacts =
+    versions.entries.firstNotNullOfOrNull { (ktorVersionRange, artifact) ->
+        artifact.takeIf {
+            Semver(ktorVersion, Semver.SemverType.NPM).satisfies(ktorVersionRange)
+        }
+    }.orEmpty()
+fun ResolvedJarMap.merge(other: ResolvedJarMap) =
+    other.mapValues { (key, value) -> value + this[key].orEmpty() }
 
 @Serializable(with = ArtifactReferenceStringSerializer::class)
 data class ArtifactReference(
+    val group: String? = null,
     val name: String,
-    val version: String,
-    var jarFile: File? = null,
+    val version: ArtifactVersion,
 ) {
     companion object {
-        private val jarNameRegex = Regex("""(.*?)(?:-jvm)?-(\d+(?:\.\d+)*.*)\.jar""")
-        private val referenceStringRegex = Regex("""(.+?):(.+?)(?:\[(.+)])?""")
+        private val jarNameRegex = Regex("""(.*?)?-(\d+(?:\.\d+)+.*)\.jar""")
+        private val referenceStringRegex = Regex("""(?:(.+?):)?(.+?):(.+)""")
 
         fun parseJarName(jarFile: File): ArtifactReference =
             jarNameRegex.matchEntire(jarFile.name)?.destructured?.let { (name, version) ->
-                ArtifactReference(name, version)
+                ArtifactReference(group = null, name, VersionNumber(version))
             } ?: throw IllegalArgumentException("Unexpected jar file name $jarFile")
 
-        fun parseReferenceString(text: String): ArtifactReference =
-            referenceStringRegex.matchEntire(text)?.destructured?.let { (name, version, jar) ->
-                ArtifactReference(name, version, File(jar))
+        fun parseReferenceString(text: String, defaultGroup: String? = null): ArtifactReference =
+            referenceStringRegex.matchEntire(text)?.destructured?.let { (group, name, version) ->
+                ArtifactReference(group.takeIf(String::isNotEmpty) ?: defaultGroup, name, ArtifactVersion.parse(version))
             } ?: throw IllegalArgumentException("Invalid reference string $text")
-
-        fun String.containsVersion(version: String): Boolean {
-            val regexPattern = replace(".", "\\.").replace("+", ".+")
-            return version.matches(Regex(regexPattern))
-        }
     }
 
-    fun actualVersion(): String? = jarFile?.let { jar -> parseJarName(jar).version }
+    fun withVersion(version: String): ArtifactReference =
+        copy(version = VersionNumber(version))
+
+    fun accepts(jarFile: File): Boolean =
+        accepts(parseJarName(jarFile))
+
+    fun accepts(other: ArtifactReference): Boolean {
+        // TODO version fix
+        return name.removeSuffix("-jvm") == other.name.removeSuffix("-jvm")
+               // && version.containsVersion(other.version.toString())
+    }
 
     override fun toString() = buildString {
+        if (group != null)
+            append(group).append(':')
         append(name).append(':').append(version)
-        jarFile?.let { jar ->
-            append('[').append(jar).append(']')
-        }
     }
 }
 
-object ArtifactReferenceStringSerializer : KSerializer<ArtifactReference> {
+sealed interface ArtifactVersion {
+    companion object {
+        fun parse(text: String): ArtifactVersion = when(text) {
+            "==" -> MatchKtor
+            else -> VersionNumber(text.fixPreRelease())
+        }
 
+        // Pre-releases resolve to SNAPSHOT jars,
+        // so we try to be more lenient here.
+        private fun String.fixPreRelease(): String =
+            replace(Regex("""(\d+)\.\d+\.\d-pre.*$"""), "$1.+")
+    }
+
+    fun containsVersion(version: String): Boolean
+}
+object MatchKtor : ArtifactVersion {
+    override fun containsVersion(version: String) = false
+    override fun toString() = "=="
+}
+data class VersionNumber(val number: String) : ArtifactVersion {
+    override fun containsVersion(version: String): Boolean {
+        return Semver(version, Semver.SemverType.IVY).satisfies(this.number)
+    }
+    override fun toString(): String = number
+}
+
+object ArtifactReferenceStringSerializer : KSerializer<ArtifactReference> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("ArtifactReference", PrimitiveKind.STRING)
 
@@ -63,4 +108,16 @@ object ArtifactReferenceStringSerializer : KSerializer<ArtifactReference> {
 
     override fun deserialize(decoder: Decoder): ArtifactReference =
         ArtifactReference.parseReferenceString(decoder.decodeString())
+}
+
+object FilePathSerializer : KSerializer<File> {
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor("FilePath", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: File) {
+        encoder.encodeString(value.path)
+    }
+
+    override fun deserialize(decoder: Decoder): File =
+        File(decoder.decodeString())
 }

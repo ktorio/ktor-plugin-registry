@@ -1,0 +1,36 @@
+{
+  "id": "auth",
+  "name": "Authentication",
+  "copyright": "Apache 2.0",
+  "short_description": "Handle Basic and Digest HTTP Auth, Form authentication and OAuth 1a and 2",
+  "vendor": {
+    "name": "Ktor",
+    "url": "https://ktor.io/"
+  },
+  "github": "https://github.com/ktorio/ktor/blob/4a50c76c3264b0121b91a203d38473bb4aafbace/ktor-features/ktor-auth/jvm/src/io/ktor/auth/Authentication.kt",
+  "group": "Security",
+  "version": "1.5.2",
+  "ktor_version": "1.4.0",
+  "required_feature_ids": [
+    "routing"
+  ],
+  "documentation": {
+    "description": "Ktor supports authentication out of the box as a standard pluggable plugin. It supports mechanisms to read credentials, and to authenticate principals.\nIt can be used in some cases along with the sessions plugin to keep the login information between requests.",
+    "usage": "## Basic usage\nKtor defines two concepts: credentials and principals.\nA principal is something that can be authenticated: a user, a computer, a group, etc.\nA credential is an object that represents a set of properties for the server to authenticate a principal: a `user/password`, an API key or an authenticated payload signature, etc.\nTo install it, you have to call to `application.install(Authentication)`. You have to install this plugin directly to the application and it won't work in another `ApplicationCallPipeline` like `Route`.\nYou might still be able to call the install code inside a Route if you have the `Application` injected in a nested DSL, but it will be applied to the application itself.\nUsing its DSL, it allows you to configure the authentication providers available:\n\n```kotlin\ninstall(Authentication) {\n    basic(name = \"myauth1\") {\n        realm = \"Ktor Server\"\n        validate { credentials ->\n            if (credentials.name == credentials.password) {\n                UserIdPrincipal(credentials.name)\n            } else {\n                null\n            }\n        }\n    }\n}\n\n```\nAfter defining one or more authentication providers (named or unnamed), with the routing plugin you can create a route group, that will apply that authentication to all the routes defined in that group:\n\n```kotlin\nrouting {\n    authenticate(\"myauth1\") {\n        get(\"/authenticated/route1\") {\n            // ...\n        }\n        get(\"/other/route2\") {\n            // ...\n        }\n    }\n    get(\"/\") {\n        // ...\n    }\n}\n\n```\nYou can specify several names to apply several authentication providers, or none or null to use the unnamed one.\nYou can get the generated Principal instance inside your handler with:\n\n```kotlin\nval principal: UserIdPrincipal? = call.authentication.principal<UserIdPrincipal>()\n\n```\n\nIn the generic, you have to put a specific type that must match the generated Principal. It will return null in the case you provide another type.\nThe handler won't be executed if the configured authentication fails (when returning null in the authentication mechanism)\n\n## Naming the AuthenticationProvider\nIt is possible to give arbitrary names to the authentication providers you specify, or to not provide a name at all (unnamed provider) by not setting the name argument or passing a null.\nYou cannot repeat authentication provider names, and you can define just one provider without a name.\nIn the case you repeat a name for the provider or try to define two unnamed providers, an exception will be thrown:\n```\njava.lang.IllegalArgumentException: Provider with the name `authName` is already registered\n```\nSummarizing:\n\n```kotlin\ninstall(Authentication) {\n    basic { // Unamed `basic` provider\n        // ...\n    }\n    form { // Unamed `form` provider (exception, already defined a provider with name = null)\n        // ...\n    }\n    basic(\"name1\") { // \"name1\" provider\n        // ...\n    }\n    basic(\"name1\") { // \"name1\" provider (exception, already defined a provider with name = \"name1\")\n        // ...\n    }\n}\n\n```\n\n## Skipping/Omitting Authentication providers\nYou can also skip an authentication based on a criteria.\n\n```kotlin\n/**\n * Authentication filters specifying if authentication is required for particular [ApplicationCall]\n * If there is no filters, authentication is required. If any filter returns true, authentication is not required.\n */\nfun AuthenticationProvider.skipWhen(predicate: (ApplicationCall) -> Boolean)\n\n```\n\nFor example, to skip a basic authentication if there is already a session, you could write:\n\n```kotlin\nauthentication {\n    basic {\n        skipWhen { call -> call.sessions.get<UserSession>() != null }\n    }\n}\n\n```\n",
+    "options": "No options"
+  },
+  "install_recipe": {
+    "install_block": "",
+    "imports": [
+      "io.ktor.auth.*",
+      "io.ktor.util.*"
+    ]
+  },
+  "dependencies": [
+    {
+      "group": "io.ktor",
+      "artifact": "ktor-auth",
+      "version": "$ktor_version"
+    }
+  ]
+}

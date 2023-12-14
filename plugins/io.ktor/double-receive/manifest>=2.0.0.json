@@ -1,0 +1,43 @@
+{
+  "id": "double-receive",
+  "name": "DoubleReceive",
+  "version": "2.0.0",
+  "ktor_version": "2.0.0",
+  "short_description": "Allows ApplicationCall.receive several times",
+  "github": "https://github.com/ktorio/ktor/blob/962677f73f0900cae32e90519fa1e850dd0acfa8/ktor-server/ktor-server-core/jvm/src/io/ktor/features/DoubleReceive.kt",
+  "copyright": "Apache 2.0",
+  "vendor": {
+    "name": "Ktor",
+    "url": "https://ktor.io/"
+  },
+  "group": "Routing",
+  "required_feature_ids": [
+    "routing"
+  ],
+  "install_recipe": {
+    "imports": [
+      "io.ktor.server.plugins.doublereceive.*",
+      "io.ktor.server.response.*",
+      "io.ktor.server.request.*"
+    ],
+    "install_block": "install(DoubleReceive)",
+    "templates": [
+      {
+        "position": "in_routing",
+        "text": "post(\"/double-receive\") {\n    val first = call.receiveText()\n    val theSame = call.receiveText()\n    call.respondText(first + \" \" + theSame)\n}"
+      }
+    ]
+  },
+  "dependencies": [
+    {
+      "group": "io.ktor",
+      "artifact": "ktor-server-double-receive-jvm",
+      "version": "$ktor_version"
+    }
+  ],
+  "documentation": {
+    "description": "The [DoubleReceive](https://ktor.io/docs/double-receive.html) plugin provides the ility to invoke `ApplicationCall.receive` several times with no `RequestAlreadyConsumedException`. This usually makes sense when a plugin is consuming a request body, so a handler is unable to receive it again.",
+    "usage": "The code snippet below shows how to install `DoubleReceive`:\n```kotlin\ninstall(DoubleReceive)\n```\nAfter that, you can receive from a call multiple times and every invocation may return the same instance:\n```kotlin\nval first = call.receiveText()\nval theSame = call.receiveText()\n```\nYou can learn more from [DoubleReceive](https://ktor.io/docs/double-receive.html).",
+    "options": "* `receiveEntireContent` - when enabled, for every request the whole content will be received and stored as a byte array. This is useful when completely different types need to be received. You also can receive streams and channels. Note that enabling this causes the whole receive pipeline to be executed for every further receive pipeline."
+  }
+}

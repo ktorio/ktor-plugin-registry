@@ -1,0 +1,46 @@
+{
+  "id": "static-content",
+  "name": "Static Content",
+  "version": "2.0.0",
+  "ktor_version": "2.0.0",
+  "short_description": "Serves static files from defined locations.",
+  "github": "https://github.com/ktorio/ktor/blob/7e78e715cec3ff039cd628f8ff8ce875c35cde4c/ktor-server/ktor-server-core/jvm/src/io/ktor/http/content/StaticContent.kt",
+  "copyright": "Apache 2.0",
+  "vendor": {
+    "name": "Ktor",
+    "url": "https://ktor.io/"
+  },
+  "group": "Routing",
+  "required_feature_ids": [
+    "routing"
+  ],
+  "install_recipe": {
+    "imports": [
+      "io.ktor.server.http.content.*"
+    ],
+    "install_block": "",
+    "templates": [
+      {
+        "position": "in_routing",
+        "text": "// Static plugin. Try to access `/static/index.html`\nstatic(\"/static\") {\n    resources(\"static\")\n}"
+      },
+      {
+        "position": "resources",
+        "name": "static/index.html",
+        "text": "<html>\n <head>\n </head>\n <body>\n   <h1>Hello Ktor!</h1>\n </body>\n</html>"
+      }
+    ]
+  },
+  "dependencies": [
+    {
+      "group": "io.ktor",
+      "artifact": "ktor-server-host-common-jvm",
+      "version": "$ktor_version"
+    }
+  ],
+  "documentation": {
+    "description": "The [static](https://ktor.io/docs/serving-static-content.html) plugin provides the ability to serve files, such as stylesheets, scripts, images, and so on.",
+    "usage": "In order to serve the contents from a folder, we need to specify the folder name using the `files` function. The path is always relative to the application path:\n```kotlin\nrouting {\n    static(\"assets\") {\n        files(\"css\")\n    }\n}\n```\n`files(\"css\")` would then allow for any file located in the folder `css` to be served as static content under the given URL pattern, which in this case is `assets`. This means that a request to `/assets/stylesheet.css` would serve the file `/css/stylesheet.css`.\n\nTo learn how to serve individual files, embedded application resources, etc., see [Serving static content](https://ktor.io/docs/serving-static-content.html).",
+    "options": ""
+  }
+}

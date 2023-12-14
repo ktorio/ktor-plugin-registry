@@ -1,0 +1,2 @@
+^1.4.0: ktor-metrics:==
+">=2.0.0": ktor-server-metrics-jvm:==

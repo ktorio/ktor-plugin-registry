@@ -1,0 +1,30 @@
+{
+  "id": "caching-headers",
+  "name": "Caching Headers",
+  "copyright": "Apache 2.0",
+  "short_description": "Send the headers Cache-Control and Expires used by clients and proxies to cache requests",
+  "vendor": {
+    "name": "Ktor",
+    "url": "https://ktor.io/"
+  },
+  "github": "https://github.com/ktorio/ktor/blob/419744383223899e69746b2afe50d873d442e568/ktor-server/ktor-server-core/jvm/src/io/ktor/features/CachingHeaders.kt",
+  "group": "HTTP",
+  "version": "1.5.2",
+  "ktor_version": "1.4.0",
+  "required_feature_ids": [],
+  "documentation": {
+    "description": "The `CachingOptions` plugin adds the ability to send the headers `Cache-Control` and `Expires` used by clients and proxies to cache requests in an easy way.\n\n",
+    "usage": "The basic plugin is installed just like many others, but for it to do something, you have to define options blocks transforming `outputContent` to `CachingOptions` using for example:\n\n```kotlin\ninstall(CachingHeaders) {\n    options { outgoingContent ->\n        when (outgoingContent.contentType?.withoutParameters()) {\n            ContentType.Text.CSS -> CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 24 * 60 * 60))\n            else -> null\n        }\n    }\n}\n\n```\nThe options configuration method, allows you to define code to optionally select a `CachingOptions` from a provided `outgoingContent: OutgoingContent`. You can, for example, use the `Content-Type` of the outgoing message to determine which `Cache-Control` to use.\n\n## CachingOptions and CacheControl\nThe options high order function requires you to return a `CachingOption` that describes a `CacheControl` plus an optional expiring time:\n\n```kotlin\ndata class CachingOptions(val cacheControl: CacheControl? = null, val expires: ZonedDateTime? = null)\n\nsealed class CacheControl(val visibility: Visibility?) {\n    enum class Visibility { Public, Private }\n\n    class NoCache(visibility: Visibility?) : CacheControl(visibility)\n    class NoStore(visibility: Visibility?) : CacheControl(visibility)\n    class MaxAge(val maxAgeSeconds: Int, val proxyMaxAgeSeconds: Int? = null, val mustRevalidate: Boolean = false, val proxyRevalidate: Boolean = false, visibility: Visibility? = null) : CacheControl(visibility)\n}\n\n```\nIf you have several options, that would append several `Cache-Control` headers per each matching option.",
+    "options": "No options"
+  },
+  "install_recipe": {
+    "install_block": "install(CachingHeaders) {\n    options { outgoingContent ->\n        when (outgoingContent.contentType?.withoutParameters()) {\n            ContentType.Text.CSS -> CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 24 * 60 * 60))\n            else -> null\n        }\n    }\n}",
+    "imports": [
+      "io.ktor.features.*",
+      "io.ktor.http.content.*",
+      "io.ktor.http.*"
+    ],
+    "test_imports": [],
+    "templates": []
+  }
+}

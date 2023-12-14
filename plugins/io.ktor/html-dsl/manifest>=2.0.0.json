@@ -1,0 +1,42 @@
+{
+  "id": "html-dsl",
+  "name": "HTML DSL",
+  "version": "2.0.0",
+  "ktor_version": "2.0.0",
+  "short_description": "Generate HTML using Kotlin code like a pure-core template engine",
+  "github": "https://github.com/Kotlin/kotlinx.html",
+  "copyright": "Apache 2.0",
+  "vendor": {
+    "name": "Ktor",
+    "url": "https://ktor.io/"
+  },
+  "group": "Templating",
+  "required_feature_ids": [
+    "routing"
+  ],
+  "install_recipe": {
+    "imports": [
+      "io.ktor.server.html.*",
+      "kotlinx.html.*"
+    ],
+    "install_block": "",
+    "templates": [
+      {
+        "position": "in_routing",
+        "text": "get(\"/html-dsl\") {\n    call.respondHtml {\n        body {\n            h1 { +\"HTML\" }\n            ul {\n                for (n in 1..10) {\n                    li { +\"$n\" }\n                }\n            }\n        }\n    }\n}"
+      }
+    ]
+  },
+  "dependencies": [
+    {
+      "group": "io.ktor",
+      "artifact": "ktor-server-html-builder-jvm",
+      "version": "$ktor_version"
+    }
+  ],
+  "documentation": {
+    "description": "[HTML DSL](https://ktor.io/docs/html-dsl.html) integrates the `kotlinx.html` library into Ktor and allows you to respond to a client with HTML blocks. With HTML DSL, you can write pure HTML in Kotlin, interpolate variables into views, and even build complex HTML layouts using templates.",
+    "usage": "To send an HTML response, call the `respondHtml` method inside the required route:\n\n```kotlin\nrouting {\n    get(\"/\") {\n        val name = \"Ktor\"\n        call.respondHtml(HttpStatusCode.OK) {\n            head {\n                title {\n                    +name\n                }\n            }\n            body {\n                h1 {\n                    +\"Hello from         $name        !\"\n                }\n            }\n        }\n    }\n}\n```\n\nYou can learn more from the [HTML DSL](https://ktor.io/docs/html-dsl.html) help topic.",
+    "options": ""
+  }
+}

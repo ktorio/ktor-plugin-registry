@@ -1,0 +1,35 @@
+{
+  "id": "auth-basic",
+  "name": "Authentication Basic",
+  "copyright": "Apache 2.0",
+  "short_description": "Handle Basic authentication",
+  "vendor": {
+    "name": "Ktor",
+    "url": "https://ktor.io/"
+  },
+  "github": "https://github.com/ktorio/ktor/blob/4a50c76c3264b0121b91a203d38473bb4aafbace/ktor-features/ktor-auth/jvm/src/io/ktor/auth/BasicAuth.kt",
+  "group": "Security",
+  "version": "1.5.2",
+  "ktor_version": "1.4.0",
+  "required_feature_ids": [
+    "auth"
+  ],
+  "documentation": {
+    "description": "Ktor supports two methods of authentication with the user and raw password as credentials: `basic` and `form`.",
+    "usage": "```kotlin\ninstall(Authentication) {\n    basic(name = \"myauth1\") {\n        realm = \"Ktor Server\"\n        validate { credentials -> /*...*/ }\n    }\n\n    form(name = \"myauth2\") {\n        userParamName = \"user\"\n        passwordParamName = \"password\"\n        challenge = FormAuthChallenge.Unauthorized\n        validate { credentials -> /*...*/ }\n    }\n}\n\n```\nBoth authentication providers have a method `validate` to provide a callback that must generate a Principal from a given `UserPasswordCredential` or null for invalid credentials. That callback is marked as suspending, so that you can validate credentials in an asynchronous fashion.",
+    "options": "* basic \n* form"
+  },
+  "install_recipe": {
+    "install_block": "server/template/auth-basic/installBlock.kt",
+    "imports": [
+      "io.ktor.auth.*"
+    ],
+    "test_imports": [],
+    "templates": [
+      {
+        "position": "in_routing",
+        "text": "server/template/auth-basic/text.kt"
+      }
+    ]
+  }
+}

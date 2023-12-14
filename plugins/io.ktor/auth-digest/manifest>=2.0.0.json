@@ -1,0 +1,36 @@
+{
+  "id": "auth-digest",
+  "name": "Authentication Digest",
+  "version": "2.0.0",
+  "ktor_version": "2.0.0",
+  "short_description": "Handle Digest authentication",
+  "github": "https://github.com/ktorio/ktor/blob/e03bafda3b3d72fcac166e46cf55e5d2d9383660/ktor-client/ktor-client-features/ktor-client-auth/common/src/io/ktor/client/features/auth/providers/DigestAuthProvider.kt",
+  "copyright": "Apache 2.0",
+  "vendor": {
+    "name": "Ktor",
+    "url": "https://ktor.io/"
+  },
+  "group": "Security",
+  "required_feature_ids": [
+    "auth"
+  ],
+  "install_recipe": {
+    "imports": [
+      "io.ktor.server.auth.*",
+      "io.ktor.util.*",
+      "io.ktor.server.response.*"
+    ],
+    "install_block": "server/template/auth-digest/installBlock.kt",
+    "templates": [
+      {
+        "position": "in_routing",
+        "text": "server/template/auth-digest/text.kt"
+      }
+    ]
+  },
+  "documentation": {
+    "description": "The [Digest](https://ktor.io/docs/digest.html) authentication scheme is a part of HTTP framework used for access control and authentication. In this scheme, a hash function is applied to a username and password before sending them over the network.",
+    "usage": "For the Digest scheme, you need to provide a user table that contains usernames and corresponding `HA1` hashes:\n\n```kotlin\nval userTable: Map<String, ByteArray> = mapOf(\n    \"jetbrains\" to getMd5Digest(\"jetbrains:        $myRealm        :foobar\"),\n    \"admin\" to getMd5Digest(\"admin:        $myRealm        :password\")\n)\n```\n\nThen, you can configure the `digestProvider` function that fetches the `HA1` part of digest for a specified username:\n```kotlin\ninstall(Authentication) {\n    digest(\"auth-digest\") {\n        realm = \"Access to the '/' path\"\n        digestProvider { userName, realm ->\n            userTable[userName]\n        }\n    }\n}\n```",
+    "options": ""
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "id": "exposed",
+  "name": "Exposed",
+  "version": "2.2.0",
+  "ktor_version": "2.2.0",
+  "short_description": "Adds Exposed database to your application",
+  "github": "https://github.com/JetBrains/Exposed",
+  "copyright": "Apache 2.0",
+  "vendor": {
+    "name": "JetBrains",
+    "url": "https://www.jetbrains.com/"
+  },
+  "group": "Databases",
+  "required_feature_ids": [
+    "routing",
+    "kotlinx-serialization"
+  ],
+  "install_recipe": {
+    "imports": [
+      "org.jetbrains.exposed.sql.*",
+      "io.ktor.http.*",
+      "io.ktor.server.request.*",
+      "io.ktor.server.response.*"
+    ],
+    "install_block": "val database = Database.connect(\n        url = \"jdbc:h2:mem:test;DB_CLOSE_DELAY=-1\",\n        user = \"root\",\n        driver = \"org.h2.Driver\",\n        password = \"\"\n    )",
+    "templates": [
+      {
+        "position": "source_file_kt",
+        "name": "UsersSchema",
+        "text": "server/template/exposed/UsersSchema.kt"
+      },
+      {
+        "position": "inside_app",
+        "text": "val userService = UserService(database)"
+      },
+      {
+        "position": "in_routing",
+        "text": "server/template/exposed/createUser.kt"
+      },
+      {
+        "position": "in_routing",
+        "text": "server/template/exposed/readUser.kt"
+      },
+      {
+        "position": "in_routing",
+        "text": "server/template/exposed/updateUser.kt"
+      },
+      {
+        "position": "in_routing",
+        "text": "server/template/exposed/deleteUser.kt"
+      }
+    ]
+  },
+  "dependencies": [
+    {
+      "group": "org.jetbrains.exposed",
+      "artifact": "exposed-core",
+      "version": "$exposed_version",
+      "version_value": "0.41.1"
+    },
+    {
+      "group": "org.jetbrains.exposed",
+      "artifact": "exposed-jdbc",
+      "version": "$exposed_version",
+      "version_value": "0.41.1"
+    },
+    {
+      "group": "com.h2database",
+      "artifact": "h2",
+      "version": "h2_version",
+      "version_value": "2.1.214"
+    }
+  ],
+  "documentation": {
+    "description": "Exposed is a lightweight SQL library on top of [JDBC](https://en.wikipedia.org/wiki/Java_Database_Connectivity) driver for Kotlin language. Exposed has two flavors of database access: typesafe SQL wrapping DSL and lightweight Data Access Objects (DAO).\n\nWith Exposed, you can have two levels of databases Access. You would like to use exposed because the database access includes wrapping DSL and a lightweight data access object. Exposed can be used to help you build applications without dependencies on any specific database engine and switch between them with very little or no changes.",
+    "usage": "### Creating a table\n```kotlin\nobject Users : Table() {\n    val id = varchar(\"id\", 10) // Column<String>\n    val name = varchar(\"name\", length = 50) // Column<String>\n    val cityId = (integer(\"city_id\") references Cities.id).nullable() // Column<Int?>\n\n    override val primaryKey = PrimaryKey(id, name = \"PK_User_ID\") // name is optional here\n}\n```\nThe above code snippet defines a table called \"Users\" with three columns: `id`, `name``, and `cityId``. The primary key for the table is defined as the `id` column, and the references function is used to define a foreign key constraint between the `cityId` column and the `id` column of the `Cities` table [(see full example)](https://github.com/JetBrains/Exposed).\n### Connecting to the database\n```kotlin\nDatabase.connect(\"jdbc:h2:mem:test\", driver = \"org.h2.Driver\", user = \"root\", password = \"\")\n```\nThe above code snippet connects to the database using the `Database.connect()` function, which takes the [JDBC](https://en.wikipedia.org/wiki/Java_Database_Connectivity) connection string, the `driver` class, and the `user` and `password` as its parameters. You can use any other database by changing the connection string and driver accordingly.\n### Performing a transaction\n```kotlin\ntransaction {\n    Users.insert {\n        it[name] = user.name\n        it[age] = user.age\n    }\n}\n```\nThe above code snippet shows how to perform a transaction using the `transaction` function. Inside the `transaction` block, you can perform any database operations",
+    "options": ""
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "id": "call-logging",
+  "name": "Call Logging",
+  "copyright": "Apache 2.0",
+  "short_description": "Logs client requests",
+  "vendor": {
+    "name": "Ktor",
+    "url": "https://ktor.io/"
+  },
+  "github": "https://github.com/ktorio/ktor/blob/f028b0ca428335b6545b81afef803e236242b3a5/ktor-server/ktor-server-core/jvm/src/io/ktor/features/CallLogging.kt",
+  "group": "Monitoring",
+  "version": "1.5.2",
+  "ktor_version": "1.4.0",
+  "required_feature_ids": [],
+  "documentation": {
+    "description": "You might want to log client requests: and the Call Logging plugin does just that. It uses the `ApplicationEnvironment.log(LoggerFactory.getLogger(\"Application\"))` that uses `slf4j` so you can easily configure the output. For more information on logging in Ktor, please check the logging in the ktor page.",
+    "usage": "## Basic usage\nThe basic unconfigured plugin logs every request using the level `TRACE`:\n\n```kotlin\ninstall(CallLogging)\n\n```\n## Configuring\nThis plugin allows you to configure the log level and filtering the requests that are being logged:\n\n```kotlin\ninstall(CallLogging) {\n    level = Level.INFO\n    filter { call -> call.request.path().startsWith(\"/section1\") }\n    filter { call -> call.request.path().startsWith(\"/section2\") }\n    // ...\n}\n\n```\nThe filter method keeps an allow list of filters. If no filters are defined, everything is logged. And if there are filters, if any of them returns true, the call will be logged.\n\nIn the example, it will log both: `/section1/*` and `/section2/*` requests.\n\n## MDC\nThe `CallLogging` plugin supports `MDC` (Mapped Diagnostic Context) from `slf4j` to associate information as part of the request.\n\nWhen installing the `CallLogging`, you can configure a parameter to associate to the request with the mdc method. This method requires a key name, and a function provider. The context would be associated (and the providers will be called) as part of the `Monitoring` pipeline phase.\n\n```kotlin\ninstall(CallLogging) {\n    mdc(name) { // call: ApplicationCall ->\n        \"value\"\n    }\n    // ...\n}\n\n```",
+    "options": "No options"
+  },
+  "install_recipe": {
+    "install_block": "install(CallLogging) {\n    level = Level.INFO\n    filter { call -> call.request.path().startsWith(\"/\") }\n}",
+    "imports": [
+      "io.ktor.features.*",
+      "org.slf4j.event.*",
+      "io.ktor.request.*"
+    ],
+    "test_imports": [],
+    "templates": [
+      {
+        "position": "call_logging_config",
+        "text": "level = Level.INFO\nfilter { call -> call.request.path().startsWith(\"/\") }"
+      }
+    ]
+  }
+}

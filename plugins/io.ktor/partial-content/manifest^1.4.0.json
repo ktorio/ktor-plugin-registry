@@ -1,0 +1,28 @@
+{
+  "id": "partial-content",
+  "name": "Partial Content",
+  "copyright": "Apache 2.0",
+  "short_description": "Handles requests with the Range header. Generating Accept-Ranges and the Content-Range headers and slicing the served content when required.",
+  "vendor": {
+    "name": "Ktor",
+    "url": "https://ktor.io/"
+  },
+  "github": "https://github.com/ktorio/ktor/blob/4517e3856a3cae8f157d2f6966635217827d2abd/ktor-server/ktor-server-core/jvm/src/io/ktor/features/PartialContent.kt",
+  "group": "HTTP",
+  "version": "1.5.2",
+  "ktor_version": "1.4.0",
+  "required_feature_ids": [],
+  "documentation": {
+    "description": "This plugin adds support for handling Partial Content requests: requests with the `Range` header. It intercepts the generated response adding the `Accept-Ranges` and the `Content-Range` header and slicing the served content when required.\n\nPartial Content is well-suited for streaming content or resume partial downloads with download managers, or in unreliable networks.\n\nIt is especially useful for the `Static Content` plugin.\n\nThis plugin only works with `HEAD` and `GET` requests. And it will return a `405 Method Not Allowed` if the client tries to use the `Range` header with other methods.\n\nIt disables compression when serving ranges.\n\nIt is only enabled for responses that define the `Content-Length`. And it:\n\nRemoves the `Content-Length` header\n\nAdds the `Accept-Ranges` header\n\nAdds the Content-Range header with the requested Ranges\n\nServes only the requested slice of the content",
+    "usage": "To install the `PartialContent` plugin with the default configuration:\n\n```kotlin\nimport io.ktor.features.*\n\nfun Application.main() {\n    // ...\n    install(PartialContent)\n    // ...\n}\n```\n",
+    "options": "* `maxRangeCount` -- Maximum number of ranges that will be accepted from a HTTP request. If the HTTP request specifies more ranges, they will all be merged into a single range."
+  },
+  "install_recipe": {
+    "install_block": "install(PartialContent) {\n        // Maximum number of ranges that will be accepted from a HTTP request.\n        // If the HTTP request specifies more ranges, they will all be merged into a single range.\n        maxRangeCount = 10\n    }",
+    "imports": [
+      "io.ktor.features.*"
+    ],
+    "test_imports": [],
+    "templates": []
+  }
+}

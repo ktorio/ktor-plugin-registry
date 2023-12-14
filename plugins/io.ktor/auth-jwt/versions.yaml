@@ -1,0 +1,2 @@
+^1.4.0: ktor-auth-jwt:==
+">=2.0.0": ktor-server-auth-jwt-jvm:==

@@ -1,0 +1,2 @@
+^1.4.0: ktor-server-core:==
+">=2.0.0": ktor-server-core-jvm:==

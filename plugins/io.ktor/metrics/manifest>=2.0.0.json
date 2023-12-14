@@ -1,0 +1,34 @@
+{
+  "id": "metrics",
+  "name": "Metrics",
+  "version": "2.0.0",
+  "ktor_version": "2.0.0",
+  "short_description": "Adds supports for monitoring several metrics",
+  "github": "https://github.com/ktorio/ktor/tree/4a50c76c3264b0121b91a203d38473bb4aafbace/ktor-features/ktor-metrics/jvm/src/io/ktor/metrics",
+  "copyright": "Apache 2.0",
+  "vendor": {
+    "name": "Ktor",
+    "url": "https://ktor.io/"
+  },
+  "group": "Monitoring",
+  "install_recipe": {
+    "install_block": "server/template/metrics/installBlock.kt",
+    "imports": [
+      "io.ktor.server.metrics.dropwizard.*",
+      "com.codahale.metrics.*",
+      "java.util.concurrent.TimeUnit"
+    ]
+  },
+  "dependencies": [
+    {
+      "group": "io.ktor",
+      "artifact": "ktor-server-metrics-jvm",
+      "version": "$ktor_version"
+    }
+  ],
+  "documentation": {
+    "description": "The [Metrics](https://ktor.io/docs/dropwizard-metrics.html) plugin allows you to configure the Metrics to get useful information about the server and incoming requests.",
+    "usage": "The example below shows how to use the SLF4J Reporter to periodically emit reports to any output supported by SLF4J. For example, to output the metrics every 10 seconds, you would:\n```kotlin\ninstall(DropwizardMetrics) {\n    Slf4jReporter.forRegistry(registry)\n        .outputTo(log)\n        .convertRatesTo(TimeUnit.SECONDS)\n        .convertDurationsTo(TimeUnit.MILLISECONDS)\n        .build()\n        .start(10, TimeUnit.SECONDS)\n}\n```\nTo learn more, see the [Dropwizard metrics](https://ktor.io/docs/dropwizard-metrics.html) topic.",
+    "options": ""
+  }
+}

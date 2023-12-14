@@ -1,0 +1,64 @@
+{
+  "id": "kotlinx-serialization",
+  "name": "kotlinx.serialization",
+  "version": "2.0.0",
+  "ktor_version": "2.0.0",
+  "short_description": "Handles JSON serialization using kotlinx.serialization library",
+  "github": "https://github.com/ktorio/ktor/blob/2dd2ed73538973e2ff44987ddba0efa0371bb0d6/ktor-features/ktor-serialization/jvm/src/io/ktor/serialization/JsonSupport.kt",
+  "copyright": "Apache 2.0",
+  "vendor": {
+    "name": "Ktor",
+    "url": "https://ktor.io/"
+  },
+  "group": "Serialization",
+  "required_feature_ids": [
+    "content-negotiation"
+  ],
+  "install_recipe": {
+    "imports": [
+      "io.ktor.serialization.kotlinx.json.*",
+      "io.ktor.server.plugins.contentnegotiation.*",
+      "io.ktor.server.response.*"
+    ],
+    "templates": [
+      {
+        "position": "in_routing",
+        "text": "get(\"/json/kotlinx-serialization\") {\n        call.respond(mapOf(\"hello\" to \"world\"))\n    }"
+      },
+      {
+        "position": "serialization_config",
+        "text": "json()"
+      }
+    ]
+  },
+  "gradle_install": {
+    "plugins": [
+      {
+        "id": "org.jetbrains.kotlin.plugin.serialization",
+        "version": "LAST_KOTLIN_VERSION"
+      }
+    ]
+  },
+  "maven_install": {
+    "plugins": [
+      {
+        "group": "org.jetbrains.kotlin",
+        "artifact": "kotlin-maven-plugin",
+        "version": "LAST_KOTLIN_VERSION",
+        "extra": "<executions>\n                <execution>\n                    <id>compile</id>\n                    <phase>compile</phase>\n                    <goals>\n                        <goal>compile</goal>\n                    </goals>\n                </execution>\n            </executions>\n            <configuration>\n                <compilerPlugins>\n                    <plugin>kotlinx-serialization</plugin>\n                </compilerPlugins>\n            </configuration>\n            <dependencies>\n                <dependency>\n                    <groupId>org.jetbrains.kotlin</groupId>\n                    <artifactId>kotlin-maven-serialization</artifactId>\n                    <version>${kotlin_version}</version>\n                </dependency>\n            </dependencies>"
+      }
+    ]
+  },
+  "dependencies": [
+    {
+      "group": "io.ktor",
+      "artifact": "ktor-serialization-kotlinx-json-jvm",
+      "version": "$ktor_version"
+    }
+  ],
+  "documentation": {
+    "description": "The [kotlinx.serialization](https://ktor.io/docs/serialization.html) plugin provides the ability to serialize/deserialize the content in a specific format (such as JSON, XML, and CBOR). Note that this plugin depends on the `ContentNegotiation` plugin, which is used to negotiate media types between the client and server using the `Accept` and `Content-Type` headers.",
+    "usage": "To install `ContentNegotiation` and register the JSON serializer in your application, call the `json` method:\n```kotlin\ninstall(ContentNegotiation) {\n    json()\n}\n```\nThis allows you to deserialize received JSON data to an object of a specific class. For example, if you have the following data class, ...\n```kotlin\n@Serializable\ndata class Customer(val id: Int, val firstName: String, val lastName: String)\n```\n... you need to pass it to the `receive` method as a parameter to convert JSON data to an object:\n```kotlin\npost(\"/customer\") {\n    val customer = call.receive<Customer>()\n    customerStorage.add(customer)\n    call.respondText(\"Customer stored correctly\", status = HttpStatusCode.Created)\n}\n```\nTo learn more, see [Content negotiation and serialization](https://ktor.io/docs/serialization.html).",
+    "options": ""
+  }
+}

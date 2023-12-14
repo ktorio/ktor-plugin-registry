@@ -1,0 +1,55 @@
+{
+  "id": "auth-oauth",
+  "name": "Authentication OAuth",
+  "version": "2.0.0",
+  "ktor_version": "2.0.0",
+  "short_description": "Handle OAuth authentication",
+  "github": "https://github.com/ktorio/ktor/blob/4a50c76c3264b0121b91a203d38473bb4aafbace/ktor-features/ktor-auth/jvm/src/io/ktor/auth/OAuth.kt",
+  "copyright": "Apache 2.0",
+  "vendor": {
+    "name": "Ktor",
+    "url": "https://ktor.io/"
+  },
+  "group": "Security",
+  "required_feature_ids": [
+    "auth"
+  ],
+  "install_recipe": {
+    "imports": [
+      "io.ktor.server.auth.*",
+      "io.ktor.client.*",
+      "io.ktor.client.engine.apache.*",
+      "io.ktor.http.*",
+      "io.ktor.server.sessions.*",
+      "io.ktor.server.response.*"
+    ],
+    "install_block": "authentication {\n        oauth(\"auth-oauth-google\") {\n            urlProvider = { \"http://localhost:8080/callback\" }\n            providerLookup = {\n                OAuthServerSettings.OAuth2ServerSettings(\n                    name = \"google\",\n                    authorizeUrl = \"https://accounts.google.com/o/oauth2/auth\",\n                    accessTokenUrl = \"https://accounts.google.com/o/oauth2/token\",\n                    requestMethod = HttpMethod.Post,\n                    clientId = System.getenv(\"GOOGLE_CLIENT_ID\"),\n                    clientSecret = System.getenv(\"GOOGLE_CLIENT_SECRET\"),\n                    defaultScopes = listOf(\"https://www.googleapis.com/auth/userinfo.profile\")\n                )\n            }\n            client = HttpClient(Apache)\n        }\n    }",
+    "templates": [
+      {
+        "position": "in_routing",
+        "text": "authenticate(\"auth-oauth-google\") {\n            get(\"login\") {\n                call.respondRedirect(\"/callback\")\n            }\n\n            get(\"/callback\") {\n                val principal: OAuthAccessTokenResponse.OAuth2? = call.authentication.principal()\n                call.sessions.set(UserSession(principal?.accessToken.toString()))\n                call.respondRedirect(\"/hello\")\n            }\n        }"
+      },
+      {
+        "position": "outside_app",
+        "text": "class UserSession(accessToken: String)"
+      }
+    ]
+  },
+  "dependencies": [
+    {
+      "group": "io.ktor",
+      "artifact": "ktor-client-core-jvm",
+      "version": "$ktor_version"
+    },
+    {
+      "group": "io.ktor",
+      "artifact": "ktor-client-apache-jvm",
+      "version": "$ktor_version"
+    }
+  ],
+  "documentation": {
+    "description": "[OAuth](https://ktor.io/docs/oauth.html) is an open standard for access delegation. OAuth can be used to authorize users of your application by using external providers, such as Google, Facebook, Twitter, and so on.\n\nThe `oauth` provider supports the authorization code flow. You can configure OAuth parameters in one place, and Ktor will automatically make a request to a specified authorization server with the necessary parameters.",
+    "usage": "To learn how to configure the `oauth` provider for authorizing users of your application using an external provider, see [OAuth](https://ktor.io/docs/oauth.html).",
+    "options": ""
+  }
+}

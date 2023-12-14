@@ -1,0 +1,65 @@
+{
+  "id": "kotlinx-serialization",
+  "name": "kotlinx.serialization",
+  "copyright": "Apache 2.0",
+  "short_description": "Handles JSON serialization using kotlinx.serialization library",
+  "vendor": {
+    "name": "Ktor",
+    "url": "https://ktor.io/"
+  },
+  "github": "https://github.com/ktorio/ktor/blob/2dd2ed73538973e2ff44987ddba0efa0371bb0d6/ktor-features/ktor-serialization/jvm/src/io/ktor/serialization/JsonSupport.kt",
+  "group": "Serialization",
+  "version": "1.5.2",
+  "ktor_version": "1.4.0",
+  "required_feature_ids": [
+    "content-negotiation"
+  ],
+  "documentation": {
+    "description": "ContentNegotiation allows you to use content converters provided by the `kotlinx.serialization` library. This library supports `JSON`, `CBOR`, `ProtoBuf`, and other formats.\n\n",
+    "usage": "## Register the JSON Converter\nTo register the JSON converter in your application, call the `json` method:\n\n```kotlin\nimport io.ktor.serialization.*\n\ninstall(ContentNegotiation) {\n    json()\n}\n```\nInside the `json` method, you can access the [JsonBuilder](https://kotlin.github.io/kotlinx.serialization/kotlinx-serialization-json/kotlinx-serialization-json/kotlinx.serialization.json/-json-builder/index.html) API, for example:\n\n```kotlin\ninstall(ContentNegotiation) {\n    json(Json {\n        prettyPrint = true\n        isLenient = true\n        // ...\n    })\n}\n```\n## Register an Arbitrary Converter\nTo register an arbitrary converter from the kotlinx.serialization library (such as Protobuf or CBOR), call the `serialization` method and pass two parameters:\n* The required `ContentType` value.\n* An object of the class implementing the required encoder/decoder.\n\nFor example, you can register the [Cbor](https://kotlin.github.io/kotlinx.serialization/kotlinx-serialization-cbor/kotlinx-serialization-cbor/kotlinx.serialization.cbor/-cbor/index.html) converter in the following way:\n\n```kotlin\ninstall(ContentNegotiation) {\n    serialization(ContentType.Application.Cbor, Cbor.Default)\n}\n```",
+    "options": "No options"
+  },
+  "install_recipe": {
+    "imports": [
+      "io.ktor.serialization.*",
+      "io.ktor.features.*",
+      "io.ktor.server.response.*"
+    ],
+    "test_imports": [],
+    "templates": [
+      {
+        "position": "in_routing",
+        "text": "get(\"/json/kotlinx-serialization\") {\n        call.respond(mapOf(\"hello\" to \"world\"))\n    }"
+      },
+      {
+        "position": "serialization_config",
+        "text": "json()"
+      }
+    ]
+  },
+  "dependencies": [
+    {
+      "group": "io.ktor",
+      "artifact": "ktor-serialization",
+      "version": "$ktor_version"
+    }
+  ],
+  "gradle_install": {
+    "plugins": [
+      {
+        "id": "org.jetbrains.kotlin.plugin.serialization",
+        "version": "LAST_KOTLIN_VERSION"
+      }
+    ]
+  },
+  "maven_install": {
+    "plugins": [
+      {
+        "group": "org.jetbrains.kotlin",
+        "artifact": "kotlin-maven-plugin",
+        "version": "LAST_KOTLIN_VERSION",
+        "extra": "<executions>\n                <execution>\n                    <id>compile</id>\n                    <phase>compile</phase>\n                    <goals>\n                        <goal>compile</goal>\n                    </goals>\n                </execution>\n            </executions>\n            <configuration>\n                <compilerPlugins>\n                    <plugin>kotlinx-serialization</plugin>\n                </compilerPlugins>\n            </configuration>\n            <dependencies>\n                <dependency>\n                    <groupId>org.jetbrains.kotlin</groupId>\n                    <artifactId>kotlin-maven-serialization</artifactId>\n                    <version>${kotlin_version}</version>\n                </dependency>\n            </dependencies>"
+      }
+    ]
+  }
+}

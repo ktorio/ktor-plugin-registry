@@ -27,7 +27,7 @@ want to include all Ktor versions.  If a plugin breaks after a release, we'll up
 the author from the contact information listed in the plugin manifest.
 
 
-## Running
+## Running and testing
 
 To resolve plugins from the `/plugins` folder, run `./gradlew resolvePlugins`.  Then, you may run `./gradlew run` to 
 generate the registry.  This will validate all plugin references and slot them into the appropriate Ktor release 

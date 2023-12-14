@@ -1,0 +1,84 @@
+{
+  "id": "postgres",
+  "name": "Postgres",
+  "version": "2.2.0",
+  "ktor_version": "2.2.0",
+  "short_description": "Adds Postgres database to your application",
+  "github": "https://github.com/pgjdbc",
+  "copyright": "Apache 2.0",
+  "vendor": {
+    "name": "PostgreSQL Global Development Group",
+    "url": "https://www.postgresql.org/"
+  },
+  "group": "Databases",
+  "required_feature_ids": [
+    "routing",
+    "kotlinx-serialization"
+  ],
+  "install_recipe": {
+    "imports": [
+      "io.ktor.http.*",
+      "io.ktor.server.request.*",
+      "io.ktor.server.response.*",
+      "kotlinx.coroutines.*",
+      "java.sql.*"
+    ],
+    "install_block": "",
+    "templates": [
+      {
+        "position": "inside_app",
+        "text": "val dbConnection: Connection = connectToPostgres(embedded = true)",
+        "required": true
+      },
+      {
+        "position": "outside_app",
+        "text": "/**\n * Makes a connection to a Postgres database.\n *\n * In order to connect to your running Postgres process,\n * please specify the following parameters in your configuration file:\n * - postgres.url -- Url of your running database process.\n * - postgres.user -- Username for database connection\n * - postgres.password -- Password for database connection\n *\n * If you don't have a database process running yet, you may need to [download]((https://www.postgresql.org/download/))\n * and install Postgres and follow the instructions [here](https://postgresapp.com/).\n * Then, you would be able to edit your url,  which is usually \"jdbc:postgresql://host:port/database\", as well as\n * user and password values.\n *\n *\n * @param embedded -- if [true] defaults to an embedded database for tests that runs locally in the same process.\n * In this case you don't have to provide any parameters in configuration file, and you don't have to run a process.\n *\n * @return [Connection] that represent connection to the database. Please, don't forget to close this connection when\n * your application shuts down by calling [Connection.close]\n * */\nfun Application.connectToPostgres(embedded: Boolean): Connection {\n    Class.forName(\"org.postgresql.Driver\")\n    if (embedded) {\n        return DriverManager.getConnection(\"jdbc:h2:mem:test;DB_CLOSE_DELAY=-1\", \"root\", \"\")\n    } else {\n        val url = environment.config.property(\"postgres.url\").getString()\n        val user = environment.config.property(\"postgres.user\").getString()\n        val password = environment.config.property(\"postgres.password\").getString()\n\n        return DriverManager.getConnection(url, user, password)\n    }\n}",
+        "required": true
+      },
+      {
+        "position": "source_file_kt",
+        "name": "CitySchema",
+        "text": "import kotlinx.coroutines.*\nimport kotlinx.serialization.Serializable\nimport java.sql.Connection\nimport java.sql.Statement\n\n@Serializable\ndata class City(val name: String, val population: Int)\nclass CityService(private val connection: Connection) {\n    companion object {\n        private const val CREATE_TABLE_CITIES =\n            \"CREATE TABLE CITIES (ID SERIAL PRIMARY KEY, NAME VARCHAR(255), POPULATION INT);\"\n        private const val SELECT_CITY_BY_ID = \"SELECT name, population FROM cities WHERE id = ?\"\n        private const val INSERT_CITY = \"INSERT INTO cities (name, population) VALUES (?, ?)\"\n        private const val UPDATE_CITY = \"UPDATE cities SET name = ?, population = ? WHERE id = ?\"\n        private const val DELETE_CITY = \"DELETE FROM cities WHERE id = ?\"\n\n    }\n\n    init {\n        val statement = connection.createStatement()\n        statement.executeUpdate(CREATE_TABLE_CITIES)\n    }\n\n    private var newCityId = 0\n\n    // Create new city\n    suspend fun create(city: City): Int = withContext(Dispatchers.IO) {\n        val statement = connection.prepareStatement(INSERT_CITY, Statement.RETURN_GENERATED_KEYS)\n        statement.setString(1, city.name)\n        statement.setInt(2, city.population)\n        statement.executeUpdate()\n\n        val generatedKeys = statement.generatedKeys\n        if (generatedKeys.next()) {\n            return@withContext generatedKeys.getInt(1)\n        } else {\n            throw Exception(\"Unable to retrieve the id of the newly inserted city\")\n        }\n    }\n\n    // Read a city\n    suspend fun read(id: Int): City = withContext(Dispatchers.IO) {\n        val statement = connection.prepareStatement(SELECT_CITY_BY_ID)\n        statement.setInt(1, id)\n        val resultSet = statement.executeQuery()\n\n        if (resultSet.next()) {\n            val name = resultSet.getString(\"name\")\n            val population = resultSet.getInt(\"population\")\n            return@withContext City(name, population)\n        } else {\n            throw Exception(\"Record not found\")\n        }\n    }\n\n    // Update a city\n    suspend fun update(id: Int, city: City) = withContext(Dispatchers.IO) {\n        val statement = connection.prepareStatement(UPDATE_CITY)\n        statement.setString(1, city.name)\n        statement.setInt(2, city.population)\n        statement.setInt(3, id)\n        statement.executeUpdate()\n    }\n\n    // Delete a city\n    suspend fun delete(id: Int) = withContext(Dispatchers.IO) {\n        val statement = connection.prepareStatement(DELETE_CITY)\n        statement.setInt(1, id)\n        statement.executeUpdate()\n    }\n}"
+      },
+      {
+        "position": "inside_app",
+        "text": "val cityService = CityService(dbConnection)"
+      },
+      {
+        "position": "in_routing",
+        "text": "// Create city\npost(\"/cities\") {\n    val city = call.receive<City>()\n    val id = cityService.create(city)\n    call.respond(HttpStatusCode.Created, id)\n}"
+      },
+      {
+        "position": "in_routing",
+        "text": "// Read city\nget(\"/cities/{id}\") {\n    val id = call.parameters[\"id\"]?.toInt() ?: throw IllegalArgumentException(\"Invalid ID\")\n    try {\n        val city = cityService.read(id)\n        call.respond(HttpStatusCode.OK, city)\n    } catch (e: Exception) {\n        call.respond(HttpStatusCode.NotFound)\n    }\n}"
+      },
+      {
+        "position": "in_routing",
+        "text": "// Update city\nput(\"/cities/{id}\") {\n    val id = call.parameters[\"id\"]?.toInt() ?: throw IllegalArgumentException(\"Invalid ID\")\n    val user = call.receive<City>()\n    cityService.update(id, user)\n    call.respond(HttpStatusCode.OK)\n}"
+      },
+      {
+        "position": "in_routing",
+        "text": "// Delete city\ndelete(\"/cities/{id}\") {\n    val id = call.parameters[\"id\"]?.toInt() ?: throw IllegalArgumentException(\"Invalid ID\")\n    cityService.delete(id)\n    call.respond(HttpStatusCode.OK)\n}"
+      }
+    ]
+  },
+  "dependencies": [
+    {
+      "group": "org.postgresql",
+      "artifact": "postgresql",
+      "version": "$postgres_version",
+      "version_value": "42.5.1"
+    },
+    {
+      "group": "com.h2database",
+      "artifact": "h2",
+      "version": "h2_version",
+      "version_value": "2.1.214"
+    }
+  ],
+  "documentation": {
+    "description": "PostgreSQL is a powerful and open-source relational database management system (RDBMS) that is widely used in enterprise and web applications. It supports a wide range of data types, has powerful SQL capabilities, and offers robust performance and reliability.",
+    "usage": "You can use the standard [JDBC](https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/) interfaces to establish a connection to the database and execute queries.\n```kotlin\nval dbConnection: Connection = DriverManager.getConnection(\n    \"jdbc:postgresql://<host>:<port>/<database>\",\n    \"<username>\", \"<password>\"\n)\n```\nThen you may want to execute some requests to the database from Ktor endpoints:\n```kotlin\nget(\"/db/select/users\") {\n    val statement = dbConnection.createStatement()\n    val resultSet = statement.executeQuery(\"SELECT name FROM users\")\n    val userNames = mutableListOf<String>()\n    while (resultSet.next()) {\n        userNames += resultSet.getString(\"name\")\n    }\n    call.respond(userNames)\n}\n```\n",
+    "options": ""
+  }
+}

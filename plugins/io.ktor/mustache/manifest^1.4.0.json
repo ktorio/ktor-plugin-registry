@@ -1,0 +1,48 @@
+{
+  "id": "mustache",
+  "name": "Mustache",
+  "copyright": "Apache 2.0",
+  "short_description": "Serve HTML content using Mustache template engine",
+  "vendor": {
+    "name": "Ktor",
+    "url": "https://ktor.io/"
+  },
+  "github": "https://github.com/ktorio/ktor/blob/4a50c76c3264b0121b91a203d38473bb4aafbace/ktor-features/ktor-mustache/jvm/src/io/ktor/mustache/Mustache.kt",
+  "group": "Templating",
+  "version": "1.5.2",
+  "ktor_version": "1.4.0",
+  "required_feature_ids": [
+    "routing"
+  ],
+  "documentation": {
+    "description": "Ktor allows you to use `Mustache` templates as views within your application by installing the Mustache plugin.\n\n",
+    "usage": "## Installing\nTo install the Mustache plugin, pass it to the `install` function in the application initialization code. This can be the `main` function ...\n\n```kotlin\nimport io.ktor.features.*\n// ...\nfun Application.main() {\n  install(Mustache)\n  // ...\n}\n```\n... or a specified `module`:\n\n```kotlin\nimport io.ktor.features.*\n// ...\nfun Application.module() {\n    install(Mustache)\n    // ...\n}\n```\nInside the `install` block, you can configure the `MustacheFactory` for loading Mustache templates.\n\n## Configure Template Loading\nTo load templates, you need to assign the `MustacheFactory` to the `mustacheFactory` property. For example, the code snippet below enables Ktor to look up templates in the templates package relative to the current classpath:\n\n```kotlin\nimport io.ktor.mustache.*\n\ninstall(Mustache) {\n    mustacheFactory = DefaultMustacheFactory(\"templates\")\n}\n```\n## Send a Template in Response\nImagine you have the `index.hbs` template in `resources/templates`:\n\n```html\n<html>\n    <body>\n        <h1>Hello, {{user.name}}</h1>\n    </body>\n</html>\n```\nA data model for a user looks as follows:\n\n```kotlin\ndata class User(val id: Int, val name: String)\n```\nTo use the template for the specified route, pass `MustacheContent` to the `call.respond` method in the following way:\n\n```kotlin\nget(\"/index\") {\n    val sampleUser = User(1, \"John\")\n    call.respond(MustacheContent(\"index.hbs\", mapOf(\"user\" to sampleUser)))\n}\n```\n",
+    "options": "* `mustacheFactory` -- defines [MustacheFactory](http://spullara.github.io/mustache/apidocs/com/github/mustachejava/MustacheFactory.html) instance that will be used"
+  },
+  "install_recipe": {
+    "install_block": "install(Mustache) {\n    mustacheFactory = DefaultMustacheFactory(\"templates/mustache\")\n}",
+    "imports": [
+      "com.github.mustachejava.DefaultMustacheFactory",
+      "io.ktor.mustache.Mustache",
+      "io.ktor.mustache.MustacheContent"
+    ],
+    "test_imports": [],
+    "templates": [
+      {
+        "position": "in_routing",
+        "text": "get(\"/html-mustache\") {\n    call.respond(MustacheContent(\"index.hbs\", mapOf(\"user\" to MustacheUser(1, \"user1\"))))\n}"
+      },
+      {
+        "position": "outside_app",
+        "text": "data class MustacheUser(val id: Int, val name: String)"
+      }
+    ]
+  },
+  "dependencies": [
+    {
+      "group": "io.ktor",
+      "artifact": "ktor-mustache",
+      "version": "$ktor_version"
+    }
+  ]
+}

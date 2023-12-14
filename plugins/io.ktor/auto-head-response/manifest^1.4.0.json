@@ -1,0 +1,28 @@
+{
+  "id": "auto-head-response",
+  "name": "AutoHeadResponse",
+  "copyright": "Apache 2.0",
+  "short_description": "Provide responses to HEAD requests for existing routes that have the GET verb defined",
+  "vendor": {
+    "name": "Ktor",
+    "url": "https://ktor.io/"
+  },
+  "github": "https://github.com/ktorio/ktor/blob/4517e3856a3cae8f157d2f6966635217827d2abd/ktor-server/ktor-server-core/jvm/src/io/ktor/features/AutoHeadResponse.kt",
+  "group": "Routing",
+  "version": "1.5.2",
+  "ktor_version": "1.4.0",
+  "required_feature_ids": [],
+  "documentation": {
+    "description": "Ktor can automatically provide responses to `HEAD` requests for existing routes that have the `GET` verb defined.\n## Under the covers\nThis plugin automatically responds to `HEAD` requests by routing as if it were `GET` response and discarding the body. Since any `FinalContent` produced by the system has lazy content semantics, it does not incur in any performance costs for processing a `GET` request with a body.",
+    "usage": "To enable automatic `HEAD` responses, install the `AutoHeadResponse` plugin\n\n```kotlin\nfun Application.main() {\n  // ...\n  install(AutoHeadResponse)\n  // ...\n}\n\n```\n",
+    "options": "No options"
+  },
+  "install_recipe": {
+    "install_block": "install(AutoHeadResponse)",
+    "imports": [
+      "io.ktor.features.*"
+    ],
+    "test_imports": [],
+    "templates": []
+  }
+}

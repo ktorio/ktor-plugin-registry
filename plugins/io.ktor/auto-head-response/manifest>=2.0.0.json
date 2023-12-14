@@ -1,0 +1,32 @@
+{
+  "id": "auto-head-response",
+  "name": "AutoHeadResponse",
+  "version": "2.0.0",
+  "ktor_version": "2.0.0",
+  "short_description": "Provide responses to HEAD requests for existing routes that have the GET verb defined",
+  "github": "https://github.com/ktorio/ktor/blob/4517e3856a3cae8f157d2f6966635217827d2abd/ktor-server/ktor-server-core/jvm/src/io/ktor/features/AutoHeadResponse.kt",
+  "copyright": "Apache 2.0",
+  "vendor": {
+    "name": "Ktor",
+    "url": "https://ktor.io/"
+  },
+  "group": "Routing",
+  "install_recipe": {
+    "imports": [
+      "io.ktor.server.plugins.autohead.*"
+    ],
+    "install_block": "install(AutoHeadResponse)"
+  },
+  "dependencies": [
+    {
+      "group": "io.ktor",
+      "artifact": "ktor-server-auto-head-response-jvm",
+      "version": "$ktor_version"
+    }
+  ],
+  "documentation": {
+    "description": "The [AutoHeadResponse](https://ktor.io/docs/autoheadresponse.html) plugin provides us with the ability to automatically respond to `HEAD` requests for every route that has a `GET` defined. You can use `AutoHeadResponse` to avoid creating a separate `head` handler if you need to somehow process a response on the client before getting the actual content.",
+    "usage": "In order to take advantage of this functionality, we need to install the `AutoHeadResponse` plugin in our application:\n```kotlin\ninstall(AutoHeadResponse)\nrouting {\n    get(\"/home\") {\n        call.respondText(\"This is a response to a GET, but HEAD also works\")\n    }\n}\n```\nIn our case, the `/home` route will now respond to `HEAD` requests even though there is no explicit definition for this verb.",
+    "options": "`AutoHeadResponse` does not provide any additional configuration options."
+  }
+}
