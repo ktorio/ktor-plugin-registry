@@ -1,0 +1,34 @@
+{
+    "id": "callid",
+    "name": "CallId",
+    "version": "1.5.2",
+    "ktor_version": "1.4.0",
+    "short_description": "Allows to identify a request/call.",
+    "github": "https://github.com/ktorio/ktor/blob/f028b0ca428335b6545b81afef803e236242b3a5/ktor-server/ktor-server-core/jvm/src/io/ktor/features/CallId.kt",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "Monitoring",
+    "required_feature_ids": [
+        "call-logging"
+    ],
+    "install_recipe": {
+        "imports": [
+            "io.ktor.http.*"
+        ],
+        "install_block": "install(CallId) {\n    header(HttpHeaders.XRequestId)\n    verify { callId: String ->\n        callId.isNotEmpty()\n    }\n}",
+        "templates": [
+            {
+                "position": "call_logging_config",
+                "text": "callIdMdc(\"call-id\")"
+            }
+        ]
+    },
+    "documentation": {
+        "description": "The `CallId` plugin allows you to trace client requests end-to-end by using unique request IDs or call IDs. Using `CallId` along with `CallLogging` helps you troubleshoot calls by putting a call ID in the MDC context and configuring a logger to show a call ID for each request.",
+        "usage": "The example below shows how to:\n- retrieve a call ID and send it in the same header using the `header` function\n- use the `verify` function to verify the retrieved call ID\n\n```kotlin\ninstall(CallId) {\n    header(HttpHeaders.XRequestId)\n    verify { callId: String ->\n        callId.isNotEmpty()\n    }\n}\n```\n\nYou can learn more about other configuration capabilities from [CallId](https://ktor.io/docs/call-id.html).",
+        "options": ""
+    }
+}

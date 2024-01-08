@@ -1,0 +1,48 @@
+{
+    "id": "auth-jwt",
+    "name": "Authentication JWT",
+    "version": "2.0.0",
+    "ktor_version": "2.0.0",
+    "short_description": "Handle JWT authentication",
+    "github": "https://github.com/ktorio/ktor/blob/7e78e715cec3ff039cd628f8ff8ce875c35cde4c/ktor-features/ktor-auth-jwt/jvm/src/io/ktor/auth/jwt/JWTAuth.kt",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "Security",
+    "required_feature_ids": [
+        "auth"
+    ],
+    "install_recipe": {
+        "imports": [
+            "io.ktor.server.auth.*",
+            "io.ktor.server.auth.jwt.*",
+            "com.auth0.jwt.JWT",
+            "com.auth0.jwt.algorithms.Algorithm"
+        ],
+        "install_block": "// Please read the jwt property from the config file if you are using EngineMain\nval jwtAudience = \"jwt-audience\"\nval jwtDomain = \"https://jwt-provider-domain/\"\nval jwtRealm = \"ktor sample app\"\nval jwtSecret = \"secret\"\nauthentication {\n    jwt {\n        realm = jwtRealm\n        verifier(\n            JWT\n                .require(Algorithm.HMAC256(jwtSecret))\n                .withAudience(jwtAudience)\n                .withIssuer(jwtDomain)\n                .build()\n        )\n        validate { credential ->\n            if (credential.payload.audience.contains(jwtAudience)) JWTPrincipal(credential.payload) else null\n        }\n    }\n}",
+        "templates": [
+            {
+                "position": "application_conf",
+                "text": "jwt {\n    domain = \"https://jwt-provider-domain/\"\n    audience = \"jwt-audience\"\n    realm = \"ktor sample app\"\n}"
+            },
+            {
+                "position": "application_yaml",
+                "text": "jwt:\n  domain: \"https://jwt-provider-domain/\"\n  audience: \"jwt-audience\"\n  realm: \"ktor sample app\""
+            }
+        ]
+    },
+    "dependencies": [
+        {
+            "group": "io.ktor",
+            "artifact": "ktor-server-auth-jwt-jvm",
+            "version": "$ktor_version"
+        }
+    ],
+    "documentation": {
+        "description": "JSON Web Token is an open standard that defines a way for securely transmitting information between parties as a JSON object. This information can be verified and trusted since it is signed using a shared secret (with the `HS256` algorithm) or a public/private key pair (for example, `RS256`).\n\nKtor handles JWTs passed in the `Authorization` header using the `Bearer` schema and allows you to:\n* verify the signature of a JSON web token;\n* perform additional validations on the JWT payload.",
+        "usage": "To learn how to use JSON web tokens in a server Ktor application, see [JSON Web Tokens](https://ktor.io/docs/jwt.html).",
+        "options": ""
+    }
+}

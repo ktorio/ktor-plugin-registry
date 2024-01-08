@@ -1,0 +1,35 @@
+{
+    "id": "auth-ldap",
+    "name": "Authentication LDAP",
+    "version": "1.5.2",
+    "ktor_version": "1.4.0",
+    "short_description": "Handle LDAP authentication",
+    "github": "https://github.com/ktorio/ktor/blob/4a50c76c3264b0121b91a203d38473bb4aafbace/ktor-features/ktor-auth-ldap/jvm/src/io/ktor/auth/ldap/Ldap.kt",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "Security",
+    "required_feature_ids": [
+        "auth"
+    ],
+    "install_recipe": {
+        "imports": [
+            "io.ktor.auth.ldap.*"
+        ],
+        "install_block": "val localhost = \"http://0.0.0.0\"\n    val ldapServerPort = 6998 // TODO: change to real value!\n    authentication {\n    basic(\"authName\") {\n        realm = \"realm\"\n        validate { credential ->\n            ldapAuthenticate(credential, \"ldap://$localhost:${ldapServerPort}\", \"uid=%s,ou=system\")\n        }\n    }\n}"
+    },
+    "dependencies": [
+        {
+            "group": "io.ktor",
+            "artifact": "ktor-auth-ldap",
+            "version": "$ktor_version"
+        }
+    ],
+    "documentation": {
+        "description": "Ktor supports `LDAP` (Lightweight Directory Access Protocol) for credential authentication.",
+        "usage": "```kotlin\nauthentication {\n    basic(\"authName\") {\n        realm = \"realm\"\n        validate { credential ->\n            ldapAuthenticate(credential, \"ldap://$localhost:${ldapServer.port}\", \"uid=%s,ou=system\")\n        }\n    }\n}\n\n```\nOptionally you can define an additional validation check:\n\n```kotlin\nauthentication {\n    basic(\"authName\") {\n        realm = \"realm\"\n        validate { credential ->\n            ldapAuthenticate(credentials, \"ldap://localhost:389\", \"cn=%s ou=users\") {\n                if (it.name == it.password) {\n                    UserIdPrincipal(it.name)\n                } else {\n                    null\n                }\n            }\n        }\n    }\n}\n\n```\nThis signature looks like this:\n\n```kotlin\n// Simplified signatures\nfun ldapAuthenticate(credential: UserPasswordCredential, ldapServerURL: String, userDNFormat: String): UserIdPrincipal?\nfun ldapAuthenticate(credential: UserPasswordCredential, ldapServerURL: String, userDNFormat: String, validate: InitialDirContext.(UserPasswordCredential) -> UserIdPrincipal?): UserIdPrincipal?\n\n```\nTo support more complex scenarios, there is a more complete signature for `ldapAuthenticate`:\n\n```kotlin\nfun <K : Credential, P : Any> ldapAuthenticate(credential: K, ldapServerURL: String, ldapEnvironmentBuilder: (MutableMap<String, Any?>) -> Unit = {}, doVerify: InitialDirContext.(K) -> P?): P?\n\n```\nWhile the other overloads support only `UserPasswordCredential`, this overload accept any kind of credential. And instead of receiving a string with the `userDNFormat`, you can provide a generator to populate a map with the environments for ldap.\n\nA more advanced example using this:\n\n```kotlin\napplication.install(Authentication) {\n    basic {\n        validate { credential ->\n            ldapAuthenticate(\n                credential,\n                \"ldap://$localhost:${ldapServer.port}\",\n                configure = { env: MutableMap<String, Any?> ->\n                    env.put(\"java.naming.security.principal\", \"uid=admin,ou=system\")\n                    env.put(\"java.naming.security.credentials\", \"secret\")\n                    env.put(\"java.naming.security.authentication\", \"simple\")\n                }\n            ) {\n                val users = (lookup(\"ou=system\") as LdapContext).lookup(\"ou=users\") as LdapContext\n                val controls = SearchControls().apply {\n                    searchScope = SearchControls.ONELEVEL_SCOPE\n                    returningAttributes = arrayOf(\"+\", \"*\")\n                }\n\n                users.search(\"\", \"(uid=user-test)\", controls).asSequence().firstOrNull {\n                    val ldapPassword = (it.attributes.get(\"userPassword\")?.get() as ByteArray?)?.toString(Charsets.ISO_8859_1)\n                    ldapPassword == credential.password\n                }?.let { UserIdPrincipal(credential.name) }\n            }\n        }\n    }\n}\n\n```\nYou can see advanced examples for `LDAP` authentication in the Ktor's tests.\n\nBear in mind that current `LDAP` implementation is synchronous.",
+        "options": "No options"
+    }
+}

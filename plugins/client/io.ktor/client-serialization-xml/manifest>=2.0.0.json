@@ -1,0 +1,39 @@
+{
+    "id": "client-serialization-xml",
+    "name": "XML Serialization",
+    "version": "2.0.0",
+    "ktor_version": "2.0.0",
+    "short_description": "Serializes request bodies to XML format",
+    "github": "https://github.com/ktorio/ktor",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "Serialization",
+    "install_recipe": {
+        "imports": [
+            "io.ktor.client.plugins.contentnegotiation.*",
+            "io.ktor.serialization.kotlinx.xml.*"
+        ],
+        "install_block": "install(ContentNegotiation) {\n    xml()\n}"
+    },
+    "dependencies": [
+        {
+            "group": "io.ktor",
+            "artifact": "ktor-client-content-negotiation",
+            "version": "$ktor_version"
+        },
+        {
+            "group": "io.ktor",
+            "artifact": "ktor-serialization-kotlinx-xml",
+            "version": "$ktor_version"
+        }
+    ],
+    "documentation": {
+        "description": "The ContentNegotiation plugin serves two primary purposes: negotiating media types between the client and server and serializing/deserializing the content in a specific format when sending requests and receiving responses.\n\nThe [ContentNegotiation](https://api.ktor.io/ktor-client/ktor-client-plugins/ktor-client-content-negotiation/io.ktor.client.plugins.contentnegotiation/-content-negotiation/index.html) plugin serves two primary purposes:\n* Negotiating media types between the client and server. For this, it uses the `Accept` and `Content-Type` headers.\n* Serializing/deserializing the content in a specific format when sending requests and receiving responses.\n\n> On the server, Ktor provides the __ContentNegotiation__ plugin for serializing/deserializing content.\n",
+        "usage": "To install ContentNegotiation, pass it to the install function inside a client configuration block:\n\n```kotlin\nval client = HttpClient(CIO) {\n    install(ContentNegotiation)\n}\n```\n\nTo register the XML serializer in your application, call the __xml__ method:\n```kotlin\nimport io.ktor.client.plugins.contentnegotiation.*\nimport io.ktor.serialization.kotlinx.xml.*\n\nval client = HttpClient(CIO) {\n    install(ContentNegotiation) {\n        xml()\n    }\n}\n```\nThe __xml__ method also allows you to access XML serialization settings, for example:\n\n```kotlin\nimport io.ktor.client.plugins.contentnegotiation.*\nimport io.ktor.serialization.kotlinx.xml.*\nimport nl.adaptivity.xmlutil.*\nimport nl.adaptivity.xmlutil.serialization.*\n\nval client = HttpClient(CIO) {\n    install(ContentNegotiation) {\n        xml(format = XML {\n            xmlDeclMode = XmlDeclMode.Charset\n        })\n    }\n}\n```",
+        "options": ""
+    },
+    "target": "client"
+}

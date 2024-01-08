@@ -1,0 +1,29 @@
+{
+    "id": "metrics",
+    "name": "Metrics",
+    "version": "1.5.2",
+    "ktor_version": "1.4.0",
+    "short_description": "Adds supports for monitoring several metrics",
+    "github": "https://github.com/ktorio/ktor/tree/4a50c76c3264b0121b91a203d38473bb4aafbace/ktor-features/ktor-metrics/jvm/src/io/ktor/metrics",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "Monitoring",
+    "install_recipe": {
+        "install_block": ""
+    },
+    "dependencies": [
+        {
+            "group": "io.ktor",
+            "artifact": "ktor-metrics",
+            "version": "$ktor_version"
+        }
+    ],
+    "documentation": {
+        "description": "The Metrics plugin allows you to configure the Metrics to get useful information about the server and incoming requests.",
+        "usage": "The Metrics plugin exposes a `registry` property, that can be used to build and start metric reporters.\n ## JMX Reporter\n The JMX Reporter allows you to expose all the metrics to JMX, allowing you to view those metrics with `jconsole` or `jvisualvm` with the MBeans plugin.\n\n```kotlin\ninstall(DropwizardMetrics) {\n    JmxReporter.forRegistry(registry)\n        .convertRatesTo(TimeUnit.SECONDS)\n        .convertDurationsTo(TimeUnit.MILLISECONDS)\n        .build()\n        .start()\n}\n\n``` \n## SLF4J Reporter\n The SLF4J Reporter allows you to periodically emit reports to any output supported by SLF4J. For example, to output the metrics every 10 seconds, you would:\n\n```kotlin\ninstall(DropwizardMetrics) {\n    Slf4jReporter.forRegistry(registry)\n        .outputTo(log)  \n        .convertRatesTo(TimeUnit.SECONDS)  \n        .convertDurationsTo(TimeUnit.MILLISECONDS)  \n        .build()  \n        .start(10, TimeUnit.SECONDS)\n}\n\n```\n## Other reporters\nYou can use any of the available [Metric reporters](http://metrics.dropwizard.io/4.0.0/).\n## Exposed reports\n This plugin exposes many JVM properties relating to memory usage and thread behavior.\n#### Global:\nSpecifically to Ktor, it exposes:\n* `ktor.calls.active`:`Count` - The number of unfinished active requests  \n* `ktor.calls.duration` - Information about the duration of the calls  \n* `ktor.calls.exceptions` - Information about the number of exceptions  \n* `ktor.calls.status.NNN` - Information about the number of times that happened a specific HTTP Status Code NNN  \n  \n#### Per endpoint:  \n  \n* `\"/uri(method:VERB).NNN\"` - Information about the number of times that happened a specific HTTP Status Code NNN, for this path, for this verb   \n* `\"/uri(method:VERB).meter\"` - Information about the number of calls for this path, for this verb  \n* `\"/uri(method:VERB).timer\"` - Information about the durations for this endpoint  \n  \n## Information per report  \n  \n#### Durations  \n  \n`\"/uri(method:VERB).timer\"` and `ktor.calls.duration` are durations and expose:  \n  \n* 50thPercentile  \n* 75thPercentile  \n* 95thPercentile  \n* 98thPercentile  \n* 99thPercentile  \n* 999thPercentile  \n* Count  \n* DurationUnit  \n* OneMinuteRate  \n* FifteenMinuteRate  \n* FiveMinuteRate  \n* Max  \n* Mean  \n* MeanRate  \n* Min  \n* RateUnit  \n* StdDev  \n  \n#### Counts  \n  \nThe other properties are exposed as counts:  \n  \n* Count  \n* FifteenMinuteRate  \n* FiveMinuteRate  \n* OneMinuteRate  \n* MeanRate  \n* RateUnit  \n",
+        "options": "No options"
+    }
+}

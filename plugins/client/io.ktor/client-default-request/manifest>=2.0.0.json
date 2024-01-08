@@ -1,0 +1,26 @@
+{
+    "id": "client-default-request",
+    "name": "DefaultRequest",
+    "version": "2.0.0",
+    "ktor_version": "2.0.0",
+    "short_description": "Allows you to configure default parameters for all requests.",
+    "github": "https://github.com/ktorio/ktor/blob/main/ktor-client/ktor-client-core/common/src/io/ktor/client/plugins/DefaultRequest.kt",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "HTTP",
+    "install_recipe": {
+        "imports": [
+            "io.ktor.client.plugins.*"
+        ],
+        "install_block": "defaultRequest {\n    url(\"https://ktor.io/docs/\")\n}"
+    },
+    "documentation": {
+        "description": "The [DefaultRequest](https://api.ktor.io/ktor-client/ktor-client-core/io.ktor.client.plugins/-default-request/index.html) plugin allows you to configure default parameters for all [requests](request.md): specify a base URL, add headers, configure query parameters, and so on.",
+        "usage": "To install `DefaultRequest`, pass it to the `install` function inside a client configuration block ...\n```kotlin\nimport io.ktor.client.*\nimport io.ktor.client.engine.cio.*\nimport io.ktor.client.plugins.*\n//...\nval client = HttpClient(CIO) {\n    install(DefaultRequest)\n}\n```\n\n... or call the `defaultRequest` function and [configure](#configure) required request parameters:\n\n```kotlin\nimport io.ktor.client.*\nimport io.ktor.client.engine.cio.*\nimport io.ktor.client.plugins.*\n//...\nval client = HttpClient(CIO) {\n    defaultRequest {\n        // this: DefaultRequestBuilder\n    }\n}\n```\n\n## Configure DefaultRequest {id=\"configure\"}\n\n### Base URL {id=\"url\"}\n\n`DefaultRequest` allows you to configure a base part of the URL that is merged with a request URL.\nFor example, the `url` function below specifies a base URL for all requests:\n\n```kotlin\ndefaultRequest {\n    url(\"https://ktor.io/docs/\")\n}\n```\n\nIf you make the following request using the client with the above configuration, ...\n\n```kotlin\nval response: HttpResponse = client.get(\"welcome.html\")\n```\n\n... the resulting URL will be the following: `https://ktor.io/docs/welcome.html`.\nTo learn how base and request URLs are merged, see [DefaultRequest](https://api.ktor.io/ktor-client/ktor-client-core/io.ktor.client.plugins/-default-request/index.html).\n\n\n### URL parameters {id=\"url-params\"}\n\nThe `url` function also allows you to specify URL components separately, for example:\n- an HTTP scheme;\n- a host name;\n- a base URL path;\n- a query parameter.\n\n```kotlin\nurl {\n    protocol = URLProtocol.HTTPS\n    host = \"ktor.io\"\n    path(\"docs/\")\n    parameters.append(\"token\", \"abc123\")\n}\n```\n\n### Headers {id=\"headers\"}\n\nTo add a specific header to each request, use the `header` function:\n\n```kotlin\ndefaultRequest {\n    header(\"X-Custom-Header\", \"Hello\")\n}\n```\n\nTo avoid duplicating headers, you can use the `appendIfNameAbsent`, `appendIfNameAndValueAbsent`, and `contains` functions:\n\n```kotlin\ndefaultRequest {\n    headers.appendIfNameAbsent(\"X-Custom-Header\", \"Hello\")\n}\n```\n",
+        "options": ""
+    },
+    "target": "client"
+}

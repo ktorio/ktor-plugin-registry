@@ -1,0 +1,34 @@
+{
+    "id": "auth-basic",
+    "name": "Authentication Basic",
+    "version": "1.5.2",
+    "ktor_version": "1.4.0",
+    "short_description": "Handle Basic authentication",
+    "github": "https://github.com/ktorio/ktor/blob/4a50c76c3264b0121b91a203d38473bb4aafbace/ktor-features/ktor-auth/jvm/src/io/ktor/auth/BasicAuth.kt",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "Security",
+    "required_feature_ids": [
+        "auth"
+    ],
+    "install_recipe": {
+        "imports": [
+            "io.ktor.auth.*"
+        ],
+        "install_block": "authentication {\n    basic(name = \"myauth1\") {\n        realm = \"Ktor Server\"\n        validate { credentials ->\n            if (credentials.name == credentials.password) {\n                UserIdPrincipal(credentials.name)\n            } else {\n                null\n            }\n        }\n    }\n\n    form(name = \"myauth2\") {\n        userParamName = \"user\"\n        passwordParamName = \"password\"\n        challenge {\n            /**/\n        }\n    }\n}",
+        "templates": [
+            {
+                "position": "in_routing",
+                "text": "authenticate(\"myauth1\") {\n    get(\"/protected/route/basic\") {\n        val principal = call.principal<UserIdPrincipal>()!!\n        call.respondText(\"Hello ${principal.name}\")\n    }\n}\nauthenticate(\"myauth2\") {\n    get(\"/protected/route/form\") {\n        val principal = call.principal<UserIdPrincipal>()!!\n        call.respondText(\"Hello ${principal.name}\")\n    }\n}"
+            }
+        ]
+    },
+    "documentation": {
+        "description": "Ktor supports two methods of authentication with the user and raw password as credentials: `basic` and `form`.",
+        "usage": "```kotlin\ninstall(Authentication) {\n    basic(name = \"myauth1\") {\n        realm = \"Ktor Server\"\n        validate { credentials -> /*...*/ }\n    }\n\n    form(name = \"myauth2\") {\n        userParamName = \"user\"\n        passwordParamName = \"password\"\n        challenge = FormAuthChallenge.Unauthorized\n        validate { credentials -> /*...*/ }\n    }\n}\n\n```\nBoth authentication providers have a method `validate` to provide a callback that must generate a Principal from a given `UserPasswordCredential` or null for invalid credentials. That callback is marked as suspending, so that you can validate credentials in an asynchronous fashion.",
+        "options": "* basic \n* form"
+    }
+}

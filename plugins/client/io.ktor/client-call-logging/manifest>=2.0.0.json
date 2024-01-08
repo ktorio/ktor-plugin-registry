@@ -1,0 +1,33 @@
+{
+    "id": "client-call-logging",
+    "name": "Logging",
+    "version": "2.0.0",
+    "ktor_version": "2.0.0",
+    "short_description": "Logs HTTP calls",
+    "github": "https://github.com/ktorio/ktor/blob/f028b0ca428335b6545b81afef803e236242b3a5/ktor-server/ktor-server-core/jvm/src/io/ktor/features/CallLogging.kt",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "Monitoring",
+    "install_recipe": {
+        "imports": [
+            "io.ktor.client.plugins.logging.*"
+        ],
+        "install_block": "install(Logging) {\n    logger = Logger.DEFAULT\n    level = LogLevel.HEADERS\n}"
+    },
+    "dependencies": [
+        {
+            "group": "io.ktor",
+            "artifact": "ktor-client-logging-jvm",
+            "version": "$ktor_version"
+        }
+    ],
+    "documentation": {
+        "description": "Ktor client provides the capability to log HTTP calls using the Logging plugin. This plugin provides different logger types for different platforms.",
+        "usage": "The example below shows how to configure the Logging plugin:\n\nThe `logger` property is set to `Logger.DEFAULT`, which uses an SLF4J logging framework. For Native targets, set this property to `Logger.SIMPLE`.\n\nThe `level` property specifies the logging level.\n```kotlin\npackage com.example\n\nimport io.ktor.client.*\nimport io.ktor.client.engine.cio.*\nimport io.ktor.client.plugins.logging.*\nimport io.ktor.client.request.*\nimport io.ktor.client.statement.*\nimport kotlinx.coroutines.runBlocking\n\nfun main() {\n    runBlocking {\n        val client = HttpClient(CIO) {\n            install(Logging) {\n                logger = Logger.DEFAULT\n                level = LogLevel.HEADERS\n            }\n        }\n\n        val response: HttpResponse = client.get(\"https://ktor.io/\")\n    }\n}\n```\n##Provide a custom logger\nTo use a custom logger in your client application, you need to create a `Logger` instance and override the log function. The example below shows how to use the [Napier](https://github.com/AAkira/Napier) library to log HTTP calls:\n\n```kotlin\nfun main() {\n    runBlocking {\n        val client = HttpClient(CIO) {\n            install(Logging) {\n                logger = object: Logger {\n                    override fun log(message: String) {\n                        Napier.v(\"HTTP Client\", null, message)\n                    }\n                }\n                level = LogLevel.HEADERS\n            }\n        }.also { Napier.base(DebugAntilog()) }\n\n        val response: HttpResponse = client.get(\"https://ktor.io/\")\n    }\n}\n```",
+        "options": ""
+    },
+    "target": "client"
+}

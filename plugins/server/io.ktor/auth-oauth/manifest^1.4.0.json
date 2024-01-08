@@ -1,0 +1,55 @@
+{
+    "id": "auth-oauth",
+    "name": "Authentication OAuth",
+    "version": "1.5.2",
+    "ktor_version": "1.4.0",
+    "short_description": "Handle OAuth authentication",
+    "github": "https://github.com/ktorio/ktor/blob/4a50c76c3264b0121b91a203d38473bb4aafbace/ktor-features/ktor-auth/jvm/src/io/ktor/auth/OAuth.kt",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "Security",
+    "required_feature_ids": [
+        "auth",
+        "ktor-locations"
+    ],
+    "install_recipe": {
+        "imports": [
+            "io.ktor.client.*",
+            "io.ktor.client.engine.apache.*",
+            "io.ktor.locations.*",
+            "io.ktor.http.*",
+            "io.ktor.sessions.*"
+        ],
+        "install_block": "authentication {\n        oauth(\"auth-oauth-google\") {\n            urlProvider = { \"http://localhost:8080/callback\" }\n            providerLookup = {\n                OAuthServerSettings.OAuth2ServerSettings(\n                    name = \"google\",\n                    authorizeUrl = \"https://accounts.google.com/o/oauth2/auth\",\n                    accessTokenUrl = \"https://accounts.google.com/o/oauth2/token\",\n                    requestMethod = HttpMethod.Post,\n                    clientId = System.getenv(\"GOOGLE_CLIENT_ID\"),\n                    clientSecret = System.getenv(\"GOOGLE_CLIENT_SECRET\"),\n                    defaultScopes = listOf(\"https://www.googleapis.com/auth/userinfo.profile\")\n                )\n            }\n            client = HttpClient(Apache)\n        }\n    }",
+        "templates": [
+            {
+                "position": "in_routing",
+                "text": "authenticate(\"auth-oauth-google\") {\n            get(\"login\") {\n                call.respondRedirect(\"/callback\")\n            }\n\n            get(\"/callback\") {\n                val principal: OAuthAccessTokenResponse.OAuth2? = call.authentication.principal()\n                call.sessions.set(UserSession(principal?.accessToken.toString()))\n                call.respondRedirect(\"/hello\")\n            }\n        }"
+            },
+            {
+                "position": "outside_app",
+                "text": "class UserSession(accessToken: String)"
+            }
+        ]
+    },
+    "dependencies": [
+        {
+            "group": "io.ktor",
+            "artifact": "ktor-client-core",
+            "version": "$ktor_version"
+        },
+        {
+            "group": "io.ktor",
+            "artifact": "ktor-client-apache",
+            "version": "$ktor_version"
+        }
+    ],
+    "documentation": {
+        "description": "`OAuth` defines a mechanism for authentication using external providers like Google or Facebook safely. You can read more about `OAuth`. Ktor has a plugin to work with `OAuth 1a` and `2.0`\n\nA simplified `OAuth 2.0` workflow:\n\nThe client is redirected to an authorize URL for the specified provider (Google, Facebook, Twitter, Github...). specifying the clientId and a valid redirection URL.\n\nOnce the login is correct, the provider generates an auth token using a `clientSecret` associated with that clientId.\n\nThen the client is redirected to a valid, previously agreed upon, application URL with an auth token that is signed with the clientSecret.\n\nKtor's OAuth plugin verifies the token and generates a `Principal` `OAuthAccessTokenResponse`.\n\nWith the auth token, you can request, for example, the user's email or id depending on the provider.",
+        "usage": "Example:\n\n```kotlin\n@Location(\"/login/{type?}\") class login(val type: String = \"\")\n\nval loginProviders = listOf(\n    OAuthServerSettings.OAuth2ServerSettings(\n            name = \"github\",\n            authorizeUrl = \"https://github.com/login/oauth/authorize\",\n            accessTokenUrl = \"https://github.com/login/oauth/access_token\",\n            clientId = \"***\",\n            clientSecret = \"***\"\n    )\n).associateBy {it.name}\n\ninstall(Authentication) {\n    oauth(\"gitHubOAuth\") {\n        client = HttpClient(Apache)\n        providerLookup = { loginProviders[application.locations.resolve<login>(login::class, this).type] }\n        urlProvider = { url(login(it.name)) }\n    }\n}\n\nrouting {\n    authenticate(\"gitHubOAuth\") {\n        location<login>() {\n            param(\"error\") {\n                handle {\n                    call.loginFailedPage(call.parameters.getAll(\"error\").orEmpty())\n                }\n            }\n\n            handle {\n                val principal = call.authentication.principal<OAuthAccessTokenResponse>()\n                if (principal != null) {\n                    call.loggedInSuccessResponse(principal)\n                } else {\n                    call.loginPage()\n                }\n            }\n        }\n    }\n}\n\n```\nDepending on the `OAuth` version, you will get a different `Principal`\n\n```kotlin\nsealed class OAuthAccessTokenResponse : Principal {\n    data class OAuth1a(\n        val token: String, val tokenSecret: String,\n        val extraParameters: Parameters = Parameters.Empty\n    ) : OAuthAccessTokenResponse()\n\n    data class OAuth2(\n        val accessToken: String, val tokenType: String,\n        val expiresIn: Long, val refreshToken: String?,\n        val extraParameters: Parameters = Parameters.Empty\n    ) : OAuthAccessTokenResponse()\n}\n\n```\n## Guide, example and testing\n* [OAuth Guide](https://ktor.io/docs/guides-oauth.html)\n* [Example configuring several OAuth providers](https://github.com/ktorio/ktor-samples/blob/1.3.0/plugin/auth/src/io/ktor/samples/auth/OAuthLoginApplication.kt)\n* [Testing OAuth authentication](https://github.com/ktorio/ktor-samples/commit/56119d2879d9300cf51d66ea7114ff815f7db752)",
+        "options": "No options"
+    }
+}

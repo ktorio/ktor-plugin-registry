@@ -1,0 +1,33 @@
+{
+    "id": "client-content-encoding",
+    "name": "ContentEncoding",
+    "version": "2.0.0",
+    "ktor_version": "2.0.0",
+    "short_description": "Enables specified compression algorithms and configures their settings",
+    "github": "https://github.com/ktorio/ktor-documentation/tree/main/codeSnippets/snippets/client-content-encoding",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "HTTP",
+    "install_recipe": {
+        "imports": [
+            "io.ktor.client.plugins.compression.*"
+        ],
+        "install_block": "install(ContentEncoding) {\n    deflate(1.0F)\n    gzip(0.9F)\n}"
+    },
+    "dependencies": [
+        {
+            "group": "io.ktor",
+            "artifact": "ktor-client-encoding",
+            "version": "$ktor_version"
+        }
+    ],
+    "documentation": {
+        "description": "The ContentEncoding plugin allows you to enable specified compression algorithms (such as 'gzip' and 'deflate') and configure their settings.\n\nThe Ktor client provides the [ContentEncoding](https://api.ktor.io/ktor-client/ktor-client-plugins/ktor-client-encoding/io.ktor.client.plugins.compression/-content-encoding/index.html) plugin that allows you to enable specified compression algorithms (such as `gzip` and `deflate`) and configure their settings. This plugin serves two primary purposes:\n* Sets the `Accept-Encoding` header with the specified quality value.\n* Decodes content received from a server to obtain the original payload.",
+        "usage": "The [example](https://github.com/ktorio/ktor-documentation/tree/%ktor_version%/codeSnippets/snippets/client-content-encoding) below shows how to enable the `deflate` and `gzip` encoders on the client with the specified quality values:\n\n```kotlin\nval client = HttpClient(CIO) {\n    install(ContentEncoding) {\n        deflate(1.0F)\n        gzip(0.9F)\n    }\n}```\n",
+        "options": ""
+    },
+    "target": "client"
+}

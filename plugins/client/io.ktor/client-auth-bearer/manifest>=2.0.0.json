@@ -1,0 +1,34 @@
+{
+    "id": "client-auth-bearer",
+    "name": "Authentication Bearer",
+    "version": "2.0.0",
+    "ktor_version": "2.0.0",
+    "short_description": "Authentication with a hash function applied to username and password",
+    "github": "https://github.com/ktorio/ktor/blob/main/ktor-client/ktor-client-plugins/ktor-client-auth/common/src/io/ktor/client/plugins/auth/providers/BearerAuthProvider.kt",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "HTTP",
+    "install_recipe": {
+        "imports": [
+            "io.ktor.client.plugins.auth.*",
+            "io.ktor.client.plugins.auth.providers.*"
+        ],
+        "install_block": "install(Auth) {\n    bearer {\n        loadTokens {\n            BearerTokens(\"abc123\", \"xyz111\")\n        }\n    }\n}"
+    },
+    "dependencies": [
+        {
+            "group": "io.ktor",
+            "artifact": "ktor-client-auth",
+            "version": "$ktor_version"
+        }
+    ],
+    "documentation": {
+        "description": "Bearer authentication involves security tokens called bearer tokens. As an example, these tokens can be used as a part of OAuth flow to authorize users of your application by using external providers, such as Google, Facebook, Twitter, and so on. You can learn how the OAuth flow might look from the OAuth authorization flow section for a Ktor server.\n\n",
+        "usage": "\n\n1. Call the `bearer` function inside the `install` block.\n   ```kotlin\n   import io.ktor.client.*\n   import io.ktor.client.engine.cio.*\n   import io.ktor.client.plugins.auth.*\n   //...\n   val client = HttpClient(CIO) {\n       install(Auth) {\n          bearer {\n             // Configure bearer authentication\n          }\n       }\n   }\n   ```\n   \n2. Configure how to obtain the initial access and refresh tokens using the `loadTokens` callback. This callback is intended to load cached tokens from a local storage and return them as the `BearerTokens` instance.\n\n   ```kotlin\n   install(Auth) {\n       bearer {\n           loadTokens {\n               // Load tokens from a local storage and return them as the 'BearerTokens' instance\n               BearerTokens(\"abc123\", \"xyz111\")\n           }\n       }\n   }\n   ```\n   \n   The `abc123` access token is sent with each [request](request.md) in the `Authorization` header using the `Bearer` scheme:\n   ```HTTP\n   GET http://localhost:8080/\n   Authorization: Bearer abc123\n   ```\n   \n3. Specify how to obtain a new token if the old one is invalid using `refreshTokens`.\n\n   ```kotlin\n   install(Auth) {\n       bearer {\n           // Load tokens ...\n           refreshTokens { // this: RefreshTokensParams\n               // Refresh tokens and return them as the 'BearerTokens' instance\n               BearerTokens(\"def456\", \"xyz111\")\n           }\n       }\n   }\n   ```\n   \n   This callback works as follows:\n   \n   a. The client makes a request to a protected resource using an invalid access token and gets a `401` (Unauthorized) response.\n     > If [several providers](auth.md#realm) are installed, a response should have the `WWW-Authenticate` header.\n   \n   b. The client calls `refreshTokens` automatically to obtain new tokens.\n\n   c. The client makes one more request to a protected resource automatically using a new token this time.\n\n5. Optionally, specify a condition for sending credentials without waiting for the `401` (Unauthorized) response. For example, you can check whether a request is made to a specified host.\n\n   ```kotlin\n   install(Auth) {\n       bearer {\n           // Load and refresh tokens ...\n           sendWithoutRequest { request ->\n               request.url.host == \"www.googleapis.com\"\n           }\n       }\n   }\n   ```\n",
+        "options": ""
+    },
+    "target": "client"
+}
