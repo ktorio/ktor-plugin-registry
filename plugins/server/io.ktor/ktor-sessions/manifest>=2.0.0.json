@@ -1,0 +1,42 @@
+{
+    "id": "ktor-sessions",
+    "name": "Sessions",
+    "version": "2.0.0",
+    "ktor_version": "2.0.0",
+    "short_description": "Adds supports for sessions: with the payload in the client or the server",
+    "github": "https://github.com/ktorio/ktor/blob/8c5ed12666b535d88277f5307b3eb286151b18af/ktor-server/ktor-server-core/jvm/src/io/ktor/sessions/Sessions.kt",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "Security",
+    "required_feature_ids": [
+        "routing"
+    ],
+    "install_recipe": {
+        "imports": [
+            "io.ktor.server.sessions.*",
+            "io.ktor.server.response.*"
+        ],
+        "install_block": "data class MySession(val count: Int = 0)\ninstall(Sessions) {\n    cookie<MySession>(\"MY_SESSION\") {\n        cookie.extensions[\"SameSite\"] = \"lax\"\n    }\n}",
+        "templates": [
+            {
+                "position": "in_routing",
+                "text": "get(\"/session/increment\") {\n        val session = call.sessions.get<MySession>() ?: MySession()\n        call.sessions.set(session.copy(count = session.count + 1))\n        call.respondText(\"Counter is ${session.count}. Refresh to increment.\")\n    }"
+            }
+        ]
+    },
+    "dependencies": [
+        {
+            "group": "io.ktor",
+            "artifact": "ktor-server-sessions-jvm",
+            "version": "$ktor_version"
+        }
+    ],
+    "documentation": {
+        "description": "[Sessions](https://ktor.io/docs/sessions.html) provide a mechanism to persist data between different HTTP requests. Typical use cases include storing a logged-in user's ID, the contents of a shopping basket, or keeping user preferences on the client. In Ktor, you can implement sessions by using cookies or custom headers, choose whether to store session data on the server or pass it to the client, sign and encrypt session data, and more.",
+        "usage": "Before installing a session, you need to create a data class for storing session data, for example:\n```kotlin\ndata class UserSession(val id: String, val count: Int)\n```\nAfter creating the required data classes, you can install the `Sessions` plugin by passing it to the `install` function in the application initialization code. Inside the `install` block, call the `cookie` or `header` function depending on how you want to pass data between the server and client:\n```kotlin\ninstall(Sessions) {\n    cookie<UserSession>(\"user_session\")\n}\n```\nTo learn more, see the [Sessions](https://ktor.io/docs/sessions.html) section.",
+        "options": ""
+    }
+}

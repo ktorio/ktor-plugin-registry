@@ -1,0 +1,51 @@
+{
+    "id": "pebble",
+    "name": "Pebble",
+    "version": "1.5.2",
+    "ktor_version": "1.4.0",
+    "short_description": "Allows you to use Pebble templates as views within your application.",
+    "github": "https://github.com/ktorio/ktor/blob/7e78e715cec3ff039cd628f8ff8ce875c35cde4c/ktor-features/ktor-pebble/jvm/src/io/ktor/pebble/Pebble.kt",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "Templating",
+    "required_feature_ids": [
+        "routing"
+    ],
+    "install_recipe": {
+        "imports": [
+            "io.pebbletemplates.pebble.loader.ClasspathLoader",
+            "io.ktor.pebble.*"
+        ],
+        "install_block": "install(Pebble) {\n    loader(ClasspathLoader().apply {\n        prefix = \"templates\"\n    })\n}",
+        "templates": [
+            {
+                "position": "resources",
+                "name": "templates/pebble-index.html",
+                "text": "<html>\n    <body>\n        <h1>Hello, {{user.name}}</h1>\n    </body>\n</html>"
+            },
+            {
+                "position": "outside_app",
+                "text": "data class PebbleUser(val id: Int, val name: String)"
+            },
+            {
+                "position": "in_routing",
+                "text": "get(\"/pebble-index\") {\n    val sampleUser = PebbleUser(1, \"John\")\n    call.respond(PebbleContent(\"pebble-index.html\", mapOf(\"user\" to sampleUser)))\n}"
+            }
+        ]
+    },
+    "dependencies": [
+        {
+            "group": "io.ktor",
+            "artifact": "ktor-pebble",
+            "version": "$ktor_version"
+        }
+    ],
+    "documentation": {
+        "description": "This plugin enable serving static content provided by `webjars`. It allows you to package your assets such as javascript libraries and css as part of your uber-jar.\n\n",
+        "usage": "## Installation\n```kotlin\ninstall(Webjars) {\n    path = \"assets\" //defaults to /webjars\n    zone = ZoneId.of(\"EST\") //defaults to ZoneId.systemDefault()\n}\n```\nThis configures the plugin to serve any webjars assets on the `/assets/` path. The `zone` argument configures the correct time zone to be used with the `Last-Modified` header to support caching (only if `Conditional Headers` plugin is also installed).\n\n## Versioning support\nWebjars allow developers to change the versions of the dependencies without requiring a change on the path used to load them on your templates.\n\nLet's assume you have imported `org.webjars:jquery:3.2.1`, you can use the following html code to import it:\n\n```html\n<head>\n  <script src=\"/webjars/jquery/jquery.js\"></script>\n</head>\n```\nYou don't need to specify a version, should you choose to update your dependencies you don't need to modify your templates.\n\n",
+        "options": "* `path` -- URL path for serving webjars\n* `zone` -- configures the correct time zone to be used with the `Last-Modified` header to support caching (only if `Conditional Headers` plugin is also installed)."
+    }
+}

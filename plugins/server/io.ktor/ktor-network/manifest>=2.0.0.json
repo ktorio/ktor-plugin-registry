@@ -1,0 +1,38 @@
+{
+    "id": "ktor-network",
+    "name": "Raw Sockets",
+    "version": "2.0.0",
+    "ktor_version": "2.0.0",
+    "short_description": "Adds Raw Socket support for listening and connecting to tcp and udp sockets",
+    "github": "https://github.com/ktorio/ktor/tree/d05996269def3ae106eb9779ac85ee448da609de/ktor-network/common/src/io/ktor/network/sockets",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "Sockets",
+    "install_recipe": {
+        "imports": [
+            "io.ktor.network.selector.*",
+            "io.ktor.network.sockets.*",
+            "io.ktor.utils.io.*",
+            "kotlinx.coroutines.Dispatchers",
+            "kotlinx.coroutines.launch",
+            "kotlinx.coroutines.runBlocking",
+            "java.io.InputStream",
+            "java.util.*"
+        ],
+        "install_block": "",
+        "templates": [
+            {
+                "position": "outside_app",
+                "text": "/**\n * Two mains are provided, you must first start EchoApp.Server, and then EchoApp.Client.\n * You can also start EchoApp.Server and then use a telnet client to connect to the echo server.\n */\nobject EchoApp {\n    val selectorManager = ActorSelectorManager(Dispatchers.IO)\n    val DefaultPort = 9002\n\n    object Server {\n        @JvmStatic\n        fun main(args: Array<String>) {\n            runBlocking {\n                val serverSocket = aSocket(selectorManager).tcp().bind(port = DefaultPort)\n                println(\"Echo Server listening at ${serverSocket.localAddress}\")\n                while (true) {\n                    val socket = serverSocket.accept()\n                    println(\"Accepted $socket\")\n                    launch {\n                        val read = socket.openReadChannel()\n                        val write = socket.openWriteChannel(autoFlush = true)\n                        try {\n                            while (true) {\n                                val line = read.readUTF8Line()\n                                write.writeStringUtf8(\"$line\\n\")\n                            }\n                        } catch (e: Throwable) {\n                            socket.close()\n                        }\n                    }\n                }\n            }\n        }\n    }\n\n    object Client {\n        @JvmStatic\n        fun main(args: Array<String>) {\n            runBlocking {\n                val socket = aSocket(selectorManager).tcp().connect(\"127.0.0.1\", port = DefaultPort)\n                val read = socket.openReadChannel()\n                val write = socket.openWriteChannel(autoFlush = true)\n\n                launch(Dispatchers.IO) {\n                    while (true) {\n                        val line = read.readUTF8Line()\n                        println(\"server: $line\")\n                    }\n                }\n\n                for (line in System.`in`.lines()) {\n                    println(\"client: $line\")\n                    write.writeStringUtf8(\"$line\\n\")\n                }\n            }\n        }\n\n        private fun InputStream.lines() = Scanner(this).lines()\n\n        private fun Scanner.lines() = sequence {\n            while (hasNext()) {\n                yield(readLine())\n            }\n        }\n    }\n}\n"
+            }
+        ]
+    },
+    "documentation": {
+        "description": "In addition to HTTP handling for the server and the client, Ktor supports client and server, TCP and UDP raw sockets. It exposes a suspending API that uses NIO under the hoods.\n\n",
+        "usage": "In order to create either server or client sockets, you have to use the `aSocket` builder, with a mandatory `ActorSelectorManager`: `aSocket(selector)`. For example: `aSocket(ActorSelectorManager(Dispatchers.IO))`.\n\nThen use:\n* `val socketBuilder = aSocket(selector).tcp()` for a builder using TCP sockets\n* `val socketBuilder = aSocket(selector).udp()` for a builder using UDP sockets\n\nThis returns a `SocketBuilder` that can be used to:\n* `val serverSocket = aSocket(selector).tcp().bind(address)` to listen to an address (for servers)\n* `val clientSocket = aSocket(selector).tcp().connect(address)` to connect to an address (for clients)\n\nIf you need to control the dispatcher used by the sockets, you can instantiate a selector, that uses, for example, a cached thread pool:\n```kotlin\nval exec = Executors.newCachedThreadPool()\nval selector = ActorSelectorManager(exec.asCoroutineDispatcher())\nval tcpSocketBuilder = aSocket(selector).tcp()\n```\nOnce you have a `socket` open by either binding or connecting the builder, you can read from or write to the socket, by opening read/write channels:\n\n```kotlin\nval input : ByteReadChannel  = socket.openReadChannel()\nval output: ByteWriteChannel = socket.openWriteChannel(autoFlush = true)\n```\nWhen creating a server socket, you have to bind to a specific `SocketAddress` to get a `ServerSocket`:\n\n```kotlin\nval server = aSocket(selector).tcp().bind(InetSocketAddress(\"127.0.0.1\", 2323))\n```\nThe server socket has an `accept` method that returns, one at a time, a connected socket for each incoming connection pending in the backlog:\n\n```kotlin\nval socket = server.accept()\n```\nWhen creating a socket client, you have to connect to a specific SocketAddress to get a Socket:\n\n```kotlin\nval socket = aSocket(selector).tcp().connect(InetSocketAddress(\"127.0.0.1\", 2323))\n```\n",
+        "options": "No options"
+    }
+}

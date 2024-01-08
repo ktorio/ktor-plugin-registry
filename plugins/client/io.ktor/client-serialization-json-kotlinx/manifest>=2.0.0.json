@@ -1,0 +1,57 @@
+{
+    "id": "client-serialization-json-kotlinx",
+    "name": "kotlinx.serialization",
+    "version": "2.0.0",
+    "ktor_version": "2.0.0",
+    "short_description": "Serializes request bodies to json using kotlinx.serialization",
+    "github": "https://github.com/ktorio/ktor/blob/main/ktor-client/ktor-client-plugins/ktor-client-json/ktor-client-serialization/common/src/io/ktor/client/plugins/kotlinx/serializer/KotlinxSerializer.kt",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "Serialization",
+    "install_recipe": {
+        "imports": [
+            "io.ktor.client.plugins.contentnegotiation.*",
+            "io.ktor.sCerialization.kotlinx.json.*"
+        ],
+        "install_block": "install(ContentNegotiation) {\n    json()\n}"
+    },
+    "gradle_install": {
+        "plugins": [
+            {
+                "id": "org.jetbrains.kotlin.plugin.serialization",
+                "version": "LAST_KOTLIN_VERSION"
+            }
+        ]
+    },
+    "maven_install": {
+        "plugins": [
+            {
+                "group": "org.jetbrains.kotlin",
+                "artifact": "kotlin-maven-plugin",
+                "version": "LAST_KOTLIN_VERSION",
+                "extra": "<executions>\n                <execution>\n                    <id>compile</id>\n                    <phase>compile</phase>\n                    <goals>\n                        <goal>compile</goal>\n                    </goals>\n                </execution>\n            </executions>\n            <configuration>\n                <compilerPlugins>\n                    <plugin>kotlinx-serialization</plugin>\n                </compilerPlugins>\n            </configuration>\n            <dependencies>\n                <dependency>\n                    <groupId>org.jetbrains.kotlin</groupId>\n                    <artifactId>kotlin-maven-serialization</artifactId>\n                    <version>${kotlin_version}</version>\n                </dependency>\n            </dependencies>"
+            }
+        ]
+    },
+    "dependencies": [
+        {
+            "group": "io.ktor",
+            "artifact": "ktor-client-content-negotiation",
+            "version": "$ktor_version"
+        },
+        {
+            "group": "io.ktor",
+            "artifact": "ktor-serialization-kotlinx-json",
+            "version": "$ktor_version"
+        }
+    ],
+    "documentation": {
+        "description": "The ContentNegotiation plugin serves two primary purposes: negotiating media types between the client and server and serializing/deserializing the content in a specific format when sending requests and receiving responses.\n\nThe [ContentNegotiation](https://api.ktor.io/ktor-client/ktor-client-plugins/ktor-client-content-negotiation/io.ktor.client.plugins.contentnegotiation/-content-negotiation/index.html) plugin serves two primary purposes:\n* Negotiating media types between the client and server. For this, it uses the `Accept` and `Content-Type` headers.\n* Serializing/deserializing the content in a specific format when sending requests and receiving responses.\n\n> On the server, Ktor provides the __ContentNegotiation__ plugin for serializing/deserializing content.\n",
+        "usage": "To install ContentNegotiation, pass it to the install function inside a client configuration block:\n\n```kotlin\nval client = HttpClient(CIO) {\n    install(ContentNegotiation)\n}\n```\n\nTo register the JSON serializer in your application, call the json method:\n```kotlin\nimport io.ktor.client.plugins.contentnegotiation.*\nimport io.ktor.serialization.kotlinx.json.*\n\nval client = HttpClient(CIO) {\n    install(ContentNegotiation) {\n        json()\n    }\n}\n```\nIn the json constructor, you can access the JsonBuilder API, for example:\n```kotlin\nval client = HttpClient(CIO) {\n    install(ContentNegotiation) {\n        json(Json {\n            prettyPrint = true\n            isLenient = true\n        })\n    }\n}\n```",
+        "options": ""
+    },
+    "target": "client"
+}

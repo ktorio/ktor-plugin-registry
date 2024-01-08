@@ -1,0 +1,4 @@
+^1.4.0:
+  - ktor-html-builder:==
+  - org.jetbrains.kotlinx:kotlinx-html-jvm:0.10.1
+">=2.0.0": ktor-server-html-builder-jvm:==

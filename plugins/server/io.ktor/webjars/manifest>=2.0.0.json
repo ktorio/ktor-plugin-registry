@@ -1,0 +1,47 @@
+{
+    "id": "webjars",
+    "name": "Webjars",
+    "version": "2.0.0",
+    "ktor_version": "2.0.0",
+    "short_description": "Allows you to package your assets such as javascript libraries and css as part of your uber-jar.",
+    "github": "https://github.com/ktorio/ktor/blob/7e78e715cec3ff039cd628f8ff8ce875c35cde4c/ktor-features/ktor-webjars/jvm/src/io/ktor/webjars/Webjars.kt",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "Routing",
+    "required_feature_ids": [
+        "routing"
+    ],
+    "install_recipe": {
+        "imports": [
+            "io.ktor.server.webjars.*",
+            "io.ktor.http.*"
+        ],
+        "install_block": "install(Webjars) {\n    path = \"/webjars\" //defaults to /webjars\n}",
+        "templates": [
+            {
+                "position": "in_routing",
+                "text": "get(\"/webjars\") {\n    call.respondText(\"<script src='/webjars/jquery/jquery.js'></script>\", ContentType.Text.Html)\n}"
+            }
+        ]
+    },
+    "dependencies": [
+        {
+            "group": "io.ktor",
+            "artifact": "ktor-server-webjars-jvm",
+            "version": "$ktor_version"
+        },
+        {
+            "group": "org.webjars",
+            "artifact": "jquery",
+            "version": "3.2.1"
+        }
+    ],
+    "documentation": {
+        "description": "This plugin enables serving static content provided by WebJars. It allows you to package your assets such as JavaScript libraries and CSS as part of your fat JAR.",
+        "usage": "The configuration below enables the plugin to serve any WebJars assets on the `/assets` path:\n```kotlin\ninstall(Webjars) {\n    path = \"assets\"\n    zone = ZoneId.of(\"EST\")\n}\n```\n\nThe `zone` argument configures the correct time zone to be used with the `Last-Modified` header to support caching (only if the `ConditionalHeaders` plugin is also installed). To learn more, see [WebJars](https://ktor.io/docs/webjars.html).",
+        "options": ""
+    }
+}

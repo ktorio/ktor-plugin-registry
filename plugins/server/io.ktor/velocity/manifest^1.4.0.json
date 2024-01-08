@@ -1,0 +1,52 @@
+{
+    "id": "velocity",
+    "name": "Velocity",
+    "version": "1.5.2",
+    "ktor_version": "1.4.0",
+    "short_description": "Serve HTML content using Apache's Velocity template engine",
+    "github": "https://github.com/ktorio/ktor/blob/7e78e715cec3ff039cd628f8ff8ce875c35cde4c/ktor-features/ktor-velocity/jvm/src/io/ktor/velocity/Velocity.kt",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "Templating",
+    "required_feature_ids": [
+        "routing"
+    ],
+    "install_recipe": {
+        "imports": [
+            "io.ktor.velocity.*",
+            "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader",
+            "org.apache.velocity.runtime.RuntimeConstants\n"
+        ],
+        "install_block": "install(Velocity) {\n    setProperty(RuntimeConstants.RESOURCE_LOADER, \"classpath\")\n    setProperty(\"classpath.resource.loader.class\", ClasspathResourceLoader::class.java.name)\n}",
+        "templates": [
+            {
+                "position": "resources",
+                "name": "templates/index.vl",
+                "text": "<html>\n    <body>\n        <h1>Hello, $user.name</h1>\n    </body>\n</html>\nCopied!\n"
+            },
+            {
+                "position": "outside_app",
+                "text": "data class VelocityUser(val id: Int, val name: String)"
+            },
+            {
+                "position": "in_routing",
+                "text": "get(\"/index\") {\n    val sampleUser = VelocityUser(1, \"John\")\n    call.respond(VelocityContent(\"templates/index.vl\", mapOf(\"user\" to sampleUser)))\n}"
+            }
+        ]
+    },
+    "dependencies": [
+        {
+            "group": "io.ktor",
+            "artifact": "ktor-velocity",
+            "version": "$ktor_version"
+        }
+    ],
+    "documentation": {
+        "description": "Ktor includes support for `Velocity` templates through the Velocity plugin. Initialize the `Velocity` plugin with the `VelocityEngine`\n\n",
+        "usage": "You can install Velocity, and configure the VelocityEngine.\n\n```kotlin\ninstall(Velocity) {\n    setProperty(\"resource.loader\", \"classpath\")\n    setProperty(\"classpath.resource.loader.class\", ClasspathResourceLoader::class.java.name)\n}\n```\nWhen Velocity is configured, you can call the call.respond method with a VelocityContent instance:\n\n```kotlin\ndata class User(val name: String, val email: String)\n\nget(\"/\") {\n\t val user = User(\"user name\", \"user@example.com\")\n    call.respond(VelocityContent(\"templates/hello.vl\", user))\n}\n```\n",
+        "options": "* `setProperty` -- sets string property for a Velocity engine"
+    }
+}

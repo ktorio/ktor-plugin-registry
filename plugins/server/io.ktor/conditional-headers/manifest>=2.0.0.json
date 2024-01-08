@@ -1,0 +1,32 @@
+{
+    "id": "conditional-headers",
+    "name": "Conditional Headers",
+    "version": "2.0.0",
+    "ktor_version": "2.0.0",
+    "short_description": "Avoids sending content if the client already has the same content using ETag or LastModified",
+    "github": "https://github.com/ktorio/ktor/blob/4517e3856a3cae8f157d2f6966635217827d2abd/ktor-server/ktor-server-core/jvm/src/io/ktor/features/ConditionalHeaders.kt",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "HTTP",
+    "install_recipe": {
+        "imports": [
+            "io.ktor.server.plugins.conditionalheaders.*"
+        ],
+        "install_block": "install(ConditionalHeaders)"
+    },
+    "dependencies": [
+        {
+            "group": "io.ktor",
+            "artifact": "ktor-server-conditional-headers-jvm",
+            "version": "$ktor_version"
+        }
+    ],
+    "documentation": {
+        "description": "The [ConditionalHeaders](https://ktor.io/docs/conditional-headers.html) plugin avoids sending the body of content if it has not changed since the last request. This is achieved by using the following headers:\n* The `Last-Modified` response header contains a resource modification time. For example, if the client request contains the `If-Modified-Since` value, Ktor will send a full response only if a resource has been modified after the given date.\n* The `Etag` response header is an identifier for a specific resource version. For instance, if the client request contains the `If-None-Match` value, Ktor won't send a full response in case this value matches the `Etag`.",
+        "usage": "The code snippet below shows how to add a `Etag` and `Last-Modified` headers for CSS:\n```kotlin\ninstall(ConditionalHeaders) {\n    val file = File(\"src/main/kotlin/com/example/Application.kt\")\n    version { outgoingContent ->\n        when (outgoingContent.contentType?.withoutParameters()) {\n            ContentType.Text.CSS -> listOf(\n                EntityTagVersion(file.lastModified().hashCode().toString()),\n                LastModifiedVersion(Date(file.lastModified()))\n            )\n            else -> emptyList()\n        }\n    }\n}\n```\n\nTo learn more, see [Conditional headers](https://ktor.io/docs/conditional-headers.html).",
+        "options": ""
+    }
+}

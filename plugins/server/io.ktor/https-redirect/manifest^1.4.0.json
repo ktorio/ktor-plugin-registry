@@ -1,0 +1,25 @@
+{
+    "id": "https-redirect",
+    "name": "HttpsRedirect",
+    "version": "1.5.2",
+    "ktor_version": "1.4.0",
+    "short_description": "All the affected HTTP calls perform a redirect to its HTTPS counterpart before processing the call",
+    "github": "https://github.com/ktorio/ktor/blob/7e78e715cec3ff039cd628f8ff8ce875c35cde4c/ktor-server/ktor-server-core/jvm/src/io/ktor/features/HttpsRedirect.kt",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "HTTP",
+    "install_recipe": {
+        "imports": [
+            "io.ktor.features.*"
+        ],
+        "install_block": "install(HttpsRedirect) {\n        // The port to redirect to. By default 443, the default HTTPS port.\n        sslPort = 443\n        // 301 Moved Permanently, or 302 Found redirect.\n        permanentRedirect = true\n    }"
+    },
+    "documentation": {
+        "description": "This plugin will make all the affected HTTP calls perform a redirect to its HTTPS counterpart before processing the call.\n\nBy default the redirection is a `301 Moved Permanently`, but it can be configured to be a `302 Found` redirect.",
+        "usage": "```kotlin\nfun Application.main() {\n    install(HttpsRedirect)\n    // install(XForwardedHeaderSupport) // Required when behind a reverse-proxy\n}\n```\nThe code above installs the `HttpsRedirect` plugin with the default configuration.\n\n## Testing\nApplying this plugin changes how testing works. After applying this plugin, each `handleRequest` you perform, results in a redirection response. And probably this is not what you want in most cases, since that behaviour is already tested.\n\n### XForwardedHeaderSupport trick\nAs shown in this test , you can install the `XForwardedHeaderSupport` plugin and add a `addHeader(HttpHeaders.XForwardedProto, \"https\")` header to the request.\n\n```kotlin\n@Test\nfun testRedirectHttps() {\n    withTestApplication {\n        application.install(XForwardedHeaderSupport)\n        application.install(HttpsRedirect)\n        application.routing {\n            get(\"/\") {\n                call.respond(\"ok\")\n            }\n        }\n\n        handleRequest(HttpMethod.Get, \"/\", {\n            addHeader(HttpHeaders.XForwardedProto, \"https\")\n        }).let { call ->\n            assertEquals(HttpStatusCode.OK, call.response.status())\n        }\n    }\n}\n```\n### Do not install the plugin when testing or uninstall it\nUninstalling it:\n\n```kotlin\napplication.uninstall(HttpsRedirect)\n```\nPrevent installation in the first place:\n\n```kotlin\n// The function referenced in the application.conf\nfun Application.mymodule() {\n    mymoduleConfigured()\n}\n\n// The function referenced in the tests\nfun Application.mymoduleForTesting() {\n    mymoduleConfigured(installHttpsRedirect = false)\n}\n\nfun Application.mymoduleConfigured(installHttpsRedirect: Boolean = true) {\n    if (installHttpsRedirect) {\n        install(HttpsRedirect)\n    }\n    // ...\n}\n```\nIn this case, you can also have a separate test that calls `mymodule` instead of `mymoduleForTesting` to verify that the `HttpsRedirect` plugin is installed and other things that you are not doing in tests.\n\n",
+        "options": "* `sslPort` -- The port to redirect to. By default 443\n* `permanentRedirect` -- `301 Moved Permanently` if `true`, or `302 Found redirect` if `false`"
+    }
+}

@@ -1,0 +1,25 @@
+{
+    "id": "forwarded-header-support",
+    "name": "Forwarded Headers",
+    "version": "1.5.2",
+    "ktor_version": "1.4.0",
+    "short_description": "This plugin allows you to handle reverse proxy headers to get information about the original request when it’s behind a proxy.",
+    "github": "https://github.com/ktorio/ktor/blob/4517e3856a3cae8f157d2f6966635217827d2abd/ktor-server/ktor-server-core/jvm/src/io/ktor/features/OriginConnectionPoint.kt",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "HTTP",
+    "install_recipe": {
+        "imports": [
+            "io.ktor.features.*"
+        ],
+        "install_block": "install(ForwardedHeaderSupport) // WARNING: for security, do not include this if not behind a reverse proxy\ninstall(XForwardedHeaderSupport) // WARNING: for security, do not include this if not behind a reverse proxy"
+    },
+    "documentation": {
+        "description": "This plugin allows you to handle reverse proxy headers to get information about the original request when it's behind a proxy.\n* ForwardedHeaderSupport handles the standard `Forwarded` header (`RFC 7239`)\n* `XForwardedHeaderSupport` handles the non-standard (but standard de-facto) `X-Forwarded-Host/X-Forwarded-Server`, `X-Forwarded-For`, `X-Forwarded-By`, `X-Forwarded-Proto/X-Forwarded-Protocol` and `X-Forwarded-SSL/Front-End-Https`\n\n",
+        "usage": "## Basic usage\nThese plugins don't require any special configuration. You can install any of the two depending on your reverse proxy, but since the standard is the `Forwarded` header, you should favor it whenever possible.\n\n```kotlin\ninstall(ForwardedHeaderSupport)\n```\nor\n```kotlin\ninstall(XForwardedHeaderSupport)\n```\n## Request information\n### The proxy request information\nYou can read the raw or local request information, read from the received normal headers and socket properties, that correspond to the proxy request using the `request.local` property:\n\n```kotlin\nval scheme = request.local.scheme\nval version = request.local.version\nval port = request.local.port\nval host = request.local.host\nval uri = request.local.uri\nval method = request.local.method\nval remoteHost = request.local.remoteHost\n```\n### The original request information\nYou can read the original request information, read from the `Forwarded` or `X-Forwarded-*` headers with fallback to the raw headers, that corresponds to original client request using the `request.origin` property:\n\n```kotlin\nval scheme = request.origin.scheme // Determined from X-Forwarded-Proto / X-Forwarded-Protocol / X-Forwarded-SSL\nval version = request.origin.version\nval port = request.origin.port // Determined from X-Forwarded-Host / X-Forwarded-Server\nval host = request.origin.host // Determined from X-Forwarded-Host / X-Forwarded-Server\nval uri = request.origin.uri\nval method = request.origin.method\nval remoteHost = request.origin.remoteHost // Determined from X-Forwarded-For\n```\nIn the cases where you need the `X-Forwarded-By` (the interface used for the socket), you can access the raw `X-Forwarded` properties with:\n\n```kotlin\nval forwardedValues: List<ForwardedHeaderSupport.ForwardedHeaderValue> = call.attributes[ForwardedHeaderSupport.ForwardedParsedKey]\n```\n```kotlin\ndata class ForwardedHeaderValue(val host: String?, val by: String?, val forParam: String?, val proto: String?, val others: Map<String, String>)\n```\n## Header description\nThe standard `Forwarded` header looks like this:\n\n`Forwarded: by=<identifier>; for=<identifier>; host=<host>; proto=<http|https>`\n* `by` - The interface where the request came in to the proxy server.\n* `for` - The client that initiated the request and subsequent proxies in a chain of proxies.\n* `host` - The Host request header field as received by the proxy.\n* `proto` - Indicates which protocol was used to make the request (typically `\"http\"` or `\"https\"`).\n\n",
+        "options": "No options"
+    }
+}

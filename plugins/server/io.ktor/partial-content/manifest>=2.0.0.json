@@ -1,0 +1,32 @@
+{
+    "id": "partial-content",
+    "name": "Partial Content",
+    "version": "2.0.0",
+    "ktor_version": "2.0.0",
+    "short_description": "Handles requests with the Range header. Generating Accept-Ranges and the Content-Range headers and slicing the served content when required.",
+    "github": "https://github.com/ktorio/ktor/blob/4517e3856a3cae8f157d2f6966635217827d2abd/ktor-server/ktor-server-core/jvm/src/io/ktor/features/PartialContent.kt",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "HTTP",
+    "install_recipe": {
+        "imports": [
+            "io.ktor.server.plugins.partialcontent.*"
+        ],
+        "install_block": "install(PartialContent) {\n        // Maximum number of ranges that will be accepted from a HTTP request.\n        // If the HTTP request specifies more ranges, they will all be merged into a single range.\n        maxRangeCount = 10\n    }"
+    },
+    "dependencies": [
+        {
+            "group": "io.ktor",
+            "artifact": "ktor-server-partial-content-jvm",
+            "version": "$ktor_version"
+        }
+    ],
+    "documentation": {
+        "description": "The [PartialContent](https://ktor.io/docs/partial-content.html) plugin adds support for handling requests with the `Range` header. It intercepts the generated response adding the `Accept-Ranges` and the `Content-Range` header and slicing the served content when required. `PartialContent` is well-suited for streaming content or resuming partial downloads with download managers or in unreliable networks.",
+        "usage": "The configuration below allows you to specify the maximum number of ranges that will be accepted from an HTTP request. If an HTTP request specifies more ranges, they will be merged into a single range.\n```kotlin\ninstall(PartialContent) {\n    maxRangeCount = 10\n}\n```",
+        "options": ""
+    }
+}

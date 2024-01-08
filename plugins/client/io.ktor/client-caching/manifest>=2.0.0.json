@@ -1,0 +1,26 @@
+{
+    "id": "client-caching",
+    "name": "Caching",
+    "version": "2.0.0",
+    "ktor_version": "2.0.0",
+    "short_description": "Allows you to save previously fetched resources in cache",
+    "github": "https://github.com/ktorio/ktor-documentation/tree/main/codeSnippets/snippets/client-caching",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "HTTP",
+    "install_recipe": {
+        "imports": [
+            "io.ktor.client.plugins.cache.*"
+        ],
+        "install_block": "install(HttpCache)"
+    },
+    "documentation": {
+        "description": "The HttpCache allows you to save previously fetched resources in a cache.",
+        "usage": "To install `HttpCache`, pass it to the `install` function inside a [client configuration block](create-client.md#configure-client):\n```kotlin\nimport io.ktor.client.*\nimport io.ktor.client.engine.cio.*\nimport io.ktor.client.plugins.cache.*\n//...\nval client = HttpClient(CIO) {\n    install(HttpCache)\n}\n```\n\nThis is enough to enable the client to save previously fetched resources in a cache. For example, if you make two consequent requests to a resource with the configured `Cache-Control` header, the client executes only the first request and skips the second one since data is already saved in a cache.\n\n```kotlin\nval client = HttpClient(CIO) {\n        install(HttpCache)\n        install(Logging) { level = LogLevel.INFO }\n    }\n\n    client.get(\"http://localhost:8080/customer/1\")\n    client.get(\"http://localhost:8080/customer/1\")\n}```\n",
+        "options": ""
+    },
+    "target": "client"
+}

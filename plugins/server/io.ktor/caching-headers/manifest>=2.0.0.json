@@ -1,0 +1,34 @@
+{
+    "id": "caching-headers",
+    "name": "Caching Headers",
+    "version": "2.0.0",
+    "ktor_version": "2.0.0",
+    "short_description": "Send the headers Cache-Control and Expires used by clients and proxies to cache requests",
+    "github": "https://github.com/ktorio/ktor/blob/419744383223899e69746b2afe50d873d442e568/ktor-server/ktor-server-core/jvm/src/io/ktor/features/CachingHeaders.kt",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "HTTP",
+    "install_recipe": {
+        "imports": [
+            "io.ktor.server.plugins.cachingheaders.*",
+            "io.ktor.http.content.*",
+            "io.ktor.http.*"
+        ],
+        "install_block": "install(CachingHeaders) {\n    options { call, outgoingContent ->\n        when (outgoingContent.contentType?.withoutParameters()) {\n            ContentType.Text.CSS -> CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 24 * 60 * 60))\n            else -> null\n        }\n    }\n}"
+    },
+    "dependencies": [
+        {
+            "group": "io.ktor",
+            "artifact": "ktor-server-caching-headers-jvm",
+            "version": "$ktor_version"
+        }
+    ],
+    "documentation": {
+        "description": "The [CachingHeaders](https://ktor.io/docs/caching.html) plugin adds the capability to configure the `Cache-Control` and `Expires` headers used for HTTP caching. You can introduce different caching strategies for specific content types, such as images, CSS and JavaScript files, and so on.",
+        "usage": "To configure the `CachingHeaders` plugin, you need to define the `options` function to provide specified caching options for a given content type. The code snippet below shows how to add the `Cache-Control` header with the `max-age` option for CSS:\n```kotlin\ninstall(CachingHeaders) {\n    options { call, outgoingContent ->\n        when (outgoingContent.contentType?.withoutParameters()) {\n            ContentType.Text.CSS -> CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 3600))\n            else -> null\n        }\n    }\n}\n```\n\nYou can learn more from the [Caching headers](https://ktor.io/docs/caching.html) help topic.",
+        "options": ""
+    }
+}

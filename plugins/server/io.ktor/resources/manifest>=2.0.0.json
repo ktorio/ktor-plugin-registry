@@ -1,0 +1,66 @@
+{
+    "id": "resources",
+    "name": "Resources",
+    "version": "2.0.0",
+    "ktor_version": "2.0.0",
+    "short_description": "Allows you to implement type-safe routing",
+    "github": "https://github.com/ktorio/ktor/blob/main/ktor-shared/ktor-resources/common/src/io/ktor/resources/Resources.kt",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "Ktor",
+        "url": "https://ktor.io/"
+    },
+    "group": "Routing",
+    "required_feature_ids": [
+        "routing"
+    ],
+    "install_recipe": {
+        "imports": [
+            "io.ktor.server.resources.*",
+            "io.ktor.resources.*",
+            "io.ktor.server.resources.Resources",
+            "kotlinx.serialization.Serializable"
+        ],
+        "install_block": "install(Resources)",
+        "templates": [
+            {
+                "position": "outside_app",
+                "text": "@Serializable\n@Resource(\"/articles\")\nclass Articles(val sort: String? = \"new\")"
+            },
+            {
+                "position": "in_routing",
+                "text": "get<Articles> { article ->\n    // Get all articles ...\n    call.respond(\"List of articles sorted starting from ${article.sort}\")\n}"
+            }
+        ]
+    },
+    "gradle_install": {
+        "plugins": [
+            {
+                "id": "org.jetbrains.kotlin.plugin.serialization",
+                "version": "LAST_KOTLIN_VERSION"
+            }
+        ]
+    },
+    "maven_install": {
+        "plugins": [
+            {
+                "group": "org.jetbrains.kotlin",
+                "artifact": "kotlin-maven-plugin",
+                "version": "LAST_KOTLIN_VERSION",
+                "extra": "<executions>\n                <execution>\n                    <id>compile</id>\n                    <phase>compile</phase>\n                    <goals>\n                        <goal>compile</goal>\n                    </goals>\n                </execution>\n            </executions>\n            <configuration>\n                <compilerPlugins>\n                    <plugin>kotlinx-serialization</plugin>\n                </compilerPlugins>\n            </configuration>\n            <dependencies>\n                <dependency>\n                    <groupId>org.jetbrains.kotlin</groupId>\n                    <artifactId>kotlin-maven-serialization</artifactId>\n                    <version>${kotlin_version}</version>\n                </dependency>\n            </dependencies>"
+            }
+        ]
+    },
+    "dependencies": [
+        {
+            "group": "io.ktor",
+            "artifact": "ktor-server-resources",
+            "version": "$ktor_version"
+        }
+    ],
+    "documentation": {
+        "description": "Ktor provides a mechanism to create routes in a typed way for both constructing URLs and reading the parameters. This functionality is provided by the [Resources](https://ktor.io/docs/type-safe-routing.html) plugin.",
+        "usage": "You can install the `Resources` plugin in the following way: \n```kotlin\ninstall(Resources)\n```\nFor each typed route you want to handle, you need to create a class containing the parameters that you want to handle. To accomplish this, you need to annotate this class using the `@Resource` keyword. Such classes should also have the `@Serializable` annotation provided by the kotlinx.serialization library. For example:\n```kotlin\n@Serializable\n@Resource(\"/articles\")\nclass Articles(val sort: String? = \"new\")\n```\nTo learn more about how to define route classes and route handlers, see the [Type-safe routing](https://ktor.io/docs/type-safe-routing.html) section.",
+        "options": ""
+    }
+}
