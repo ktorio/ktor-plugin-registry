@@ -5,6 +5,7 @@ import java.net.URL
 import java.nio.file.Path
 import java.nio.file.Paths
 import javax.xml.parsers.DocumentBuilderFactory
+import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
 import kotlin.io.path.readLines
 import kotlin.io.path.writeText
@@ -33,7 +34,10 @@ private fun readKtorVersionsFromFile(): List<String>? = try {
 }
 
 private fun writeToFile(versionsList: List<String>) =
-    Paths.get(LOCAL_LIST).writeText(versionsList.joinToString("\n"))
+    Paths.get(LOCAL_LIST).also {
+        if (!it.parent.exists())
+            it.parent.createDirectories()
+    }.writeText(versionsList.joinToString("\n"))
 
 private fun fetchKtorVersionsFromMaven(): List<String> {
     val allVersions = buildList {
