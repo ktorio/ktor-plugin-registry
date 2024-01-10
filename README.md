@@ -6,32 +6,33 @@ This project contains references to all Ktor plugins available in the Ktor proje
 
 To add a new plugin, follow these easy steps:
 
-1. In your project, add a `manifest.ktor.yaml` file to your main resources.
-    - The file must be under a directory like `<group>/<plugin-id>`
-    - Start with the [sample template](samples/org/group/sample/manifest.ktor.yaml)
-2. Publish your project to Maven.
-    - We read from repositories listed in [Repositories.kt](buildSrc/src/main/kotlin/io/ktor/plugins/registry/Repositories.kt). 
-    - If you'd like to include another Maven repository for your plugin, include an update to Repositories.kt in your 
-      pull request in step 3.
-3. Create a pull request on this repository with a new file addition in the form `plugins/<server|client>/<group>/<plugin-id>/versions.ktor.yaml`. 
-    - See the [plugins](plugins) directory for examples.
-    - For organization information, also include a `group.ktor.yaml` file under the `plugins/<server|client>/<group>` directory.
+### 1. Publish your project to Maven
 
-The plugin file contents are a mapping of Ktor version ranges to artifact versions.
+We read from repositories listed in [Repositories.kt](buildSrc/src/main/kotlin/io/ktor/plugins/registry/Repositories.kt). 
 
-For example:
-```yaml
-^2.0.0: ktor-server-auth-jwt:2.+
-^1.0.0: ktor-auth-jwt:1.+
+If you'd like to include another Maven repository for your plugin, include an update to
+Repositories.kt in your pull request in step 3.  It should have public read access.
+
+### 2. Clone this repository and add files under `/plugins`
+
+Use the following structure for the files:
+```
+  /plugins
+    /<server|client>
+      /<group>                        -- e.g. "io.ktor"
+        /group.ktor.yaml              -- organization details
+        /<plugin-id>                  -- must be unique
+           /versions.ktor.yaml        -- see templates/versions.ktor.yaml
+           /<version>                 -- ktor version range w/ special chars stripped
+             /manifest.ktor.yaml      -- use template templates/manifest.ktor.yaml
+             /install.kt              -- contains install function
 ```
 
-The version ranges use the same syntax as [node-semver](https://github.com/npm/node-semver) for defining ranges.  For 
-most cases, you can simply use a range like `^2.0.0` annotation for any release under a major version, or `>=1` if you
-want to include all Ktor versions.  If a plugin breaks after a release, we'll update the supported versions and notify
-the author from the contact information listed in the plugin manifest.
+You can include any number of install files for populating new projects.  More information under 
+[templates/manifest.ktor.yaml](templates/manifest.ktor.yaml)
 
+Run `./gradlew buildRegistry` before submitting to test the new files.
 
-## Running and testing
+### 3. Create a pull request
 
-To validate all plugin manifests, run `./gradlew buildRegistry`.  This will generate the model for the plugin registry
-by resolving and verifying all plugins for all relevant Ktor release versions.
+Once merged, your plugin will be available in the ktor project generator.

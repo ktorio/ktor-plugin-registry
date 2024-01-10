@@ -1,5 +1,3 @@
-package io.ktor.csrf
-
 import io.ktor.server.application.*
 import org.group.plugin.sample.*
 
