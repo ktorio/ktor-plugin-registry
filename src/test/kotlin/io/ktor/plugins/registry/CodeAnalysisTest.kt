@@ -40,8 +40,8 @@ class CodeAnalysisTest {
 
         assertEquals(InstallSnippet.Kotlin(
             imports = listOf(
-                "import io.ktor.server.application.*",
-                "import io.ktor.server.plugins.csrf.*",
+                "io.ktor.server.application.*",
+                "io.ktor.server.plugins.csrf.*",
             ),
             code = """
                 install(CSRF) {
@@ -64,8 +64,8 @@ class CodeAnalysisTest {
 
         assertEquals(InstallSnippet.Kotlin(
             imports = listOf(
-                "import io.ktor.server.application.*",
-                "import io.ktor.server.plugins.csrf.*",
+                "io.ktor.server.application.*",
+                "io.ktor.server.plugins.csrf.*",
             ),
             code = """
                 public fun Application.install() {

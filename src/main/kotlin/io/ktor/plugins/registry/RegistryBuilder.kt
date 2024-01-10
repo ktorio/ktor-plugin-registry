@@ -4,8 +4,6 @@ import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.ktor.plugins.registry.ResourceYamlManifest.Companion.resolveManifestYaml
-import io.ktor.plugins.registry.PrebuiltJsonManifest.Companion.findPrebuiltManifest
 import io.ktor.plugins.registry.SemverUtils.semverString
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -93,21 +91,18 @@ class RegistryBuilder(
                 else -> releaseArtifacts.values.map(::toPathUrl)
             }
 
-            URLClassLoader(jars.toTypedArray()).use { releaseClassloader ->
-                for (plugin in release.plugins) {
-                    val outputFile = manifestsDir.resolve(plugin.manifestOutputFile)
-                    if (plugin.isUnresolved() || outputFile.exists())
-                        continue
+            URLClassLoader(jars.toTypedArray()).use { classLoader ->
+                with(PluginResolutionContext(snippetExtractor, release, classLoader, pluginsDir)) {
+                    for (plugin in release.plugins) {
+                        val outputFile = manifestsDir.resolve(plugin.manifestOutputFile)
+                        if (plugin.isUnresolved() || outputFile.exists())
+                            continue
 
-                    val manifest = pluginsDir.findPrebuiltManifest(plugin)
-                        ?: releaseClassloader.resolveManifestYaml(snippetExtractor, plugin, release)
-
-                    if (manifest == null) {
-                        logger.error { "Could not find manifest for ${plugin.group.id}:${plugin.id} for ktor ${plugin.versionRange}" }
-                        continue
+                        when (val manifest = resolveManifest(plugin)) {
+                            null -> logger.error { "Could not find manifest for ${plugin.group.id}:${plugin.id} for ktor ${plugin.versionRange}" }
+                            else -> manifest.export(outputFile, json)
+                        }
                     }
-
-                    manifest.export(outputFile, json)
                 }
             }
         }

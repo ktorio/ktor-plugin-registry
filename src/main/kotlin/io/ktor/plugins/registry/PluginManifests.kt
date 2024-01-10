@@ -14,14 +14,93 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
+import java.io.InputStream
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.exists
+import kotlin.io.path.inputStream
 import kotlin.io.path.outputStream
 
 sealed interface ResolvedPluginManifest {
     fun export(outputFile: Path, json: Json)
+}
+
+class PluginResolutionContext(
+    private val snippetExtractor: CodeSnippetExtractor,
+    private val release: KtorRelease,
+    private val classLoader: ClassLoader,
+    private val pluginsDir: Path,
+) {
+    /**
+     * Preference goes:
+     * - prebuilt JSON
+     * - local YAML
+     * - YAML from artifacts
+     */
+    fun resolveManifest(plugin: PluginReference): ResolvedPluginManifest? =
+        resolvePrebuiltJson(plugin)
+            ?: resolveYamlFile(plugin)
+            ?: resolveYamlFromClasspath(plugin)
+
+    private fun resolvePrebuiltJson(plugin: PluginReference) =
+        plugin.versionPath.resolve("manifest.json").ifExists()?.let { path ->
+            PrebuiltJsonManifest(plugin, path)
+        }
+
+    private fun resolveYamlFile(plugin: PluginReference) =
+        plugin.versionPath.resolve("manifest.ktor.yaml").ifExists()?.let { path ->
+            val model: YamlManifest.ImportManifest = path.inputStream().use(Yaml.default::decodeFromStream)
+            val installation: Map<String, InstallSnippet> = model.installation.mapValues { (site, installBlock) ->
+                readCodeSnippet(site, installBlock) { filename ->
+                    plugin.versionPath.resolve(filename).ifExists()?.inputStream()
+                }
+            }
+            YamlManifest(plugin, release, model, installation, source = "plugin files")
+        }
+
+    private fun resolveYamlFromClasspath(plugin: PluginReference): YamlManifest? {
+        val model: YamlManifest.ImportManifest = classLoader.getResourceAsStream(plugin.manifestResourceFile)
+            ?.use(Yaml.default::decodeFromStream)
+            ?: return null
+        val installation: Map<String, InstallSnippet> = model.installation.mapValues { (site, installBlock) ->
+            readCodeSnippet(site, installBlock) { filename ->
+                classLoader.getResourceAsStream("${plugin.resourcePath}/${filename}")
+            }
+        }
+        return YamlManifest(plugin, release, model, installation, source = "classpath")
+    }
+
+    private val PluginReference.versionPath: Path
+        get() = pluginsDir.resolve("${group.id}/$id/${versionRange.stripSpecialChars()}")
+
+    private fun Path.ifExists(): Path? = takeIf { it.exists() }
+
+    private val PluginReference.manifestResourceFile: String get() =
+        "$resourcePath/manifest.ktor.yaml"
+
+    private val PluginReference.resourcePath: String get() =
+        "${group.id.replace('.', '/')}/$id"
+
+    private fun String.stripSpecialChars() =
+        Regex("[^a-zA-Z0-9-.]").replace(this, "")
+
+    private fun readCodeSnippet(
+        site: String,
+        installBlock: YamlManifest.CodeSnippetSource,
+        findCodeInput: (String) -> InputStream?
+    ): InstallSnippet {
+        val injectionSite = CodeInjectionSite.valueOf(site.uppercase())
+        val (code: String, filename: String?) = when (installBlock) {
+            is YamlManifest.CodeSnippetSource.Text -> installBlock.code to null
+            is YamlManifest.CodeSnippetSource.File -> {
+                val code = findCodeInput(installBlock.file)?.use { it.readAllBytes().toString(Charset.defaultCharset()) }
+                    ?: throw IllegalArgumentException("Missing install snippet ${installBlock.file}")
+                code to installBlock.file
+            }
+        }
+        return snippetExtractor.parseInstallSnippet(injectionSite, code, filename)
+    }
 }
 
 /**
@@ -30,66 +109,29 @@ sealed interface ResolvedPluginManifest {
 class PrebuiltJsonManifest(
     private val plugin: PluginReference,
     private val path: Path,
-    private val logger: KLogger = KotlinLogging.logger("PrebuiltManifestJson")
+    private val logger: KLogger = KotlinLogging.logger("PrebuiltJsonManifest")
 ) : ResolvedPluginManifest {
-    companion object {
-        fun Path.findPrebuiltManifest(plugin: PluginReference): PrebuiltJsonManifest? =
-            resolve(plugin.manifestPrebuiltFile).ifExists()?.let { path ->
-                PrebuiltJsonManifest(plugin, path)
-            }
-
-        private val PluginReference.manifestPrebuiltFile: String get() =
-            "${group.id}/$id/manifest$versionRange.json"
-
-        private fun Path.ifExists(): Path? = takeIf { it.exists() }
-    }
-
     override fun export(outputFile: Path, json: Json) {
         logger.info { "${plugin.identifier} copied from ${path.normalizeAndRelativize()}" }
         Files.copy(path, outputFile)
     }
-
 }
 
 /**
- * manifest.ktor.yaml files imported via gradle.
+ * manifest.ktor.yaml files imported via gradle OR resolved from plugin directory
  */
-class ResourceYamlManifest(
+class YamlManifest(
     private val plugin: PluginReference,
     private val release: KtorRelease,
     private val model: ImportManifest,
     private val installSnippets: Map<String, InstallSnippet>,
-    private val logger: KLogger = KotlinLogging.logger("ResourceYamlManifest")
+    private val source: String,
+    private val logger: KLogger = KotlinLogging.logger("YamlManifest")
 ): ResolvedPluginManifest {
-
-    companion object {
-        fun ClassLoader.resolveManifestYaml(snippetExtractor: CodeSnippetExtractor, plugin: PluginReference, release: KtorRelease): ResourceYamlManifest? {
-            val model: ImportManifest = getResourceAsStream(plugin.manifestResourceFile)
-                ?.use(Yaml.default::decodeFromStream)
-                ?: return null
-            val installation: Map<String, InstallSnippet> = model.installation.mapValues { (site, installBlock) ->
-                val injectionSite = CodeInjectionSite.valueOf(site.uppercase())
-                val (code, filename) = when(installBlock) {
-                    is CodeSnippetSource.Text -> installBlock.code to null
-                    is CodeSnippetSource.Resource -> getResourceAsStream("${plugin.resourcePath}/${installBlock.file}")?.use {
-                        it.readAllBytes().toString(Charset.defaultCharset()) to installBlock.file
-                    } ?: throw IllegalArgumentException("Missing install snippet ${installBlock.file}")
-                }
-                snippetExtractor.parseInstallSnippet(injectionSite, code, filename)
-            }
-            return ResourceYamlManifest(plugin, release, model, installation)
-        }
-
-        private val PluginReference.manifestResourceFile: String get() =
-            "$resourcePath/manifest.ktor.yaml"
-
-        private val PluginReference.resourcePath: String get() =
-            "${group.id.replace('.', '/')}/$id"
-    }
 
     @OptIn(ExperimentalSerializationApi::class)
     override fun export(outputFile: Path, json: Json) {
-        logger.info { "${plugin.identifier} resolved from dependencies" }
+        logger.info { "${plugin.identifier} resolved from $source" }
         outputFile.outputStream().use { out ->
             json.encodeToStream(model.toExportModel(release), out)
         }
@@ -162,10 +204,10 @@ class ResourceYamlManifest(
     @Serializable(with = CodeBlockSerializer::class)
     sealed class CodeSnippetSource {
         companion object {
-            val DEFAULT = mapOf<String, CodeSnippetSource>(CodeBlockLocation.DEFAULT to CodeSnippetSource.Resource("install.kt"))
+            val DEFAULT = mapOf<String, CodeSnippetSource>(CodeBlockLocation.DEFAULT to CodeSnippetSource.File("install.kt"))
         }
         data class Text(val code: String): CodeSnippetSource()
-        data class Resource(val file: String): CodeSnippetSource()
+        data class File(val file: String): CodeSnippetSource()
     }
 
     object CodeBlockLocation {
@@ -183,7 +225,7 @@ class ResourceYamlManifest(
         override fun deserialize(decoder: Decoder): CodeSnippetSource {
             val text = decoder.decodeString()
             return if (text.matches(Regex("\\S+\\.\\S{1,5}")))
-                CodeSnippetSource.Resource(text)
+                CodeSnippetSource.File(text)
             else
                 CodeSnippetSource.Text(text)
         }

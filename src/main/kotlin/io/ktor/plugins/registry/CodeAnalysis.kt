@@ -53,7 +53,7 @@ class CodeSnippetExtractor {
 }
 
 private fun KtFile.importListAsStrings() =
-    importList?.imports?.map { it.text } ?: emptyList()
+    importList?.imports?.map { it.text.substring("import ".length) } ?: emptyList()
 
 private fun KtFile.functionBody() =
     declarations.filterIsInstance<KtNamedFunction>()
