@@ -26,6 +26,7 @@ Use the following structure for the files:
            /<version>                 -- ktor version range w/ special chars stripped
              /manifest.ktor.yaml      -- use template templates/manifest.ktor.yaml
              /install.kt              -- contains install function
+             /documentation.md        -- contains documentation
 ```
 
 You can include any number of install files for populating new projects.  More information under 
