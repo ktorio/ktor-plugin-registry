@@ -9,30 +9,28 @@ category: Routing
 # Plugin ID references which are required for this
 prerequisites:
   - other.plugin.id
-documentation:
-  description: |
-    A longer description here which is shown after selecting the plugin listing.  More details are provided here.
-  usage: |
-    Usage is a short description of how to use the plugin, supporting markdown for code snippets.
-    
-    ```kotlin
-    install(Sample) {
-        sampleProperty = "property.value"    
-    }
-    ```
-
+# Documentation can either be a file reference or string
+# Optional, defaults to documentation.md
+documentation: documentation.md
+# Formatted options shown at the bottom of documentation.
+# Optional, defaults to empty
+options:
+  - name: option1
+    default: some_value
+    description: defines the first option
 # (location, kotlin) pairs, where "location" is a pre-defined injection point, and "kotlin" is either a path or inline code
 #   options for "location" include:
-#     default: placed in the category's install file
-#     in_routing: underneath the `routing` configuration
-#     application_conf: in the application.conf file
-#     application_yaml: in the application.yaml file
-#     inside_app: add snippet to the application
-#     outside_app: top-level of main kotlin file, outside application scope
-#     call_logging_config: inside the call logging configuration block
-#     serialization_config: inside the serialization configuration block
-#     source_file_kt: in a separate file
-#     test_function: adds a function to the test suite
-#     resources: adds a file to the project's resources
+#   - default: placed in the *category*'s install file
+#   - in_routing: underneath the `routing` configuration
+#   - application_conf: in the application.conf file
+#   - application_yaml: in the application.yaml file
+#   - inside_app: add snippet to the application
+#   - outside_app: top-level of main kotlin file, outside application scope
+#   - call_logging_config: inside the call logging configuration block
+#   - serialization_config: inside the serialization configuration block
+#   - source_file_kt: in a separate file
+#   - test_function: adds a function to the test suite
+#   - resources: adds a file to the project's resources
+# Optional, defaults to install.kt
 installation:
   default: install.kt
