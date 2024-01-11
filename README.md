@@ -30,7 +30,8 @@ Use the following structure for the files:
 ```
 
 You can include any number of install files for populating new projects.  More information under 
-[templates/manifest.ktor.yaml](templates/manifest.ktor.yaml)
+[templates/manifest.ktor.yaml](templates/manifest.ktor.yaml).  The existing plugin files under the [plugins](plugins) folder can also be 
+useful reference for introducing new plugins.
 
 Run `./gradlew buildRegistry` before submitting to test the new files.
 

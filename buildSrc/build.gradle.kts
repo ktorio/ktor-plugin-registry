@@ -1,5 +1,3 @@
-import java.util.*
-
 plugins {
     `kotlin-dsl`
     kotlin("jvm") version "1.9.22"
@@ -12,7 +10,7 @@ repositories {
 
 dependencies {
     implementation(libs.kaml)
-    implementation(libs.semver)
+    implementation(libs.maven.artifact)
     testImplementation(kotlin("test"))
 }
 

@@ -4,7 +4,8 @@ import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.ktor.plugins.registry.SemverUtils.semverString
+import io.ktor.plugins.registry.SemverUtils.asMavenRange
+import io.ktor.plugins.registry.SemverUtils.asMavenVersion
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToStream
@@ -111,9 +112,12 @@ class RegistryBuilder(
 
 }
 
-val PluginReference.manifestOutputFile: String get() = "$id$versionRange.json"
+val PluginReference.manifestOutputFile: String get() = "$id-${versionRange.stripSpecialChars()}.json"
 val PluginReference.identifier: String get() = "${group.id}:$id:$versionRange"
 val PluginReference.versionRange: String get() = versions.keys.single()
+
+fun String.stripSpecialChars() =
+    Regex("[^a-zA-Z0-9\\-,.]").replace(this, "").trim(',')
 
 // Should be exactly one applicable version per release
 private fun PluginReference.isUnresolved() = versions.keys.size != 1
@@ -128,9 +132,9 @@ data class KtorRelease(
      * Selects the first plugin version that satisfies this release and includes it in "plugins" list.
      */
     fun pickVersion(plugin: PluginReference): String? {
-        val version = SemverUtils.parse(versionString)
+        val range = versionString.asMavenRange()
         return plugin.versions.keys.firstOrNull {
-            version.satisfies(it.semverString())
+            range.containsVersion(it.asMavenVersion())
         }?.also { foundVersion ->
             plugins.add(plugin.copy(versions = mapOf(foundVersion to plugin.versions[foundVersion]!!)))
         }

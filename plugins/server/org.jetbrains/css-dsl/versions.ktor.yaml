@@ -1,2 +1,2 @@
-^1.4.0: kotlin-css-jvm:1.0.0-pre.129-kotlin-1.4.20
-">=2.0.0": kotlin-css-jvm:1.0.0-pre.129-kotlin-1.4.20
+"[1.4,2.0)": kotlin-css-jvm:1.0.0-pre.129-kotlin-1.4.20
+"[2.0,)": kotlin-css-jvm:1.0.0-pre.129-kotlin-1.4.20

@@ -1,7 +1,7 @@
 [versions]
 kaml-version = "0.56.0"
-semver-version = "3.1.0"
+maven-artifact-version = "3.6.3"
 
 [libraries]
 kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml-version" }
-semver = { module = "com.vdurmont:semver4j", version.ref = "semver-version" }
+maven-artifact = { module = "org.apache.maven:maven-artifact", version.ref = "maven-artifact-version" }

@@ -1,1 +1,1 @@
-">=2.0.0": ktor-client-auth:==
+"[2.0,)": ktor-client-auth:==

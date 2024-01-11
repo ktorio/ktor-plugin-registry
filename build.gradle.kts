@@ -46,7 +46,7 @@ dependencies {
     implementation(libs.kaml)
 
     // resolving versions
-    implementation(libs.semver)
+    implementation(libs.maven.artifact)
 
     //logging
     implementation(libs.kotlin.logging)

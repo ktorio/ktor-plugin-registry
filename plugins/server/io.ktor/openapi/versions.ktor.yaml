@@ -1,1 +1,1 @@
-">=2.2.0": ktor-server-openapi:==
+"[2.2,)": ktor-server-openapi:==

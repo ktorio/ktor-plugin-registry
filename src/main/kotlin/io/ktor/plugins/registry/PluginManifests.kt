@@ -108,9 +108,6 @@ class PluginResolutionContext(
     private val PluginReference.resourcePath: String get() =
         "${group.id.replace('.', '/')}/$id"
 
-    private fun String.stripSpecialChars() =
-        Regex("[^a-zA-Z0-9-.]").replace(this, "")
-
     private fun readCodeSnippet(
         site: String,
         codeSnippet: YamlManifest.CodeSnippetSource,

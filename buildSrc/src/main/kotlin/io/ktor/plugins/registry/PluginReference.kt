@@ -1,6 +1,7 @@
 package io.ktor.plugins.registry
 
-import com.vdurmont.semver4j.Semver
+import io.ktor.plugins.registry.SemverUtils.asMavenRange
+import io.ktor.plugins.registry.SemverUtils.asMavenVersion
 import io.ktor.plugins.registry.SemverUtils.semverString
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -9,6 +10,8 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion
+import org.apache.maven.artifact.versioning.VersionRange
 import java.io.File
 
 @Serializable
@@ -30,10 +33,10 @@ typealias Artifacts = List<ArtifactReference>
 val PluginReference.artifacts: Artifacts get() = versions.values.flatten()
 
 fun PluginReference.allArtifactsForVersion(ktorVersion: String): Artifacts =
-    SemverUtils.parse(ktorVersion).let { releaseVersion ->
+    ktorVersion.asMavenVersion().let { releaseVersion ->
         versions.entries.firstNotNullOfOrNull { (versionRange, artifact) ->
             artifact.takeIf {
-                releaseVersion.satisfies(versionRange.semverString())
+                versionRange.asMavenRange().containsVersion(releaseVersion)
             }
         }.orEmpty()
     }
@@ -115,11 +118,18 @@ object FilePathSerializer : KSerializer<File> {
 
 object SemverUtils {
 
-    fun parse(versionString: String) =
-        Semver(versionString.semverString(), Semver.SemverType.NPM)
+    fun validateRange(range: String) {
+        VersionRange.createFromVersionSpec(range)
+    }
+
+    fun String.asMavenRange() =
+        VersionRange.createFromVersionSpec(this)
+
+    fun String.asMavenVersion() =
+        DefaultArtifactVersion(this)
 
     fun String.semverString() =
-        fixPreRelease().fixBetaNotation()
+        fixBetaNotation()
 
     // 1.0.0-beta-1 is technically incorrect, it should be 1.0.0-beta.1
     private fun String.fixBetaNotation() =
@@ -127,6 +137,7 @@ object SemverUtils {
 
     // Pre-releases resolve to SNAPSHOT jars,
     // so we try to be more lenient here.
+    // TODO we don't parse jar filenames anymore
     private fun String.fixPreRelease(): String =
         replace(Regex("""(\d+)\.\d+\.\d-pre.*$"""), "$1.+")
 }

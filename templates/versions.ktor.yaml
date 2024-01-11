@@ -1,11 +1,11 @@
 # This file maps ktor versions to the required artifacts
 
 # For a single artifact, include just the string.
-# The version range uses NPM semantic versioning.
+# The version range uses Maven-style semantic versioning https://docs.gradle.org/current/userguide/single_versions.html
 # Group and artifact name will default to the group and plugin ID.
-^1.0.0: 1.+
+"[1.0,2.0)": 1.+
 
 # For multiple gradle imports, use a list.
-">=2.0.0":
+2.+:
   - org.sample:sample-artifact:1.+
   - io.ktor:ktor-serialization-kotlinx-json:1.6.+
