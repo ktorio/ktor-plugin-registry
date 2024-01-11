@@ -1,10 +1,8 @@
 package io.ktor.plugins.registry
 
 import com.charleskorn.kaml.*
-import com.vdurmont.semver4j.Requirement
 import java.nio.file.Path
 import kotlin.io.path.*
-import io.ktor.plugins.registry.SemverUtils.semverString
 
 fun Path.readPluginFiles(): Sequence<PluginReference> = sequence {
     for (groupFolder in listDirectoryEntries()) {
@@ -31,7 +29,7 @@ fun Path.readPluginFiles(): Sequence<PluginReference> = sequence {
                     else -> throw IllegalArgumentException("Unexpected node $yamlNode")
                 }
                 try {
-                    Requirement.buildNPM(ktorVersionRange.semverString())
+                    SemverUtils.validateRange(ktorVersionRange)
                 } catch (e: Exception) {
                     throw IllegalArgumentException("Invalid version range $ktorVersionRange in $pluginFile", e)
                 }

@@ -1,2 +1,2 @@
-^1.4.0: []
-">=2.0.0": ktor-server-forwarded-header-jvm:==
+"[1.4,2.0)": []
+"[2.0,)": ktor-server-forwarded-header-jvm:==
