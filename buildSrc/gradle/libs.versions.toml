@@ -1,5 +1,5 @@
 [versions]
-kaml-version = "0.55.0"
+kaml-version = "0.56.0"
 semver-version = "3.1.0"
 
 [libraries]
