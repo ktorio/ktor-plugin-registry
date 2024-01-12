@@ -1,7 +1,7 @@
 package io.ktor.plugins.registry
 
 object DocumentationExtractor {
-    private val usageRegex = Regex("\n#+\\s*Usage\\s\n", setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
+    private val usageRegex = Regex("\n#+\\s*Usage\\s*?\n", setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
 
     fun parseDocumentationMarkdown(contents: String): DocumentationEntry =
         try {

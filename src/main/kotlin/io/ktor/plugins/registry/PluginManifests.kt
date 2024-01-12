@@ -15,6 +15,8 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 import java.io.InputStream
+import java.net.MalformedURLException
+import java.net.URL
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
@@ -132,7 +134,7 @@ class PluginResolutionContext(
         is YamlManifest.CodeSnippetSource.Text -> codeSnippet.code
         is YamlManifest.CodeSnippetSource.File -> {
             findCodeInput(codeSnippet.file)?.use { it.readAllBytes().toString(Charset.defaultCharset()) }
-                ?: throw IllegalArgumentException("Missing documentation snippet ${codeSnippet.file}")
+                ?: throw IllegalArgumentException("Missing documentation file ${codeSnippet.file}")
         }
     })
 }
@@ -163,6 +165,9 @@ class YamlManifest(
     private val sourceDescription: String,
     private val logger: KLogger = KotlinLogging.logger("YamlManifest")
 ): ResolvedPluginManifest {
+    init {
+        model.validateImportModel()
+    }
 
     @OptIn(ExperimentalSerializationApi::class)
     override fun export(outputFile: Path, json: Json) {
@@ -181,7 +186,7 @@ class YamlManifest(
         put("ktor_version", release.versionString)
         put("short_description", description)
         put("github", vcsLink)
-        put("copyright", copyright)
+        put("copyright", license)
         put("group", category.titleCase())
         putJsonObject("vendor") {
             put("name", plugin.group.name)
@@ -217,19 +222,33 @@ class YamlManifest(
         }
     }
 
-    private fun String.titleCase() = get(0) + substring(1).lowercase()
+    private fun ImportManifest.validateImportModel() {
+        require(name.isNotBlank()) { "Property 'name' requires a value" }
+        require(description.isNotBlank()) { "Property 'description' requires a value" }
+        validateVcsLink()
+        require(license.isNotBlank()) { "Property 'license' requires a value" }
+        require(category.uppercase() in PluginCategory.namesUppercase) { "Property 'category' must be one of ${PluginCategory.names}" }
+    }
+
+    private fun ImportManifest.validateVcsLink() {
+        try {
+            URL(vcsLink)
+        } catch (e: MalformedURLException) {
+            throw IllegalArgumentException("Invalid VCS link \"$vcsLink\"", e)
+        }
+    }
 
     @Serializable
     data class ImportManifest(
         val name: String,
         val description: String,
         val vcsLink: String,
-        val copyright: String,
+        val license: String,
         val category: String,
         val prerequisites: List<String>? = null,
         val documentation: CodeSnippetSource =
             CodeSnippetSource.File("documentation.md"),
-        val options: List<ImportOption>? = null, // TODO
+        val options: List<ImportOption>? = null,
         val installation: Map<String, CodeSnippetSource> =
             mapOf(CodeInjectionSite.DEFAULT.name to CodeSnippetSource.File("install.kt"))
     )
@@ -269,3 +288,22 @@ class YamlManifest(
     }
 
 }
+
+enum class PluginCategory(val acronym: Boolean = false) {
+    ADMINISTRATION,
+    DATABASES,
+    HTTP(acronym = true),
+    MONITORING,
+    ROUTING,
+    SECURITY,
+    SERIALIZATION,
+    SOCKETS,
+    TEMPLATING;
+
+    companion object {
+        val namesUppercase = entries.asSequence().map { it.name }.toSet()
+        val names = entries.asSequence().map { if (it.acronym) it.name else it.name.titleCase() }.toSet()
+    }
+}
+
+private fun String.titleCase() = get(0) + substring(1).lowercase()

@@ -31,7 +31,7 @@ class CodeSnippetExtractor {
                         imports = ktFile.importListAsStrings(),
                         code = codeBlock
                     )
-                } ?: throw IllegalArgumentException("Could not read snippet from function body:\n$contents")
+                } ?: throw IllegalArgumentException("Could not read install function:\n$contents")
             }
             CodeExtractionMethod.CODE_CONTENTS -> {
                 val ktFile = compileKotlinSource(contents, filename)

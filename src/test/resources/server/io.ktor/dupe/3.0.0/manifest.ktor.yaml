@@ -1,0 +1,9 @@
+name: Duplicates
+description: A test for duplicate plugins
+vcsLink: https://github.com/ktorio/dupe
+license: Apache 2.0
+category: Templating
+documentation: |
+  Here are the docs
+  #Usage
+  doThing()

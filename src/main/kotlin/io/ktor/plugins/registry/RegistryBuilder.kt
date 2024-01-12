@@ -23,7 +23,12 @@ class RegistryBuilder(
     private val yaml: Yaml = Yaml.default,
     private val json: Json = Json { prettyPrint = true }
 ) {
-    fun buildRegistry(pluginsRoot: Path, buildDir: Path, target: String) {
+    fun buildRegistry(
+        pluginsRoot: Path,
+        buildDir: Path,
+        target: String,
+        filter: (String) -> Boolean = { true },
+    ) {
         val pluginsDir = pluginsRoot.resolve(target)
         val artifactsFile = buildDir.resolve("$target-artifacts.yaml")
         val outputDir = buildDir.resolve("registry").resolve(target)
@@ -39,7 +44,7 @@ class RegistryBuilder(
         }
         logger.info { "Building registry for $target..." }
         with(ktorReleasesFromFile()) {
-            resolvePluginVersions(pluginsDir)
+            resolvePluginVersions(pluginsDir, filter)
             outputReleaseMappings(outputDir)
             outputManifestFiles(pluginsDir, artifactsFile, manifestsDir)
         }
@@ -48,8 +53,8 @@ class RegistryBuilder(
     private fun ktorReleasesFromFile() =
         Paths.get("build/ktor_releases").readLines().map(::KtorRelease)
 
-    private fun List<KtorRelease>.resolvePluginVersions(pluginsDir: Path) {
-        for (plugin in pluginsDir.readPluginFiles()) {
+    private fun List<KtorRelease>.resolvePluginVersions(pluginsDir: Path, filter: (String) -> Boolean) {
+        for (plugin in pluginsDir.readPluginFiles(filter)) {
             try {
                 val distributions = mapNotNull { release ->
                     release.pickVersion(plugin)?.let {
