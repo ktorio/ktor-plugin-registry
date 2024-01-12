@@ -2,7 +2,7 @@ import java.util.*
 
 plugins {
     `kotlin-dsl`
-    kotlin("jvm") version "1.9.21"
+    kotlin("jvm") version "1.9.22"
     kotlin("plugin.serialization") version "1.9.21"
 }
 
