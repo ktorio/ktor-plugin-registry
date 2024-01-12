@@ -1,0 +1,7 @@
+name: Missing documentation file
+description: A test for missing documentation files.
+vcsLink: https://github.com/fail/missing_doc
+license: Apache 2.0
+category: Templating
+installation:
+  default: "fun bun(){}"

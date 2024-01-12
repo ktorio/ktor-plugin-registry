@@ -1,5 +1,5 @@
 name: CSRF
 description: Cross-site request forgery mitigation
 vcsLink: https://github.com/ktorio/ktor/blob/main/ktor-server/ktor-server-plugins/ktor-server-csrf/jvmAndNix/src/io/ktor/server/plugins/csrf/CSRF.kt
-copyright: Apache 2.0
+license: Apache 2.0
 category: Security

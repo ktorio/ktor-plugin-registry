@@ -1,0 +1,9 @@
+name: Missing install file
+description: A test for missing install files.
+vcsLink: https://github.com/fail/missing
+license: Apache 2.0
+category: Templating
+documentation: |
+  Here are the docs
+  #Usage
+  doThing()
