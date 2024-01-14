@@ -1,5 +1,5 @@
 [versions]
-kaml-version = "0.56.0"
+kaml-version = "0.57.0"
 maven-artifact-version = "3.9.6"
 
 [libraries]
