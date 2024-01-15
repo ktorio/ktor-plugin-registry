@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
@@ -27,6 +28,15 @@ class CodeSnippetExtractor {
             CodeExtractionMethod.FUNCTION_BODY -> {
                 val ktFile = compileKotlinSource(contents, filename)
                 ktFile.functionBody()?.let { codeBlock ->
+                    InstallSnippet.Kotlin(
+                        imports = ktFile.importListAsStrings(),
+                        code = codeBlock
+                    )
+                } ?: throw IllegalArgumentException("Could not read install function:\n$contents")
+            }
+            CodeExtractionMethod.CLASS_BODY -> {
+                val ktFile = compileKotlinSource(contents, filename)
+                ktFile.classBody()?.let { codeBlock ->
                     InstallSnippet.Kotlin(
                         imports = ktFile.importListAsStrings(),
                         code = codeBlock
@@ -60,6 +70,11 @@ private fun KtFile.functionBody() =
         .singleOrNull()
         ?.bodyExpression?.text?.trimBraces()?.trimIndent()
 
+private fun KtFile.classBody() =
+    declarations.filterIsInstance<KtClass>()
+        .singleOrNull()
+        ?.body?.text?.trimBraces()?.trimIndent()?.trim('\n')
+
 private fun KtFile.endOfImports(): Int? =
     importDirectives.maxOfOrNull { it.textRange.endOffset }
 
@@ -87,6 +102,8 @@ sealed interface InstallSnippet {
 enum class CodeExtractionMethod {
     // pulls the body out of the function declaration found in this file
     FUNCTION_BODY,
+    // uses the contents of the class declaration to be injected into another class
+    CLASS_BODY,
     // extracts all top-level declarations for the code, excluding imports
     CODE_CONTENTS,
     // 1:1 copy of file contents
@@ -116,7 +133,7 @@ enum class CodeInjectionSite(val extractionMethod: CodeExtractionMethod) {
     CALL_LOGGING_CONFIG(CodeExtractionMethod.FUNCTION_BODY),
 
     // In ApplicationTest.kt as a separate function:
-    TEST_FUNCTION(CodeExtractionMethod.CODE_CONTENTS),
+    TEST_FUNCTION(CodeExtractionMethod.CLASS_BODY),
 
     // In application resources folder as a separate resource file
     RESOURCES(CodeExtractionMethod.FILE),
