@@ -137,9 +137,9 @@ data class KtorRelease(
      * Selects the first plugin version that satisfies this release and includes it in "plugins" list.
      */
     fun pickVersion(plugin: PluginReference): String? {
-        val range = versionString.asMavenRange()
+        val releaseVersion = versionString.asMavenVersion()
         return plugin.versions.keys.firstOrNull {
-            range.containsVersion(it.asMavenVersion())
+            it.asMavenRange().containsVersion(releaseVersion)
         }?.also { foundVersion ->
             plugins.add(plugin.copy(versions = mapOf(foundVersion to plugin.versions[foundVersion]!!)))
         }
