@@ -29,7 +29,7 @@ sealed interface ResolvedPluginManifest {
 }
 
 class PluginResolutionContext(
-    private val snippetExtractor: CodeSnippetExtractor,
+    private val codeAnalysis: CodeAnalysis,
     private val release: KtorRelease,
     private val classLoader: ClassLoader,
     private val pluginsDir: Path,
@@ -124,7 +124,7 @@ class PluginResolutionContext(
                 code to codeSnippet.file
             }
         }
-        return snippetExtractor.parseInstallSnippet(injectionSite, code, filename)
+        return codeAnalysis.parseInstallSnippet(injectionSite, code, filename)
     }
 
     private fun readDocumentation(

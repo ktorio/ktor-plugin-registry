@@ -4,8 +4,6 @@ import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.ktor.plugins.registry.SemverUtils.asMavenRange
-import io.ktor.plugins.registry.SemverUtils.asMavenVersion
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToStream
@@ -33,7 +31,8 @@ class RegistryBuilder(
         val artifactsFile = buildDir.resolve("$target-artifacts.yaml")
         val outputDir = buildDir.resolve("registry").resolve(target)
         val manifestsDir = outputDir.resolve("manifests")
-        if (!artifactsFile.exists())
+        val ktorReleasesFile = buildDir.resolve("ktor_releases")
+        if (!artifactsFile.exists() || !ktorReleasesFile.exists())
             throw PluginsUnresolvedException()
         else {
             outputDir.apply {
@@ -43,15 +42,12 @@ class RegistryBuilder(
             }
         }
         logger.info { "Building registry for $target..." }
-        with(ktorReleasesFromFile()) {
+        with(ktorReleasesFile.readLines().map(::KtorRelease)) {
             resolvePluginVersions(pluginsDir, filter)
             outputReleaseMappings(outputDir)
             outputManifestFiles(pluginsDir, artifactsFile, manifestsDir)
         }
     }
-
-    private fun ktorReleasesFromFile() =
-        Paths.get("build/ktor_releases").readLines().map(::KtorRelease)
 
     private fun List<KtorRelease>.resolvePluginVersions(pluginsDir: Path, filter: (String) -> Boolean) {
         for (plugin in pluginsDir.readPluginFiles(filter)) {
@@ -80,7 +76,6 @@ class RegistryBuilder(
 
         val artifactsByRelease: Map<String, Map<String, String>> =
             artifactsFile.inputStream().use(yaml::decodeFromStream)
-        val snippetExtractor = CodeSnippetExtractor()
 
         for (release in this) {
             logger.info {
@@ -89,16 +84,17 @@ class RegistryBuilder(
                 else
                     "Fetching manifests for ${release.versionString} ${release.plugins.map { it.id }.sorted()}"
             }
-            val jars = when (val releaseArtifacts = artifactsByRelease[release.versionString]) {
+            val jars: List<Path> = when (val releaseArtifacts = artifactsByRelease[release.versionString]) {
                 null -> {
                     logger.error { "No artifacts found for ${release.versionString}!" }
                     continue
                 }
-                else -> releaseArtifacts.values.map(::toPathUrl)
+                else -> releaseArtifacts.values.map(Paths::get)
             }
+            val codeAnalysis = CodeAnalysis(jars)
 
-            URLClassLoader(jars.toTypedArray()).use { classLoader ->
-                with(PluginResolutionContext(snippetExtractor, release, classLoader, pluginsDir)) {
+            URLClassLoader(jars.map { it.toUri().toURL() }.toTypedArray()).use { classLoader ->
+                with(PluginResolutionContext(codeAnalysis, release, classLoader, pluginsDir)) {
                     for (plugin in release.plugins) {
                         val outputFile = manifestsDir.resolve(plugin.manifestOutputFile)
                         if (plugin.isUnresolved() || outputFile.exists())
@@ -126,7 +122,6 @@ fun String.stripSpecialChars() =
 
 // Should be exactly one applicable version per release
 private fun PluginReference.isUnresolved() = versions.keys.size != 1
-private fun toPathUrl(pathString: String) = Paths.get(pathString).toUri().toURL()
 
 data class KtorRelease(
     val versionString: String,
@@ -137,9 +132,9 @@ data class KtorRelease(
      * Selects the first plugin version that satisfies this release and includes it in "plugins" list.
      */
     fun pickVersion(plugin: PluginReference): String? {
-        val releaseVersion = versionString.asMavenVersion()
+        val releaseVersion = ArtifactVersion.parse(versionString)
         return plugin.versions.keys.firstOrNull {
-            it.asMavenRange().containsVersion(releaseVersion)
+            ArtifactVersion.parse(it).contains(releaseVersion)
         }?.also { foundVersion ->
             plugins.add(plugin.copy(versions = mapOf(foundVersion to plugin.versions[foundVersion]!!)))
         }

@@ -27,6 +27,14 @@ dependencies {
     for (target in targets) {
         for ((config, version) in target.releases) {
             config("io.ktor:ktor-${target.name}-core:$version")
+            config(kotlin("stdlib"))
+
+            // test imports for test_function template
+            if (target.name == "server") {
+                config(kotlin("test"))
+                config(kotlin("test-junit"))
+                config("io.ktor:ktor-server-test-host:$version")
+            }
 
             for (dependency in target.allArtifactsForVersion(version))
                 config(dependency)

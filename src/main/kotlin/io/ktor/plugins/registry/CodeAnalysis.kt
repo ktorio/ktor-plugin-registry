@@ -3,45 +3,78 @@ package io.ktor.plugins.registry
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFileFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
+import org.jetbrains.kotlin.cli.jvm.compiler.CliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.cli.jvm.configureContentRootsFromClassPath
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import java.io.File
+import java.nio.file.Path
+import java.nio.file.Paths
 
-class CodeSnippetExtractor {
+class CodeAnalysis(private val classpathUrls: List<Path> = emptyList()) {
 
-    private val environment by lazy {
+    private var environment: KotlinCoreEnvironment
+    private var psiFileFactory: PsiFileFactory
+    private val analyzer = TopDownAnalyzerFacadeForJVM
+
+    init {
         val messageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, true)
         val configuration = CompilerConfiguration().apply {
             put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
+            put(CommonConfigurationKeys.MODULE_NAME, "PluginRegistry")
+            put(JVMConfigurationKeys.JDK_HOME, File(System.getenv("JAVA_HOME")))
+
+            configureContentRootsFromClassPath(K2JVMCompilerArguments().apply {
+                classpath = classpathUrls.ifNotEmpty {
+                    classpathUrls.joinToString(File.pathSeparator) { it.toString() }
+                } ?: System.getProperty("java.class.path")
+            })
         }
-        KotlinCoreEnvironment.createForProduction(Disposer.newDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        environment = KotlinCoreEnvironment.createForProduction(
+            Disposer.newDisposable(),
+            configuration,
+            EnvironmentConfigFiles.JVM_CONFIG_FILES
+        )
+        psiFileFactory = PsiFileFactory.getInstance(environment.project)
     }
 
     fun parseInstallSnippet(site: CodeInjectionSite, contents: String, filename: String? = null): InstallSnippet =
         when(site.extractionMethod) {
             CodeExtractionMethod.FUNCTION_BODY -> {
-                val ktFile = compileKotlinSource(contents, filename)
-                ktFile.functionBody()?.let { codeBlock ->
-                    InstallSnippet.Kotlin(
-                        imports = ktFile.importListAsStrings(),
-                        code = codeBlock
-                    )
-                } ?: throw IllegalArgumentException("Could not read install function:\n$contents")
+                with(compileKotlinSource(contents, filename)) {
+                    throwIfError()
+                    functionBody()?.let { codeBlock ->
+                        InstallSnippet.Kotlin(
+                            imports = importListAsStrings(),
+                            code = codeBlock
+                        )
+                    } ?: throw IllegalArgumentException("Could not read install function:\n$contents")
+                }
             }
             CodeExtractionMethod.CLASS_BODY -> {
-                val ktFile = compileKotlinSource(contents, filename)
-                ktFile.classBody()?.let { codeBlock ->
-                    InstallSnippet.Kotlin(
-                        imports = ktFile.importListAsStrings(),
-                        code = codeBlock
-                    )
-                } ?: throw IllegalArgumentException("Could not read install function:\n$contents")
+                with(compileKotlinSource(contents, filename)) {
+                    throwIfError()
+                    classBody()?.let { codeBlock ->
+                        InstallSnippet.Kotlin(
+                            imports = importListAsStrings(),
+                            code = codeBlock
+                        )
+                    } ?: throw IllegalArgumentException("Could not read install class:\n$contents")
+                }
             }
             CodeExtractionMethod.CODE_CONTENTS -> {
                 val ktFile = compileKotlinSource(contents, filename)
@@ -57,8 +90,27 @@ class CodeSnippetExtractor {
             CodeExtractionMethod.FILE -> InstallSnippet.RawContent(contents, filename)
         }
 
-    private fun compileKotlinSource(contents: String, filename: String? = null) =
-        PsiFileFactory.getInstance(environment.project).createFileFromText(filename ?: "Install.kt", KotlinFileType.INSTANCE, contents) as KtFile
+    private fun compileKotlinSource(contents: String, filename: String? = null): KtFile =
+        psiFileFactory.createFileFromText(filename ?: "install.kt", KotlinFileType.INSTANCE, contents) as KtFile
+
+    private fun KtFile.throwIfError() {
+        val trace = CliBindingTrace()
+        analyzer.analyzeFilesWithJavaIntegration(
+            environment.project,
+            listOf(this),
+            trace,
+            environment.configuration,
+            environment::createPackagePartProvider
+        )
+
+        trace.bindingContext.diagnostics.firstOrNull {
+            it.severity == Severity.ERROR
+        }?.let { compileError ->
+            val startOffset = compileError.textRanges.first().startOffset
+            val lineNumber = compileError.psiFile.viewProvider.document?.getLineNumber(startOffset)?.let { it + 1 } ?: "??"
+            throw IllegalArgumentException("${DefaultErrorMessages.render(compileError)} (${this@throwIfError.name}:$lineNumber)")
+        }
+    }
 
 }
 
