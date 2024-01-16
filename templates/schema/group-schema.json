@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "https://ktor.io/group.yaml.json",
+  "properties": {
+    "name": {
+      "description": "The name of your organization",
+      "type": "string",
+      "maxLength": 80,
+      "minLength": 1
+    },
+    "url": {
+      "description": "A URL associated with your organization",
+      "type": "string",
+      "maxLength": 80
+    },
+    "email": {
+      "description": "An email for contacting the plugin maintainers",
+      "type": "string",
+      "maxLength": 80
+    }
+  },
+  "required": ["name"],
+  "title": "YAML schema for Ktor plugin groups",
+  "type": "object"
+}

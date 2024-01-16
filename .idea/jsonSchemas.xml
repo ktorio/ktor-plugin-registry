@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JsonSchemaMappingsProjectConfiguration">
+    <state>
+      <map>
+        <entry key="Ktor plugin group">
+          <value>
+            <SchemaInfo>
+              <option name="generatedName" value="New Schema" />
+              <option name="name" value="Ktor plugin group" />
+              <option name="relativePathToSchema" value="templates/schema/group-schema.json" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="plugins/*/*/group.ktor.yaml" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key="Ktor plugin manifest">
+          <value>
+            <SchemaInfo>
+              <option name="generatedName" value="New Schema" />
+              <option name="name" value="Ktor plugin manifest" />
+              <option name="relativePathToSchema" value="templates/schema/manifest-schema.json" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="plugins/*/*/*/*/manifest.ktor.yaml" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key="Ktor versions mapping">
+          <value>
+            <SchemaInfo>
+              <option name="generatedName" value="New Schema" />
+              <option name="name" value="Ktor versions mapping" />
+              <option name="relativePathToSchema" value="templates/schema/version-schema.json" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="plugins/*/*/*/versions.ktor.yaml" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
+      </map>
+    </state>
+  </component>
+</project>
