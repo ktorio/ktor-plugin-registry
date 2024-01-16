@@ -182,7 +182,7 @@ class YamlManifest(
     ): JsonObject = buildJsonObject {
         put("id", plugin.id)
         put("name", name)
-        put("version", plugin.versionRange) // TODO assuming version doesn't really matter
+        put("version", plugin.versionRange.stripSpecialChars())
         put("ktor_version", release.versionString)
         put("short_description", description)
         put("github", vcsLink)
@@ -191,6 +191,7 @@ class YamlManifest(
         putJsonObject("vendor") {
             put("name", plugin.group.name)
             put("url", plugin.group.url)
+            put("email", plugin.group.email)
         }
         putJsonArray("required_feature_ids") {
             prerequisites?.forEach(::add)

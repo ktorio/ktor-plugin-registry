@@ -26,6 +26,7 @@ data class PluginGroup(
     val id: String,
     val name: String?,
     val url: String?,
+    val email: String?,
 )
 
 typealias Artifacts = List<ArtifactReference>
