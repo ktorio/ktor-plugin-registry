@@ -1,0 +1,9 @@
+name: Missing import
+description: The install script won't compile
+vcsLink: https://github.com/fail/missing_import
+license: Apache 2.0
+category: Templating
+documentation: |
+  Here are the docs
+  #Usage
+  doThing()

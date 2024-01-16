@@ -1,5 +1,6 @@
 package io.ktor.plugins.registry
 
+import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -17,6 +18,10 @@ class RegistryBuilderTest {
             Files.copy(
                 Paths.get("build/server-artifacts.yaml"),
                 buildDir.resolve("server-artifacts.yaml"),
+            )
+            Files.copy(
+                testResources.resolve("resolved/ktor_releases"),
+                buildDir.resolve("ktor_releases"),
             )
         }
     }
@@ -110,10 +115,18 @@ class RegistryBuilderTest {
 
     @Test
     fun `fails on install compilation error`() {
-        assertRegistryFailure("Could not read install function:\n" +
-                "does not compile") {
+        assertRegistryFailure("Could not read install function:\n${resourceContents("/server/com.fail/bad_kt/2.3.7/install.kt")}") {
             buildRegistry {
                 it == "bad_kt"
+            }
+        }
+    }
+
+    @Test
+    fun `fails on unknown types`() {
+        assertRegistryFailure("Unresolved reference: does (install.kt:1)") {
+            buildRegistry {
+                it == "missing_import"
             }
         }
     }
@@ -129,6 +142,12 @@ class RegistryBuilderTest {
 
     private fun clonePlugin(id: String): PluginTestContext =
         PluginTestContext(id)
+
+
+    private fun resourceContents(resource: String): String =
+        this::class.java.getResourceAsStream(resource)?.use {
+            it.readAllBytes().toString(Charset.defaultCharset())
+        } ?: throw IllegalArgumentException("No resource found for $resource")
 
     inner class PluginTestContext(private val id: String) {
         private val replacements = mutableMapOf<String, String?>()

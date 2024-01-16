@@ -75,7 +75,7 @@ private fun readVersionsMapping(pluginFile: Path, groupId: String): Map<String, 
                     else -> throw IllegalArgumentException("Unexpected node $versionsYamlNode")
                 }
                 try {
-                    SemverUtils.validateRange(ktorVersionRange)
+                    ArtifactVersion.parse(ktorVersionRange)
                 } catch (e: Exception) {
                     throw IllegalArgumentException("Invalid version range $ktorVersionRange in $pluginFile", e)
                 }

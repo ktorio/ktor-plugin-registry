@@ -17,7 +17,7 @@ fun Sequence<PluginReference>.allArtifactsForVersion(ktorRelease: String): Seque
             with(artifact) {
                 "$group:$name:" + when(version) {
                     is MatchKtor -> ktorRelease
-                    is VersionNumber -> version.number
+                    else -> version.toString()
                 }
             }
         }

@@ -7,78 +7,44 @@ class CodeAnalysisTest {
 
     companion object {
         private const val KOTLIN_CODE = """
-            import io.ktor.server.application.*
-            import io.ktor.server.plugins.csrf.*
+            import java.nio.file.Paths
         
-            public fun Application.install() {
-                install(CSRF) {
-                    // tests Origin is an expected value
-                    allowOrigin("http://localhost:8080")
-        
-                    // tests Origin matches Host header
-                    originMatchesHost()
-        
-                    // custom header checks
-                    checkHeader("X-CSRF-Token")
-                }
+            public fun pwd() {
+                println(Paths.get("").toAbsolutePath().toString())
             }
         """
     }
 
-    private val snippetExtractor = CodeSnippetExtractor()
+    private val codeAnalysis = CodeAnalysis()
 
     @Test
     fun `read install snippet verbatim`() {
-        val result = snippetExtractor.parseInstallSnippet(CodeInjectionSite.SOURCE_FILE_KT, KOTLIN_CODE.trimIndent(), "Test.kt")
+        val result = codeAnalysis.parseInstallSnippet(CodeInjectionSite.SOURCE_FILE_KT, KOTLIN_CODE.trimIndent(), "Test.kt")
 
         assertEquals(InstallSnippet.RawContent(KOTLIN_CODE.trimIndent(), "Test.kt"), result)
     }
 
     @Test
     fun `read install snippet from kotlin`() {
-        val result = snippetExtractor.parseInstallSnippet(CodeInjectionSite.DEFAULT, KOTLIN_CODE.trimIndent())
+        val result = codeAnalysis.parseInstallSnippet(CodeInjectionSite.DEFAULT, KOTLIN_CODE.trimIndent())
 
         assertEquals(InstallSnippet.Kotlin(
             imports = listOf(
-                "io.ktor.server.application.*",
-                "io.ktor.server.plugins.csrf.*",
+                "java.nio.file.Paths",
             ),
-            code = """
-                install(CSRF) {
-                    // tests Origin is an expected value
-                    allowOrigin("http://localhost:8080")
-
-                    // tests Origin matches Host header
-                    originMatchesHost()
-
-                    // custom header checks
-                    checkHeader("X-CSRF-Token")
-                }
-            """.trimIndent()
+            code = """println(Paths.get("").toAbsolutePath().toString())"""
         ), result)
     }
 
     @Test
     fun `read install snippet code contents`() {
-        val result = snippetExtractor.parseInstallSnippet(CodeInjectionSite.OUTSIDE_APP, KOTLIN_CODE.trimIndent(), "Test.kt")
+        val result = codeAnalysis.parseInstallSnippet(CodeInjectionSite.OUTSIDE_APP, KOTLIN_CODE.trimIndent(), "Test.kt")
 
         assertEquals(InstallSnippet.Kotlin(
-            imports = listOf(
-                "io.ktor.server.application.*",
-                "io.ktor.server.plugins.csrf.*",
-            ),
+            imports = listOf("java.nio.file.Paths"),
             code = """
-                public fun Application.install() {
-                    install(CSRF) {
-                        // tests Origin is an expected value
-                        allowOrigin("http://localhost:8080")
-    
-                        // tests Origin matches Host header
-                        originMatchesHost()
-    
-                        // custom header checks
-                        checkHeader("X-CSRF-Token")
-                    }
+                public fun pwd() {
+                    println(Paths.get("").toAbsolutePath().toString())
                 }
             """.trimIndent()
         ), result)
