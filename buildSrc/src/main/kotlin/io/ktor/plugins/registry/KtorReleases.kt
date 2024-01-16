@@ -1,6 +1,5 @@
 package io.ktor.plugins.registry
 
-import org.gradle.kotlin.dsl.provideDelegate
 import java.net.URL
 import java.nio.file.Path
 import java.nio.file.Paths
