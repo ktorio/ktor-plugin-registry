@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "io.ktor"
-version = "1.0-SNAPSHOT"
+version = "1.6.8"
 
 repositories {
     allRepositories()
