@@ -20,12 +20,11 @@ fun Path.readPluginFiles(filter: (String) -> Boolean = { true }): Sequence<Plugi
 
     for (groupFolder in listDirectoryEntries()) {
         val groupId = groupFolder.name
-        val groupInfo = groupFolder.resolve("group.ktor.yaml").takeIf { it.exists() }?.inputStream()?.use(Yaml.default::parseToYamlNode)?.yamlMap?.let { yaml: YamlMap ->
-            PluginGroup(
-                id = groupId,
-                name = yaml.get<YamlScalar>("name")?.content,
-                url = yaml.get<YamlScalar>("url")?.content
-            )
+        val groupInfo = groupFolder.resolve("group.ktor.yaml").readYamlMap()?.let { yaml: YamlMap ->
+            val (name, url, email) = listOf("name", "url", "email").map {
+                yaml.get<YamlScalar>(it)?.content
+            }
+            PluginGroup(groupId, name, url, email)
         }
 
         for (pluginFolder in groupFolder.listDirectoryEntries()) {
@@ -57,10 +56,11 @@ fun Path.readPluginFiles(filter: (String) -> Boolean = { true }): Sequence<Plugi
 
 private fun readVersionsMapping(pluginFile: Path, groupId: String): Map<String, Artifacts> {
     try {
-        val versionsYamlNode = pluginFile.inputStream().use(Yaml.default::parseToYamlNode)
+        val versionsYamlNode = pluginFile.readYamlMap()
+            ?: throw IllegalArgumentException("Could not find versions.ktor.yaml")
 
         val versions: Map<String, Artifacts> =
-            versionsYamlNode.yamlMap.entries.entries.associate { (range, artifacts) ->
+            versionsYamlNode.entries.entries.associate { (range, artifacts) ->
                 val ktorVersionRange = range.content
                 val artifactReferences = when (artifacts) {
                     is YamlList -> artifacts.items.map {
@@ -90,3 +90,10 @@ private fun readVersionsMapping(pluginFile: Path, groupId: String): Map<String, 
         throw IllegalArgumentException("Failed to parse versions.ktor.yaml for plugin \"${pluginFile.parent.name}\"", e)
     }
 }
+
+private fun Path.readYamlMap(): YamlMap? =
+    takeIf { it.exists() }
+        ?.inputStream()
+        ?.use(Yaml.default::parseToYamlNode)
+        ?.yamlMap
+
