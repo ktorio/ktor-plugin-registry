@@ -91,7 +91,11 @@ class CodeAnalysis(private val classpathUrls: List<Path> = emptyList()) {
         }
 
     private fun compileKotlinSource(contents: String, filename: String? = null): KtFile =
-        psiFileFactory.createFileFromText(filename ?: "install.kt", KotlinFileType.INSTANCE, contents) as KtFile
+        psiFileFactory.createFileFromText(
+            filename ?: "Install.kt",
+            KotlinFileType.INSTANCE,
+            contents
+        ) as KtFile
 
     private fun KtFile.throwIfError() {
         val trace = CliBindingTrace()

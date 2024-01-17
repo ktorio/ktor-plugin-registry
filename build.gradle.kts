@@ -8,6 +8,7 @@ val targets by lazy { fetchKtorTargets() }
 plugins {
     kotlin("jvm") version "1.9.22"
     kotlin("plugin.serialization") version "1.9.22"
+    id("io.gitlab.arturbosch.detekt") version "1.23.3"
 }
 
 group = "io.ktor"
@@ -71,6 +72,12 @@ sourceSets {
             srcDir("build/copied")
         }
     }
+}
+
+detekt {
+    toolVersion = "1.23.3"
+    config.setFrom(file("detekt.yml"))
+    buildUponDefaultConfig = true
 }
 
 tasks {

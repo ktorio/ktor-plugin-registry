@@ -97,7 +97,10 @@ class RegistryBuilderTest {
 
     @Test
     fun `fails on incorrect category`() {
-        assertRegistryFailure("Property 'category' must be one of [Administration, Databases, HTTP, Monitoring, Routing, Security, Serialization, Sockets, Templating]") {
+        assertRegistryFailure(
+            "Property 'category' must be one of " +
+                "[Administration, Databases, HTTP, Monitoring, Routing, Security, Serialization, Sockets, Templating]"
+        ) {
             clonePlugin("csrf")
                 .substitute("category" to "Some wrong value")
                 .build()
@@ -159,7 +162,7 @@ class RegistryBuilderTest {
 
         fun build() {
             val pluginDir = Files.walk(testResources).filter { it.name == id }.findFirst().getOrNull()
-                ?: throw IllegalStateException("Could not find plugin $id")
+            require(pluginDir != null) { "Could not find plugin $id" }
             val groupDir = pluginDir.parent
             val groupYaml = groupDir.resolve("group.ktor.yaml")
             val tempDir = Files.createTempDirectory("cloned")
@@ -192,9 +195,5 @@ class RegistryBuilderTest {
 
             buildRegistry(dir = tempDir)
         }
-
-
-
     }
-
 }

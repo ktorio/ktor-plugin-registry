@@ -101,7 +101,10 @@ class RegistryBuilder(
                             continue
 
                         when (val manifest = resolveManifest(plugin)) {
-                            null -> logger.error { "Could not find manifest for ${plugin.group.id}:${plugin.id} for ktor ${plugin.versionRange}" }
+                            null -> logger.error {
+                                "Could not find manifest for ${plugin.group.id}:${plugin.id} " +
+                                    "for ktor ${plugin.versionRange}"
+                            }
                             else -> manifest.export(outputFile, json)
                         }
                     }

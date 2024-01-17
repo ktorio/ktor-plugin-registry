@@ -19,7 +19,11 @@ class CodeAnalysisTest {
 
     @Test
     fun `read install snippet verbatim`() {
-        val result = codeAnalysis.parseInstallSnippet(CodeInjectionSite.SOURCE_FILE_KT, KOTLIN_CODE.trimIndent(), "Test.kt")
+        val result = codeAnalysis.parseInstallSnippet(
+            CodeInjectionSite.SOURCE_FILE_KT,
+            KOTLIN_CODE.trimIndent(),
+            "Test.kt"
+        )
 
         assertEquals(InstallSnippet.RawContent(KOTLIN_CODE.trimIndent(), "Test.kt"), result)
     }
@@ -38,7 +42,11 @@ class CodeAnalysisTest {
 
     @Test
     fun `read install snippet code contents`() {
-        val result = codeAnalysis.parseInstallSnippet(CodeInjectionSite.OUTSIDE_APP, KOTLIN_CODE.trimIndent(), "Test.kt")
+        val result = codeAnalysis.parseInstallSnippet(
+            CodeInjectionSite.OUTSIDE_APP,
+            KOTLIN_CODE.trimIndent(),
+            "Test.kt"
+        )
 
         assertEquals(InstallSnippet.Kotlin(
             imports = listOf("java.nio.file.Paths"),
@@ -49,5 +57,4 @@ class CodeAnalysisTest {
             """.trimIndent()
         ), result)
     }
-
 }
