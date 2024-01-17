@@ -1,7 +1,12 @@
 [versions]
+kotlin-version = "1.9.22"
 kaml-version = "0.57.0"
 maven-artifact-version = "3.9.6"
 
 [libraries]
 kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml-version" }
 maven-artifact = { module = "org.apache.maven:maven-artifact", version.ref = "maven-artifact-version" }
+
+[plugins]
+serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin-version" }
+jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-version" }

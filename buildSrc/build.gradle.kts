@@ -4,8 +4,8 @@
 
 plugins {
     `kotlin-dsl`
-    kotlin("jvm") version "1.9.22"
-    kotlin("plugin.serialization") version "1.9.22"
+    alias(libs.plugins.serialization)
+    alias(libs.plugins.jvm)
 }
 
 repositories {
