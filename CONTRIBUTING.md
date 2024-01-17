@@ -42,9 +42,13 @@ The main source path includes all the code for building out the plugin registry 
 
 ## Building
 
-For building the project, simply run `./gradlew build`.  This builds the project and runs the tests to ensure the 
-plugin artifacts can be resolved and the registry builder is functioning normally.  Note, this does not build the 
-registry for export to the project generator (see [Building the registry](CONTRIBUTING.md#building-the-registry)).
+To build the project, run the following gradle target:
+```bash
+./gradlew build
+```
+
+This builds the project and runs the tests to ensure the plugin artifacts can be resolved and the registry builder is 
+functioning normally.  Note, this does not build the registry for export to the project generator (see [Building the registry](CONTRIBUTING.md#building-the-registry)).
 
 #### Resolving plugin artifacts
 
@@ -52,7 +56,12 @@ When this project is built, it will also resolve all the artifacts required by t
 under [plugins](plugins) while iterating through all the relevant Ktor releases found in maven 
 (see [KtorReleases.kt](buildSrc/src/main/kotlin/io/ktor/plugins/registry/KtorReleases.kt)).  During this step, 
 the build will output `<client/server>-artifacts.yaml` and `ktor_releases` files which are later used for building 
-the registry.  To run this step in isolation, run `./gradlew resolvePlugins`.
+the registry.
+
+To perform this step in isolation, run:
+```bash
+./gradlew resolvePlugins
+```
 
 #### Building the registry
 
@@ -76,7 +85,7 @@ Contributions are made using Github [pull requests](https://help.github.com/en/a
 
 1. Fork the Ktor repository and work on your fork.
 2. Try to [build the registry](CONTRIBUTING.md#building-the-registry) locally before submitting the pull request.  If
-   you have some difficulty with the build you can submit the PR and we can help debug the problem.
+   you have some difficulty with the build you can submit the PR, and we can help debug the problem.
 3. [Create](https://github.com/ktorio/ktor-plugin-registry/compare) a new PR with a request to merge to the **main** branch.
 4. Provide as much context as possible regarding the change, including links to issues or YouTrack tickets.
 
