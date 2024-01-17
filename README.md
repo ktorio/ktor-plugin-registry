@@ -7,7 +7,7 @@ This project contains references to all [Ktor](https://github.com/ktorio/ktor/) 
 
 To add a new plugin, follow these easy steps:
 
-1. **Publish your project to Maven**
+1. **Publish your project to Maven.**
    - Use the gradle [maven publish plugin](https://docs.gradle.org/current/userguide/publishing_maven.html) to publish 
      to [Maven Central](https://central.sonatype.org/) or some other public Maven repository.
    - We read from repositories listed in [Repositories.kt](buildSrc/src/main/kotlin/io/ktor/plugins/registry/Repositories.kt). 
@@ -15,9 +15,9 @@ To add a new plugin, follow these easy steps:
 Repositories.kt in your pull request in step 2.  It should have public read access.
      <br /><br />
 
-2. **Fork and clone this repository**<br /><br />
+2. **Fork and clone this repository.**<br /><br />
 
-3. **Add files under the `/plugins` folder**
+3. **Add files under the `/plugins` folder.**
     - Use the following structure for the files:
     ```
       /plugins
