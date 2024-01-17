@@ -1,3 +1,7 @@
+/*
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ */
+
 package io.ktor.plugins.registry
 
 import com.charleskorn.kaml.Yaml
@@ -101,7 +105,10 @@ class RegistryBuilder(
                             continue
 
                         when (val manifest = resolveManifest(plugin)) {
-                            null -> logger.error { "Could not find manifest for ${plugin.group.id}:${plugin.id} for ktor ${plugin.versionRange}" }
+                            null -> logger.error {
+                                "Could not find manifest for ${plugin.group.id}:${plugin.id} " +
+                                    "for ktor ${plugin.versionRange}"
+                            }
                             else -> manifest.export(outputFile, json)
                         }
                     }

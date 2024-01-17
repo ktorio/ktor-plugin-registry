@@ -1,3 +1,7 @@
+/*
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ */
+
 @file:Suppress("UnstableApiUsage")
 
 import io.ktor.plugins.registry.*
@@ -6,8 +10,9 @@ import java.nio.file.Paths
 val targets by lazy { fetchKtorTargets() }
 
 plugins {
-    kotlin("jvm") version "1.9.22"
-    kotlin("plugin.serialization") version "1.9.22"
+    alias(libs.plugins.serialization)
+    alias(libs.plugins.jvm)
+    alias(libs.plugins.detekt)
 }
 
 group = "io.ktor"
@@ -71,6 +76,12 @@ sourceSets {
             srcDir("build/copied")
         }
     }
+}
+
+detekt {
+    toolVersion = libs.versions.detekt.version.get()
+    config.setFrom(file("detekt.yml"))
+    buildUponDefaultConfig = true
 }
 
 tasks {

@@ -1,6 +1,9 @@
+/*
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ */
+
 package io.ktor.plugins.registry
 
-import org.gradle.kotlin.dsl.provideDelegate
 import java.net.URL
 import java.nio.file.Path
 import java.nio.file.Paths

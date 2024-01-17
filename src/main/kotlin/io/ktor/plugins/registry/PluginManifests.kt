@@ -1,3 +1,7 @@
+/*
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ */
+
 package io.ktor.plugins.registry
 
 import com.charleskorn.kaml.Yaml
@@ -34,6 +38,7 @@ class PluginResolutionContext(
     private val classLoader: ClassLoader,
     private val pluginsDir: Path,
 ) {
+    private val logger = KotlinLogging.logger("PluginResolutionContext")
 
     /**
      * Preference goes:
@@ -46,16 +51,19 @@ class PluginResolutionContext(
             ?: resolveYamlFile(plugin)
             ?: resolveYamlFromClasspath(plugin)
 
-    private fun resolvePrebuiltJson(plugin: PluginReference) =
-        plugin.versionPath.resolve("manifest.json").ifExists()?.let { path ->
-            PrebuiltJsonManifest(plugin, path)
+    private fun resolvePrebuiltJson(plugin: PluginReference): ResolvedPluginManifest? {
+        return plugin.versionPath.resolve("manifest.json").ifExists()?.let { path ->
+            logger.info { "${plugin.identifier} resolved from JSON" }
+            PrebuiltJsonManifest(path)
         }
+    }
 
     private fun resolveYamlFile(plugin: PluginReference) =
         plugin.versionPath.resolve("manifest.ktor.yaml").ifExists()?.let { path ->
             val model: YamlManifest.ImportManifest =
                 path.inputStream().use(Yaml.default::decodeFromStream)
 
+            logger.info { "${plugin.identifier} resolved from YAML" }
             YamlManifest(
                 plugin = plugin,
                 release = release,
@@ -68,7 +76,6 @@ class PluginResolutionContext(
                 documentationEntry = readDocumentation(model.documentation) {
                     plugin.readFileFromVersionPath(it)
                 },
-                sourceDescription = "plugin files"
             )
         }
 
@@ -77,6 +84,7 @@ class PluginResolutionContext(
             ?.use(Yaml.default::decodeFromStream)
             ?: return null
 
+        logger.info { "${plugin.identifier} resolved from classpath" }
         return YamlManifest(
             plugin = plugin,
             release = release,
@@ -89,7 +97,6 @@ class PluginResolutionContext(
             documentationEntry = readDocumentation(model.documentation) {
                 plugin.readFileFromClasspath(it)
             },
-            sourceDescription = "classpath"
         )
     }
 
@@ -142,13 +149,8 @@ class PluginResolutionContext(
 /**
  * Migrated JSON files from earlier iterations of the project generator backend.
  */
-class PrebuiltJsonManifest(
-    private val plugin: PluginReference,
-    private val path: Path,
-    private val logger: KLogger = KotlinLogging.logger("PrebuiltJsonManifest")
-) : ResolvedPluginManifest {
+data class PrebuiltJsonManifest(private val path: Path) : ResolvedPluginManifest {
     override fun export(outputFile: Path, json: Json) {
-        logger.info { "${plugin.identifier} copied from ${path.normalizeAndRelativize()}" }
         Files.copy(path, outputFile)
     }
 }
@@ -156,14 +158,12 @@ class PrebuiltJsonManifest(
 /**
  * manifest.ktor.yaml files imported via gradle OR resolved from plugin directory
  */
-class YamlManifest(
+data class YamlManifest(
     private val plugin: PluginReference,
     private val release: KtorRelease,
     private val model: ImportManifest,
     private val installSnippets: Map<String, InstallSnippet>,
     private val documentationEntry: DocumentationEntry,
-    private val sourceDescription: String,
-    private val logger: KLogger = KotlinLogging.logger("YamlManifest")
 ): ResolvedPluginManifest {
     init {
         model.validateImportModel()
@@ -171,7 +171,6 @@ class YamlManifest(
 
     @OptIn(ExperimentalSerializationApi::class)
     override fun export(outputFile: Path, json: Json) {
-        logger.info { "${plugin.identifier} resolved from $sourceDescription" }
         outputFile.outputStream().use { out ->
             json.encodeToStream(model.toExportModel(release), out)
         }
@@ -211,7 +210,10 @@ class YamlManifest(
                 put("install_block", defaultInstall.code)
             }
             putJsonArray("templates") {
-                for ((position, snippet) in installSnippets.entries.filter { (key, _) -> key != CodeBlockLocation.DEFAULT })
+                val templateFiles = installSnippets.entries.filter { (key, _) ->
+                    key != CodeBlockLocation.DEFAULT
+                }
+                for ((position, snippet) in templateFiles)
                     add(buildJsonObject {
                         put("position", position)
                         put("text", snippet.code)
@@ -228,7 +230,9 @@ class YamlManifest(
         require(description.isNotBlank()) { "Property 'description' requires a value" }
         validateVcsLink()
         require(license.isNotBlank()) { "Property 'license' requires a value" }
-        require(category.uppercase() in PluginCategory.namesUppercase) { "Property 'category' must be one of ${PluginCategory.names}" }
+        require(category.uppercase() in PluginCategory.namesUppercase) {
+            "Property 'category' must be one of ${PluginCategory.names}"
+        }
     }
 
     private fun ImportManifest.validateVcsLink() {
