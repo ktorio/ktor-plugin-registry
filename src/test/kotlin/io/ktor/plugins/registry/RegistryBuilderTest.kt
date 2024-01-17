@@ -1,3 +1,7 @@
+/*
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ */
+
 package io.ktor.plugins.registry
 
 import java.nio.charset.Charset
@@ -118,7 +122,10 @@ class RegistryBuilderTest {
 
     @Test
     fun `fails on install compilation error`() {
-        assertRegistryFailure("Could not read install function:\n${resourceContents("/server/com.fail/bad_kt/2.3.7/install.kt")}") {
+        assertRegistryFailure("""
+            Could not read install function:
+            ${resourceContents("/server/com.fail/bad_kt/2.3.7/install.kt")}
+        """.trimIndent()) {
             buildRegistry {
                 it == "bad_kt"
             }

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ */
+
 package io.ktor.plugins.registry
 
 import com.intellij.openapi.util.Disposer
@@ -111,8 +115,11 @@ class CodeAnalysis(private val classpathUrls: List<Path> = emptyList()) {
             it.severity == Severity.ERROR
         }?.let { compileError ->
             val startOffset = compileError.textRanges.first().startOffset
-            val lineNumber = compileError.psiFile.viewProvider.document?.getLineNumber(startOffset)?.let { it + 1 } ?: "??"
-            throw IllegalArgumentException("${DefaultErrorMessages.render(compileError)} (${this@throwIfError.name}:$lineNumber)")
+            val document = compileError.psiFile.viewProvider.document
+            val lineNumber = document?.getLineNumber(startOffset)?.let { it + 1 } ?: "??"
+            throw IllegalArgumentException(
+                "${DefaultErrorMessages.render(compileError)} (${this@throwIfError.name}:$lineNumber)"
+            )
         }
     }
 
