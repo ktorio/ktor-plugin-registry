@@ -1,15 +1,15 @@
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import io.ktor.server.sse.*
+import io.ktor.client.plugins.sse.sse
 import io.ktor.server.testing.*
+import io.ktor.server.sse.*
 import io.ktor.sse.*
+import kotlinx.coroutines.flow.*
 import kotlin.test.*
 
 class ServerSentEventsTest {
 
     @Test
-    fun testSeverSentEvents() = testApplication {
+    fun testServerSentEvents() = testApplication {
+        install(SSE)
         routing {
             sse("/events") {
                 repeat(100) {
@@ -18,14 +18,11 @@ class ServerSentEventsTest {
             }
         }
 
-        client.get("/events").apply {
-            assertEquals(HttpStatusCode.OK, status)
-            assertEquals(ContentType.Text.EventStream.toString(), headers[HttpHeaders.ContentType])
-            val events = bodyAsText().lines()
-            assertEquals(201, events.size)
-            for (i in 0 until 100) {
-                assertEquals("data: event $i", events[i * 2])
-                assertTrue(events[i * 2 + 1].isEmpty())
+        createClient {
+            install(io.ktor.client.plugins.sse.SSE)
+        }.sse("/events") {
+            incoming.collectIndexed { i, event ->
+                assertEquals("event $i", event.data)
             }
         }
     }

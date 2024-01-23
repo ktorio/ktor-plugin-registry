@@ -1,6 +1,6 @@
-Server-Sent Events (SSE) support plugin. It is required to be installed first before binding any sse endpoints.
+Server-Sent Events (SSE) support plugin for sending events using the [SSE specification](https://html.spec.whatwg.org/multipage/server-sent-events.html).
 
-To learn more, see [specification](https://html.spec.whatwg.org/multipage/server-sent-events.html).
+This extends routing to include the `sse` function, which creates a special GET endpoint for streaming events.
 
 ## Usage
 
