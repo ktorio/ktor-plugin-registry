@@ -4,6 +4,7 @@
 
 package io.ktor.plugins.registry
 
+import org.slf4j.Logger
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 import java.net.URL
@@ -18,13 +19,14 @@ import kotlin.io.path.writeText
 const val KTOR_MAVEN_REPO = "https://repo1.maven.org/maven2/io/ktor/ktor-server/maven-metadata.xml"
 const val LOCAL_LIST = "build/ktor_releases"
 
+
 /**
  * Retrieve all Ktor versions from maven, presented by client/server targets.
  * Cached in local text file build/ktor_releases.
  */
-fun fetchKtorTargets(latestCount: Int = 2): List<KtorTarget> {
-    val ktorVersions = readKtorVersionsFromFile()
-        ?: fetchKtorVersionsFromMaven(latestCount).also(::writeToFile)
+fun fetchKtorTargets(log: Logger, latestCount: Int = 2): List<KtorTarget> {
+    val ktorVersions = readKtorVersionsFromFile(log)
+        ?: fetchKtorVersionsFromMaven(latestCount, log).also(::writeToFile)
     return listOf("client", "server").map { name ->
         KtorTarget(name, ktorVersions.map { version ->
             KtorRelease("$name-$version", version)
@@ -32,9 +34,10 @@ fun fetchKtorTargets(latestCount: Int = 2): List<KtorTarget> {
     }
 }
 
-private fun readKtorVersionsFromFile(): List<String>? = try {
+private fun readKtorVersionsFromFile(log: Logger): List<String>? = try {
     Paths.get(LOCAL_LIST).takeIf { it.exists() }?.readLines()
 } catch (e: Exception) {
+    log.info("Local release list not found at $LOCAL_LIST, will fetch from maven")
     null
 }
 
@@ -46,9 +49,10 @@ private fun writeToFile(versionsList: List<String>) =
 
 internal fun fetchKtorVersionsFromMaven(
     latestCount: Int,
-    source: Document = fetchAndParseXml()
+    log: Logger,
+    source: Document = fetchAndParseXml(),
 ): List<String> {
-    val groupedVersions = source.readVersionNumbers().groupByVersions()
+    val groupedVersions = source.readVersionNumbers(log).groupByVersions()
 
     return groupedVersions.filterByLatest(latestCount)
         .map(VersionNumber::number)
@@ -63,7 +67,7 @@ private fun fetchAndParseXml(location: String = KTOR_MAVEN_REPO): Document {
     return doc
 }
 
-private fun Document.readVersionNumbers(): Sequence<VersionNumber> = sequence {
+private fun Document.readVersionNumbers(log: Logger): Sequence<VersionNumber> = sequence {
     val versioning = getElementsByTagName("versioning").item(0)
 
     versioning.childNodes("versions").forEach { versionsList ->
@@ -71,7 +75,7 @@ private fun Document.readVersionNumbers(): Sequence<VersionNumber> = sequence {
             try {
                 yield(VersionNumber(version.textContent))
             } catch (e: Exception) {
-                e.printStackTrace()
+                log.warn("Couldn't read version from maven metadata $version")
             }
         }
     }
