@@ -90,14 +90,17 @@ object MatchKtor : ArtifactVersion {
 /**
  * Standard semantic version number references (i.e. 1.0.0)
  */
-data class VersionNumber(val number: String) : ArtifactVersion {
+data class VersionNumber(
+    val number: String,
+    val mavenVersion: DefaultArtifactVersion = DefaultArtifactVersion(number)
+) : ArtifactVersion, org.apache.maven.artifact.versioning.ArtifactVersion by mavenVersion {
     override fun contains(other: ArtifactVersion): Boolean = this == other
     override fun toString(): String = number
 }
 
 data class VersionRange(private val range: org.apache.maven.artifact.versioning.VersionRange) : ArtifactVersion {
     constructor(text: String): this(org.apache.maven.artifact.versioning.VersionRange.createFromVersionSpec(text))
-    override fun contains(other: ArtifactVersion): Boolean = other is VersionNumber && range.containsVersion(DefaultArtifactVersion(other.number))
+    override fun contains(other: ArtifactVersion): Boolean = other is VersionNumber && range.containsVersion(other.mavenVersion)
     override fun toString(): String = range.toString()
 }
 

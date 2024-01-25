@@ -7,7 +7,7 @@
 import io.ktor.plugins.registry.*
 import java.nio.file.Paths
 
-val targets by lazy { fetchKtorTargets() }
+val targets by lazy { fetchKtorTargets(logger) }
 
 plugins {
     alias(libs.plugins.serialization)

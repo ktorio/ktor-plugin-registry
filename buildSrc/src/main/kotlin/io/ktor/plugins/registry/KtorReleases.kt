@@ -4,6 +4,9 @@
 
 package io.ktor.plugins.registry
 
+import org.slf4j.Logger
+import org.w3c.dom.Document
+import org.w3c.dom.Node
 import java.net.URL
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -16,13 +19,14 @@ import kotlin.io.path.writeText
 const val KTOR_MAVEN_REPO = "https://repo1.maven.org/maven2/io/ktor/ktor-server/maven-metadata.xml"
 const val LOCAL_LIST = "build/ktor_releases"
 
+
 /**
  * Retrieve all Ktor versions from maven, presented by client/server targets.
  * Cached in local text file build/ktor_releases.
  */
-fun fetchKtorTargets(): List<KtorTarget> {
-    val ktorVersions = readKtorVersionsFromFile()
-        ?: fetchKtorVersionsFromMaven().also(::writeToFile)
+fun fetchKtorTargets(log: Logger, latestCount: Int = 2): List<KtorTarget> {
+    val ktorVersions = readKtorVersionsFromFile(log)
+        ?: fetchKtorVersionsFromMaven(latestCount, log).also(::writeToFile)
     return listOf("client", "server").map { name ->
         KtorTarget(name, ktorVersions.map { version ->
             KtorRelease("$name-$version", version)
@@ -30,9 +34,10 @@ fun fetchKtorTargets(): List<KtorTarget> {
     }
 }
 
-private fun readKtorVersionsFromFile(): List<String>? = try {
+private fun readKtorVersionsFromFile(log: Logger): List<String>? = try {
     Paths.get(LOCAL_LIST).takeIf { it.exists() }?.readLines()
 } catch (e: Exception) {
+    log.info("Local release list not found at $LOCAL_LIST, will fetch from maven")
     null
 }
 
@@ -42,41 +47,70 @@ private fun writeToFile(versionsList: List<String>) =
             it.parent.createDirectories()
     }.writeText(versionsList.joinToString("\n"))
 
-private fun fetchKtorVersionsFromMaven(): List<String> {
-    val allVersions = buildList {
-        URL(KTOR_MAVEN_REPO).openStream().use {
-            val dbf: DocumentBuilderFactory = DocumentBuilderFactory.newInstance()
-            val db = dbf.newDocumentBuilder()
-            val doc = db.parse(it)
+internal fun fetchKtorVersionsFromMaven(
+    latestCount: Int,
+    log: Logger,
+    source: Document = fetchAndParseXml(),
+): List<String> {
+    val groupedVersions = source.readVersionNumbers(log).groupByVersions()
 
-            val versioning = doc.getElementsByTagName("versioning").item(0)
-            val versions = versioning.childNodes
+    return groupedVersions.filterByLatest(latestCount)
+        .map(VersionNumber::number)
+}
 
-            for (i in 0 until (versions.length)) {
-                if (versions.item(i).nodeName == "versions") {
-                    val versionList = versions.item(i).childNodes
-                    for (j in 0 until versionList.length) {
-                        if (versionList.item(j).nodeName == "version") {
-                            add(versionList.item(j).textContent)
-                        }
-                    }
-                }
+private fun fetchAndParseXml(location: String = KTOR_MAVEN_REPO): Document {
+    val doc = URL(location).openStream().use { input ->
+        val dbf: DocumentBuilderFactory = DocumentBuilderFactory.newInstance()
+        val db = dbf.newDocumentBuilder()
+        db.parse(input)
+    }
+    return doc
+}
+
+private fun Document.readVersionNumbers(log: Logger): Sequence<VersionNumber> = sequence {
+    val versioning = getElementsByTagName("versioning").item(0)
+
+    versioning.childNodes("versions").forEach { versionsList ->
+        versionsList.childNodes("version").forEach { version ->
+            try {
+                yield(VersionNumber(version.textContent))
+            } catch (e: Exception) {
+                log.warn("Couldn't read version from maven metadata $version")
             }
         }
     }
-    return allVersions.filterIndexed { i, version ->
-        // only return latest of each minor version
-        val minorVersion = version.minorVersion
-        minorVersion !in obsoleteReleases
-                && (i + 1 >= allVersions.size || allVersions[i + 1].minorVersion != minorVersion)
+}
+
+private fun Node.childNodes(nodeName: String): Sequence<Node> = with(childNodes) {
+    sequence {
+        for (i in 0 until length)
+            if (item(i).nodeName == nodeName)
+                yield(item(i))
     }
 }
 
-private val obsoleteReleases = setOf("1.0", "1.1", "1.2", "1.3")
-private val minorVersionRegex = Regex("""(\d+\.\d+)\..*""")
+private fun Sequence<VersionNumber>.groupByVersions(): GroupedVersions =
+    groupBy { it.majorVersion }
+        .mapValues { entry ->
+            entry.value.groupBy { it.minorVersion }
+        }
 
-private val String.minorVersion get() =
-    minorVersionRegex.matchEntire(this)?.groups?.get(1)?.value ?: ""
+/**
+ * Retains the latest count of minor and patch releases.
+ */
+private fun GroupedVersions.filterByLatest(latestCount: Int): MutableList<VersionNumber> {
+    val filteredVersions = mutableListOf<VersionNumber>()
+    values.asSequence().map { minorVersions ->
+        minorVersions.values.toList().takeLast(latestCount)
+    }.forEach { minorVersions ->
+        minorVersions.forEach { versions ->
+            filteredVersions.addAll(versions.takeLast(latestCount))
+        }
+    }
+    return filteredVersions
+}
+
+typealias GroupedVersions = Map<Int, Map<Int, List<VersionNumber>>>
 
 /**
  * Either server or client; holds release references which are used for gradle configs / plugin dependency management.
