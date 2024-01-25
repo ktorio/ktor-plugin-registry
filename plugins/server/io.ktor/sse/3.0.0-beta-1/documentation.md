@@ -1,6 +1,8 @@
-Server-Sent Events (SSE) support plugin. It is required to be installed first before binding any sse endpoints.
+Server-Sent Events (SSE) support plugin for sending events using the [SSE specification](https://html.spec.whatwg.org/multipage/server-sent-events.html).
 
-To learn more, see [specification](https://html.spec.whatwg.org/multipage/server-sent-events.html).
+This extends routing to include the `sse` function, which installs a special GET endpoint for streaming events.
+
+For more information, please refer to the [documentation](https://ktor.io/docs/3.0.0-beta-1/sse-server.html).
 
 ## Usage
 
