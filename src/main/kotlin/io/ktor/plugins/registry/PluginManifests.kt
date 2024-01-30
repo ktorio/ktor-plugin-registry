@@ -195,23 +195,38 @@ data class YamlManifest(
         putJsonArray("required_feature_ids") {
             prerequisites?.forEach(::add)
         }
+        putDocumentation()
+        putInstallRecipe()
+        putDependencies(release)
+    }
+
+    private fun JsonObjectBuilder.putDocumentation() {
         putJsonObject("documentation") {
             put("description", documentationEntry.description)
             put("usage", documentationEntry.usage)
-            put("options", options.orEmpty().joinToString("\n") { (name, defaultValue, description) ->
+            put("options", model.options.orEmpty().joinToString("\n") { (name, defaultValue, description) ->
                 "* `$name` (default $defaultValue): $description"
             })
         }
+    }
+
+    private fun JsonObjectBuilder.putInstallRecipe() {
         putJsonObject("install_recipe") {
-            installSnippets[CodeBlockLocation.DEFAULT]?.let { defaultInstall ->
+            installSnippets[CodeInjectionSite.DEFAULT.lowercaseName]?.let { defaultInstall ->
                 putJsonArray("imports") {
                     (defaultInstall as? InstallSnippet.Kotlin)?.imports?.forEach(::add)
                 }
                 put("install_block", defaultInstall.code)
             }
+            installSnippets[CodeInjectionSite.TEST_FUNCTION.lowercaseName]?.let { testFunctionInstall ->
+                putJsonArray("imports") {
+                    (testFunctionInstall as? InstallSnippet.Kotlin)?.imports?.forEach(::add)
+                }
+                // function template will be included in the following section
+            }
             putJsonArray("templates") {
                 val templateFiles = installSnippets.entries.filter { (key, _) ->
-                    key != CodeBlockLocation.DEFAULT
+                    key != CodeInjectionSite.DEFAULT.lowercaseName
                 }
                 for ((position, snippet) in templateFiles)
                     add(buildJsonObject {
@@ -221,6 +236,23 @@ data class YamlManifest(
                             put("name", it)
                         }
                     })
+            }
+        }
+    }
+
+    private fun JsonObjectBuilder.putDependencies(release: KtorRelease) {
+        putJsonArray("dependencies") {
+            for (dependency in plugin.allArtifactsForVersion(release.versionString)) {
+                addJsonObject {
+                    put("group", dependency.group)
+                    put("artifact", dependency.name)
+                    put("version", when (val version = dependency.version) {
+                        is VersionNumber -> version.toString()
+                        is VersionRange -> version.toString()
+                        MatchKtor -> "\$ktor_version"
+                        else -> throw IllegalArgumentException("Unexpected version type ${version::class}")
+                    })
+                }
             }
         }
     }
@@ -269,10 +301,6 @@ data class YamlManifest(
     sealed class CodeSnippetSource {
         data class Text(val code: String): CodeSnippetSource()
         data class File(val file: String): CodeSnippetSource()
-    }
-
-    object CodeBlockLocation {
-       const val DEFAULT = "default"
     }
 
     object CodeBlockSerializer : KSerializer<CodeSnippetSource> {

@@ -208,5 +208,7 @@ enum class CodeInjectionSite(val extractionMethod: CodeExtractionMethod) {
     APPLICATION_CONF(CodeExtractionMethod.VERBATIM),
 
     // In application.yaml file
-    APPLICATION_YAML(CodeExtractionMethod.VERBATIM),
+    APPLICATION_YAML(CodeExtractionMethod.VERBATIM);
+
+    val lowercaseName: String get() = name.lowercase()
 }
