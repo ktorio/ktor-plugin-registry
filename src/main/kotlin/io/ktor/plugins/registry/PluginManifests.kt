@@ -219,7 +219,7 @@ data class YamlManifest(
                 put("install_block", defaultInstall.code)
             }
             installSnippets[CodeInjectionSite.TEST_FUNCTION.lowercaseName]?.let { testFunctionInstall ->
-                putJsonArray("imports") {
+                putJsonArray("test_imports") {
                     (testFunctionInstall as? InstallSnippet.Kotlin)?.imports?.forEach(::add)
                 }
                 // function template will be included in the following section

@@ -24,6 +24,9 @@ fun Path.readPluginFiles(filter: (String) -> Boolean = { true }): Sequence<Plugi
 
     for (groupFolder in listDirectoryEntries()) {
         val groupId = groupFolder.name
+        if (groupId.startsWith("."))
+            continue
+
         val groupInfo = groupFolder.resolve("group.ktor.yaml").readYamlMap()?.let { yaml: YamlMap ->
             val (name, url, email) = listOf("name", "url", "email").map {
                 yaml.get<YamlScalar>(it)?.content
