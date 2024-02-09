@@ -149,6 +149,7 @@ private fun String.trimBraces() =
 
 sealed interface InstallSnippet {
     val code: String
+    val importsOrEmpty get() = (this as? Kotlin)?.imports ?: emptyList()
 
     data class Kotlin(
         val imports: List<String>,
