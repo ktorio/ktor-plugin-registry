@@ -6,7 +6,6 @@ package io.ktor.plugins.registry
 
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
-import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.util.*
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -165,6 +164,11 @@ data class YamlManifest(
     private val installSnippets: Map<String, InstallSnippet>,
     private val documentationEntry: DocumentationEntry,
 ): ResolvedPluginManifest {
+    companion object {
+        val DEFAULT = CodeInjectionSite.DEFAULT.lowercaseName
+        val TEST = CodeInjectionSite.TEST_FUNCTION.lowercaseName
+    }
+
     init {
         model.validateImportModel()
     }
@@ -212,23 +216,23 @@ data class YamlManifest(
 
     private fun JsonObjectBuilder.putInstallRecipe() {
         putJsonObject("install_recipe") {
-            installSnippets[CodeInjectionSite.DEFAULT.lowercaseName]?.let { defaultInstall ->
-                putJsonArray("imports") {
-                    (defaultInstall as? InstallSnippet.Kotlin)?.imports?.forEach(::add)
-                }
+            putJsonArray("imports") {
+                installSnippets.allExcept(TEST).asSequence()
+                    .flatMap { (_, snippet) -> snippet.importsOrEmpty }
+                    .distinct()
+                    .forEach(::add)
+            }
+            installSnippets[DEFAULT]?.let { defaultInstall ->
                 put("install_block", defaultInstall.code)
             }
-            installSnippets[CodeInjectionSite.TEST_FUNCTION.lowercaseName]?.let { testFunctionInstall ->
+            installSnippets[TEST]?.let { testFunctionInstall ->
                 putJsonArray("test_imports") {
-                    (testFunctionInstall as? InstallSnippet.Kotlin)?.imports?.forEach(::add)
+                    testFunctionInstall.importsOrEmpty.forEach(::add)
                 }
                 // function template will be included in the following section
             }
             putJsonArray("templates") {
-                val templateFiles = installSnippets.entries.filter { (key, _) ->
-                    key != CodeInjectionSite.DEFAULT.lowercaseName
-                }
-                for ((position, snippet) in templateFiles)
+                for ((position, snippet) in installSnippets.allExcept(DEFAULT))
                     add(buildJsonObject {
                         put("position", position)
                         put("text", snippet.code)
@@ -239,6 +243,9 @@ data class YamlManifest(
             }
         }
     }
+
+    private fun Map<String, InstallSnippet>.allExcept(site: String) =
+        entries.filter { (key) -> key != site }
 
     private fun JsonObjectBuilder.putDependencies(release: KtorRelease) {
         putJsonArray("dependencies") {
