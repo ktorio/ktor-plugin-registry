@@ -8,7 +8,8 @@
     "copyright": "Apache 2.0",
     "vendor": {
         "name": "JetBrains",
-        "url": "https://www.jetbrains.com/"
+        "url": "https://www.jetbrains.com/",
+        "logo": "org.jetbrains.svg"
     },
     "group": "Databases",
     "required_feature_ids": [

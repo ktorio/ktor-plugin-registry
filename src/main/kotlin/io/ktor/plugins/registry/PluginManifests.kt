@@ -7,7 +7,6 @@ package io.ktor.plugins.registry
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.ktor.util.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -195,6 +194,7 @@ data class YamlManifest(
             put("name", plugin.group.name)
             put("url", plugin.group.url)
             put("email", plugin.group.email)
+            put("logo", plugin.group.outputLogo)
         }
         putJsonArray("required_feature_ids") {
             prerequisites?.forEach(::add)

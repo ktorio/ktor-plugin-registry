@@ -25,6 +25,24 @@ class RegistryBuilder(
     private val yaml: Yaml = Yaml.default,
     private val json: Json = Json { prettyPrint = true }
 ) {
+    fun processAssets(
+        pluginsRoot: Path,
+        buildDir: Path,
+    ) {
+        val outputDir = buildDir.resolve("registry/assets")
+        outputDir.createDirectories()
+
+        for (target in sequenceOf("client", "server")) {
+            val pluginsDir = pluginsRoot.resolve(target)
+            for (groupFolder in pluginsDir.listDirectoryEntries()) {
+                val group = groupFolder.resolve("group.ktor.yaml").readPluginGroup() ?: continue
+                val logo = group.logo ?: continue
+                val logoFile = groupFolder.resolve(logo).takeIf { it.exists() } ?: continue
+                logoFile.copyTo(outputDir.resolve(group.outputLogo!!), overwrite = true)
+            }
+        }
+    }
+
     fun buildRegistry(
         pluginsRoot: Path,
         buildDir: Path,
@@ -46,14 +64,17 @@ class RegistryBuilder(
             }
         }
         logger.info { "Building registry for $target..." }
+        val allPluginIds = mutableSetOf<String>()
         with(ktorReleasesFile.readLines().map(::KtorRelease)) {
-            resolvePluginVersions(pluginsDir, filter)
+            allPluginIds += resolvePluginVersions(pluginsDir, filter)
             outputReleaseMappings(outputDir)
             outputManifestFiles(pluginsDir, artifactsFile, manifestsDir)
         }
+        logger.info { "Registry built for $target including plugins: ${allPluginIds.sorted().joinToString()}" }
     }
 
-    private fun List<KtorRelease>.resolvePluginVersions(pluginsDir: Path, filter: (String) -> Boolean) {
+    private fun List<KtorRelease>.resolvePluginVersions(pluginsDir: Path, filter: (String) -> Boolean): Set<String> {
+        val pluginIds = mutableSetOf<String>()
         for (plugin in pluginsDir.readPluginFiles(filter)) {
             try {
                 val distributions = mapNotNull { release ->
@@ -61,11 +82,13 @@ class RegistryBuilder(
                         "${release.versionString}: $it"
                     }
                 }
+                pluginIds += plugin.id
                 logger.debug { "Plugin ${plugin.id}\n\t${distributions.joinToString("\n\t")}" }
             } catch (e: Exception) {
                 logger.error(e) { "Failed to process plugin ${plugin.id}!" }
             }
         }
+        return pluginIds
     }
 
     private fun List<KtorRelease>.outputReleaseMappings(distDir: Path) {
@@ -123,6 +146,8 @@ class RegistryBuilder(
 val PluginReference.manifestOutputFile: String get() = "$id-${versionRange.stripSpecialChars()}.json"
 val PluginReference.identifier: String get() = "${group.id}:$id:$versionRange"
 val PluginReference.versionRange: String get() = versions.keys.single()
+
+val PluginGroup.outputLogo get() = logo?.let { id + '.' + it.substringAfterLast('.') }
 
 fun String.stripSpecialChars() =
     Regex("[^a-zA-Z0-9\\-,.]").replace(this, "").trim(',')
