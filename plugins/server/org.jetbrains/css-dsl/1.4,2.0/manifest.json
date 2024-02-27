@@ -7,8 +7,9 @@
     "github": "https://github.com/JetBrains/kotlin-wrappers/tree/master/kotlin-css",
     "copyright": "Apache 2.0",
     "vendor": {
-        "name": "Ktor",
-        "url": "https://ktor.io/"
+        "name": "JetBrains",
+        "url": "https://www.jetbrains.com/",
+        "logo": "org.jetbrains.svg"
     },
     "group": "Templating",
     "required_feature_ids": [

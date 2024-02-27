@@ -8,7 +8,8 @@
     "copyright": "Apache 2.0",
     "vendor": {
         "name": "PostgreSQL Global Development Group",
-        "url": "https://www.postgresql.org/"
+        "url": "https://www.postgresql.org/",
+        "logo": "org.postgresql.png"
     },
     "group": "Databases",
     "required_feature_ids": [

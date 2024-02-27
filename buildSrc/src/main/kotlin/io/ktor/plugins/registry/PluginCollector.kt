@@ -27,12 +27,7 @@ fun Path.readPluginFiles(filter: (String) -> Boolean = { true }): Sequence<Plugi
         if (groupId.startsWith("."))
             continue
 
-        val groupInfo = groupFolder.resolve("group.ktor.yaml").readYamlMap()?.let { yaml: YamlMap ->
-            val (name, url, email) = listOf("name", "url", "email").map {
-                yaml.get<YamlScalar>(it)?.content
-            }
-            PluginGroup(groupId, name, url, email)
-        }
+        val groupInfo = groupFolder.resolve("group.ktor.yaml").readPluginGroup()
 
         for (pluginFolder in groupFolder.listDirectoryEntries()) {
             if (!pluginFolder.isDirectory() || !filter(pluginFolder.name) || pluginFolder.resolve("ignore").exists())
@@ -97,6 +92,14 @@ private fun readVersionsMapping(pluginFile: Path, groupId: String): Map<String, 
         throw IllegalArgumentException("Failed to parse versions.ktor.yaml for plugin \"${pluginFile.parent.name}\"", e)
     }
 }
+
+fun Path.readPluginGroup(): PluginGroup? =
+    readYamlMap()?.let { yaml ->
+        val (name, url, email, logo) = listOf("name", "url", "email", "logo").map {
+            yaml.get<YamlScalar>(it)?.content
+        }
+        PluginGroup(parent.name, name, url, email, logo)
+    }
 
 private fun Path.readYamlMap(): YamlMap? =
     takeIf { it.exists() }
