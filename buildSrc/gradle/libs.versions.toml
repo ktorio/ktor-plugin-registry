@@ -1,5 +1,5 @@
 [versions]
-kotlin-version = "1.9.22"
+kotlin-version = "1.9.23"
 kaml-version = "0.57.0"
 maven-artifact-version = "3.9.6"
 
