@@ -1,0 +1,90 @@
+{
+    "id": "mongodb",
+    "name": "MongoDB",
+    "version": "2.2.0",
+    "ktor_version": "2.2.0",
+    "short_description": "Adds MongoDB database to your application",
+    "github": "https://github.com/mongodb/mongo",
+    "copyright": "Apache 2.0",
+    "vendor": {
+        "name": "MongoDB Inc.",
+        "url": "https://www.mongodb.com/"
+    },
+    "group": "Databases",
+    "required_feature_ids": [
+        "routing",
+        "kotlinx-serialization"
+    ],
+    "install_recipe": {
+        "imports": [
+            "io.ktor.http.*",
+            "io.ktor.server.request.*",
+            "io.ktor.server.response.*",
+            "io.ktor.server.config.*",
+            "com.mongodb.client.*"
+        ],
+        "install_block": "",
+        "templates": [
+            {
+                "position": "inside_app",
+                "text": "val mongoDatabase = connectToMongoDB()",
+                "required": true
+            },
+            {
+                "position": "outside_app",
+                "text": "/**\n * Establishes connection with a MongoDB database.\n *\n * The following configuration properties (in application.yaml/application.conf) can be specified:\n * * `db.mongo.user` username for your database\n * * `db.mongo.password` password for the user\n * * `db.mongo.host` host that will be used for the database connection\n * * `db.mongo.port` port that will be used for the database connection\n * * `db.mongo.maxPoolSize` maximum number of connections to a MongoDB server\n * * `db.mongo.database.name` name of the database\n *\n * IMPORTANT NOTE: in order to make MongoDB connection working, you have to start a MongoDB server first.\n * See the instructions here: https://www.mongodb.com/docs/manual/administration/install-community/\n * all the paramaters above\n *\n * @returns [MongoDatabase] instance\n * */\nfun Application.connectToMongoDB(): MongoDatabase {\n val user = environment.config.tryGetString(\"db.mongo.user\")\n val password = environment.config.tryGetString(\"db.mongo.password\")\n val host = environment.config.tryGetString(\"db.mongo.host\") ?: \"127.0.0.1\"\n val port = environment.config.tryGetString(\"db.mongo.port\") ?: \"27017\"\n val maxPoolSize = environment.config.tryGetString(\"db.mongo.maxPoolSize\")?.toInt() ?: 20\n val databaseName = environment.config.tryGetString(\"db.mongo.database.name\") ?: \"myDatabase\"\n\n val credentials = user?.let { userVal -> password?.let { passwordVal -> \"$userVal:$passwordVal@\" } }.orEmpty()\n val uri = \"mongodb://$credentials$host:$port/?maxPoolSize=$maxPoolSize&w=majority\"\n\n val mongoClient = MongoClients.create(uri)\n val database = mongoClient.getDatabase(databaseName)\n\n environment.monitor.subscribe(ApplicationStopped) {\n mongoClient.close()\n }\n\n return database\n}",
+                "required": true
+            },
+            {
+                "position": "source_file_kt",
+                "name": "CarsSchema",
+                "text": "import com.mongodb.client.MongoCollection\nimport com.mongodb.client.MongoDatabase\nimport com.mongodb.client.model.Filters\nimport kotlinx.coroutines.Dispatchers\nimport kotlinx.coroutines.withContext\nimport kotlinx.serialization.Serializable\nimport kotlinx.serialization.json.Json\nimport org.bson.Document\nimport org.bson.types.ObjectId\n\n@Serializable\ndata class Car(\n    val brandName: String,\n    val model: String,\n    val number: String\n) {\n    fun toDocument(): Document = Document.parse(Json.encodeToString(serializer(), this))\n\n    companion object {\n        private val json = Json { ignoreUnknownKeys = true }\n\n        fun fromDocument(document: Document): Car = json.decodeFromString(serializer(), document.toJson())\n    }\n}\n\nclass CarService(private val database: MongoDatabase) {\n    var collection: MongoCollection<Document>\n\n    init {\n        database.createCollection(\"cars\")\n        collection = database.getCollection(\"cars\")\n    }\n\n    // Create new car\n    suspend fun create(car: Car): String = withContext(Dispatchers.IO) {\n        val doc = car.toDocument()\n        collection.insertOne(doc)\n        doc[\"_id\"].toString()\n    }\n\n    // Read a car\n    suspend fun read(id: String): Car? = withContext(Dispatchers.IO) {\n        collection.find(Filters.eq(\"_id\", ObjectId(id))).first()?.let(Car::fromDocument)\n    }\n\n    // Update a car\n    suspend fun update(id: String, car: Car): Document?= withContext(Dispatchers.IO) {\ncollection.findOneAndReplace(Filters.eq(\"_id\", ObjectId(id)), car.toDocument())\n}\n\n// Delete a car\nsuspend fun delete(id: String): Document?= withContext(Dispatchers.IO) {\ncollection.findOneAndDelete(Filters.eq(\"_id\", ObjectId(id)))\n}\n}"
+            },
+            {
+                "position": "inside_app",
+                "text": "val carService = CarService(mongoDatabase)"
+            },
+            {
+                "position": "in_routing",
+                "text": "// Create car\npost(\"/cars\") {\n val car = call.receive<Car>()\n val id = carService.create(car)\n println(\"id : $id\")\n call.respond(HttpStatusCode.Created, id)\n}"
+            },
+            {
+                "position": "in_routing",
+                "text": "// Read car\nget(\"/cars/{id}\") {\n val id = call.parameters[\"id\"] ?: throw IllegalArgumentException(\"No ID found\")\n carService.\n read(id)?.let { car ->\n call.respond(car)\n } ?: call.respond(HttpStatusCode.NotFound)\n}"
+            },
+            {
+                "position": "in_routing",
+                "text": "// Update car\nput(\"/cars/{id}\") {\n val id = call.parameters[\"id\"] ?: throw IllegalArgumentException(\"No ID found\")\n val car = call.receive<Car>()\n carService.update(id, car)?.let {\n call.respond(HttpStatusCode.OK)\n} ?:call.respond(HttpStatusCode.NotFound)\n}"
+            },
+            {
+                "position": "in_routing",
+                "text": "// Delete car\ndelete(\"/cars/{id}\") {\n    val id = call.parameters[\"id\"] ?: throw IllegalArgumentException(\"No ID found\")\n    carService.delete(id)?.let {\n    call.respond(HttpStatusCode.OK)\n} ?:call.respond(HttpStatusCode.NotFound)\n}"
+            }
+        ]
+    },
+    "dependencies": [
+        {
+            "group": "org.mongodb",
+            "artifact": "mongodb-driver-core",
+            "version": "mongodb_version",
+            "version_value": "4.9.0"
+        },
+        {
+            "group": "org.mongodb",
+            "artifact": "mongodb-driver-sync",
+            "version": "mongodb_version",
+            "version_value": "4.9.0"
+        },
+        {
+            "group": "org.mongodb",
+            "artifact": "bson",
+            "version": "mongodb_version",
+            "version_value": "4.9.0"
+        }
+    ],
+    "documentation": {
+        "description": "MongoDB is a powerful, flexible, and scalable document-oriented database that allows you to store your data in an efficient way. It uses a JSON-like document model for storing objects.",
+        "usage": "In order to connect to the database, you have to use `MongoClients` interface:\n```kotlin\nval uri = \"mongodb://127.0.0.1:27017/?maxPoolSize=20&w=majority\"\n\nval mongoClient = MongoClients.create(uri)\nval database = mongoClient.getDatabase(databaseName)\n```\nThen, you have to create the collection of the documents in the database:\n```kotlin\ndatabase.createCollection(\"users\")\nval collection = database.getCollection(\"users\")\n```\nAnd after that work is done, you could put some data to the collection. The data needs to be stored in `org.bson.Document`:\n```kotlin\nval doc = Document(mapOf(\"name\" to \"John\", \"secondName\" to \"Smith\", \"age\" to 30))\nval id = collection.insertOne(doc)\n```\nThen you can always get the inserted data using a filter:\n```kotlin\nval user = collection.find(Filters.eq(\"_id\", id)).first()\n```",
+        "options": ""
+    }
+}
