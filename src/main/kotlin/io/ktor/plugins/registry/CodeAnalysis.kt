@@ -177,27 +177,30 @@ enum class CodeExtractionMethod {
 }
 
 // Intended destination of a code snippet in the generated project
-enum class CodeInjectionSite(val extractionMethod: CodeExtractionMethod) {
+enum class CodeInjectionSite(
+    val extractionMethod: CodeExtractionMethod,
+    val defaultFileLocation: String? = null,
+) {
     // In category's install file
-    DEFAULT(CodeExtractionMethod.FUNCTION_BODY),
+    DEFAULT(CodeExtractionMethod.FUNCTION_BODY, "install.kt"),
 
     // In Application.module() { ... } extension:
-    INSIDE_APP(CodeExtractionMethod.FUNCTION_BODY),
+    INSIDE_APP(CodeExtractionMethod.FUNCTION_BODY, "inside_app.kt"),
 
     // After Application.module() { ... } extension:
-    OUTSIDE_APP(CodeExtractionMethod.CODE_CONTENTS),
+    OUTSIDE_APP(CodeExtractionMethod.CODE_CONTENTS, "outside_app.kt"),
 
     // In a file, separate from Application.kt:
-    IN_ROUTING(CodeExtractionMethod.FUNCTION_BODY),
+    IN_ROUTING(CodeExtractionMethod.FUNCTION_BODY, "routing.kt"),
 
     // Serialization config inside install(ContentNegotiation) {...} block:
-    SERIALIZATION_CONFIG(CodeExtractionMethod.FUNCTION_BODY),
+    SERIALIZATION_CONFIG(CodeExtractionMethod.FUNCTION_BODY, "content_negotiation.kt"),
 
     // CallLogging config inside install(CallLogging) {...} block:
-    CALL_LOGGING_CONFIG(CodeExtractionMethod.FUNCTION_BODY),
+    CALL_LOGGING_CONFIG(CodeExtractionMethod.FUNCTION_BODY, "call_logging.kt"),
 
     // In ApplicationTest.kt as a separate function:
-    TEST_FUNCTION(CodeExtractionMethod.CLASS_BODY),
+    TEST_FUNCTION(CodeExtractionMethod.CLASS_BODY, "test.kt"),
 
     // In application resources folder as a separate resource file
     RESOURCES(CodeExtractionMethod.FILE),
@@ -206,10 +209,10 @@ enum class CodeInjectionSite(val extractionMethod: CodeExtractionMethod) {
     SOURCE_FILE_KT(CodeExtractionMethod.FILE),
 
     // In application.conf file
-    APPLICATION_CONF(CodeExtractionMethod.VERBATIM),
+    APPLICATION_CONF(CodeExtractionMethod.VERBATIM, "application.conf"),
 
     // In application.yaml file
-    APPLICATION_YAML(CodeExtractionMethod.VERBATIM);
+    APPLICATION_YAML(CodeExtractionMethod.VERBATIM, "application.yaml");
 
     val lowercaseName: String get() = name.lowercase()
 }

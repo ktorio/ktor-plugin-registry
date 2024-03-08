@@ -6,6 +6,9 @@ package io.ktor.plugins.registry
 
 import java.nio.file.Paths
 
+/**
+ * Builds registry for use in ktor project generator back end.
+ */
 fun main() {
     val pluginsRoot = Paths.get("plugins")
     val buildDir = Paths.get("build")
