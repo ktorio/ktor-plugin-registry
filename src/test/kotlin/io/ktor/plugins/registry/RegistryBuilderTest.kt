@@ -17,6 +17,7 @@ class RegistryBuilderTest {
 
     private val registryBuilder = RegistryBuilder()
     private val testResources = Paths.get("src/test/resources")
+    // copy only required build files
     private val buildDir by lazy {
         Files.createTempDirectory("build").also { buildDir ->
             Files.copy(
@@ -24,7 +25,7 @@ class RegistryBuilderTest {
                 buildDir.resolve("server-artifacts.yaml"),
             )
             Files.copy(
-                testResources.resolve("resolved/ktor_releases"),
+                Paths.get("build/ktor_releases"),
                 buildDir.resolve("ktor_releases"),
             )
         }
@@ -124,7 +125,7 @@ class RegistryBuilderTest {
     fun `fails on install compilation error`() {
         assertRegistryFailure("""
             Could not read install function:
-            ${resourceContents("/server/com.fail/bad_kt/2.3.7/install.kt")}
+            ${resourceContents("/server/com.fail/bad_kt/2.0/install.kt")}
         """.trimIndent()) {
             buildRegistry {
                 it == "bad_kt"

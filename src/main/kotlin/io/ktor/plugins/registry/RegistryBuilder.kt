@@ -50,18 +50,20 @@ class RegistryBuilder(
         filter: (String) -> Boolean = { true },
     ) {
         val pluginsDir = pluginsRoot.resolve(target)
+        check(pluginsDir.exists()) {
+            "Plugins directory ${pluginsDir.absolute()} does not exist"
+        }
         val artifactsFile = buildDir.resolve("$target-artifacts.yaml")
         val outputDir = buildDir.resolve("registry").resolve(target)
         val manifestsDir = outputDir.resolve("manifests")
         val ktorReleasesFile = buildDir.resolve("ktor_releases")
-        if (!artifactsFile.exists() || !ktorReleasesFile.exists())
-            throw PluginsUnresolvedException()
-        else {
-            outputDir.apply {
-                deleteRecursively()
-                createDirectories()
-                manifestsDir.createDirectory()
-            }
+        check(artifactsFile.exists()) { "Artifacts file $artifactsFile does not exist" }
+        check(ktorReleasesFile.exists()) { "Release list file $artifactsFile does not exist" }
+        logger.info { "Cleaning output dir $outputDir..." }
+        outputDir.apply {
+            deleteRecursively()
+            createDirectories()
+            manifestsDir.createDirectory()
         }
         logger.info { "Building registry for $target..." }
         val allPluginIds = mutableSetOf<String>()

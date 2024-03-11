@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.File
 import java.nio.file.Path
-import java.nio.file.Paths
 
 class CodeAnalysis(private val classpathUrls: List<Path> = emptyList()) {
 

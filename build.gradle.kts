@@ -27,6 +27,13 @@ configurations {
         target.releaseConfigs.forEach(::create)
 }
 
+kotlin {
+    jvmToolchain {
+        check(this is JavaToolchainSpec)
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}
+
 dependencies {
     // each ktor version has its own classpath
     for (target in targets) {
