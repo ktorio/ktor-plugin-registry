@@ -120,6 +120,81 @@
     "documentation": {
       "description": "Markdown string or file reference to populate the plugin details. Must include a 'Usage' header.",
       "type": "string"
+    },
+    "gradle": {
+      "description": "Define custom gradle script injections required for your plugin.",
+      "type": "object",
+      "properties": {
+        "repositories": {
+          "description": "A list of repositories that will be included in the generated build script.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "plugins": {
+          "description": "A list of gradle plugins that will be included in the generated build script.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "maven": {
+      "description": "Define custom maven script injections required for your plugin.",
+      "type": "object",
+      "properties": {
+        "repositories": {
+          "description": "A list of repositories that will be included in the generated build script.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "plugins": {
+          "description": "A list of gradle plugins that will be included in the generated build script.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "group": {
+                "type": "string"
+              },
+              "artifact": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "extra": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "required": ["name", "description", "vcsLink", "license", "category"],

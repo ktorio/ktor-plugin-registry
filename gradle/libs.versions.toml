@@ -14,7 +14,7 @@ kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization-version" }
 kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml-version" }
 kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging-version" }
-slf4j = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j-version" }
+slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j-version" }
 maven-artifact = { module = "org.apache.maven:maven-artifact", version.ref = "maven-artifact-version" }
 
 [plugins]

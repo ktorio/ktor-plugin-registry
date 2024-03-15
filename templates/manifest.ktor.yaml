@@ -18,6 +18,33 @@ options:
   - name: option1
     default: some_value
     description: defines the first option
+# Additional instructions for gradle.
+# Optional
+gradle:
+  # Required gradle plugins
+  plugins:
+    - id: com.example.plugin
+      version: 7.0.1
+  # Required repositories for the plugin artifacts
+  # YOU MUST ALSO include a line in buildSrc/src/main/kotlin/io/ktor/plugins/registry/Repositories.kt
+  repositories:
+    - url: https://maven.repository.org/p/example
+# Additional instructions for maven install
+# Optional
+maven:
+  # Required maven plugins
+  plugins:
+    - group: com.example
+      artifact: plugin
+      version: 7.0.1
+      extra: |-
+        <extra>
+          <info>example</info>
+        </extra>
+  # Required repositories for maven - note the extra "id"
+  repositories:
+    - id: example_repo
+      url: https://maven.repository.org/p/example
 # (location, kotlin) pairs, where "location" is a pre-defined injection point, and "kotlin" is either a path or inline code
 #   options for "location" include:
 #   - default: placed in the *category*'s install file
@@ -31,6 +58,6 @@ options:
 #   - source_file_kt: in a separate file
 #   - test_function: adds a function to the test suite
 #   - resources: adds a file to the project's resources
-# Optional, defaults to install.kt
+# Optional, defaults to "default: install.kt"
 installation:
   default: install.kt

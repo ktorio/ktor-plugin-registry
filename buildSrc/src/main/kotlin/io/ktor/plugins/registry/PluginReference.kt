@@ -14,13 +14,31 @@ import kotlinx.serialization.encoding.Encoder
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
 import java.io.File
 
+/**
+ * Represents a reference to a plugin, including its ID, group, versions, and client flag.
+ *
+ * @property id The ID of the plugin.
+ * @property group The publishing group or vendor of the plugin.
+ * @property versions A map of version ranges to artifacts for the plugin.
+ * @property client A flag indicating whether the plugin is a client plugin.
+ */
 @Serializable
 data class PluginReference(
     val id: String,
     val group: PluginGroup,
     val versions: Map<String, Artifacts>,
+    val client: Boolean,
 )
 
+/**
+ * The credited vendor of the plugin, for displaying links, logo, etc. in the generator.
+ *
+ * @property id The ID of the plugin group.
+ * @property name The name of the plugin group, generally title-case.
+ * @property url The URL associated with the plugin group.
+ * @property email The contact email of the plugin group.
+ * @property logo The logo URL of the plugin group.
+ */
 @Serializable
 data class PluginGroup(
     val id: String,

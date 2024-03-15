@@ -1,0 +1,5 @@
+name: Default Headers
+description: This plugin adds a default set of headers to HTTP responses
+vcsLink: https://github.com/ktorio/ktor/blob/962677f73f0900cae32e90519fa1e850dd0acfa8/ktor-server/ktor-server-core/jvm/src/io/ktor/features/DefaultHeaders.kt
+license: Apache 2.0
+category: HTTP

@@ -1,0 +1,10 @@
+name: DoubleReceive
+description: Allows ApplicationCall.receive several times
+vcsLink: https://github.com/ktorio/ktor/blob/962677f73f0900cae32e90519fa1e850dd0acfa8/ktor-server/ktor-server-core/jvm/src/io/ktor/features/DoubleReceive.kt
+license: Apache 2.0
+category: Routing
+prerequisites:
+  - routing
+installation:
+  default: install.kt
+  in_routing: routing.kt

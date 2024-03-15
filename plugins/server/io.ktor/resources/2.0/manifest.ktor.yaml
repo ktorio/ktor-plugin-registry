@@ -1,0 +1,42 @@
+name: Resources
+description: Allows you to implement type-safe routing
+vcsLink: https://github.com/ktorio/ktor/blob/main/ktor-shared/ktor-resources/common/src/io/ktor/resources/Resources.kt
+license: Apache 2.0
+category: Routing
+prerequisites:
+  - routing
+installation:
+  default: install.kt
+  outside_app: outside_app.kt
+  in_routing: routing.kt
+gradle:
+  plugins:
+    - id: org.jetbrains.kotlin.plugin.serialization
+      version: LAST_KOTLIN_VERSION
+maven:
+  plugins:
+    - group: org.jetbrains.kotlin
+      artifact: kotlin-maven-plugin
+      version: LAST_KOTLIN_VERSION
+      extra: |-
+        <executions>
+            <execution>
+                <id>compile</id>
+                <phase>compile</phase>
+                <goals>
+                    <goal>compile</goal>
+                </goals>
+            </execution>
+        </executions>
+        <configuration>
+            <compilerPlugins>
+                <plugin>kotlinx-serialization</plugin>
+            </compilerPlugins>
+        </configuration>
+        <dependencies>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-serialization</artifactId>
+                <version>${kotlin_version}</version>
+            </dependency>
+        </dependencies>

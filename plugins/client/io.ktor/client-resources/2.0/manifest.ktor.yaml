@@ -1,0 +1,5 @@
+name: Resources
+description: Allows you to implement type-safe requests
+vcsLink: https://github.com/ktorio/ktor/blob/main/ktor-client/ktor-client-plugins/ktor-client-resources/common/src/io/ktor/client/plugins/resources/Resources.kt
+license: Apache 2.0
+category: HTTP

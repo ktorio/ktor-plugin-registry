@@ -6,15 +6,17 @@ package io.ktor.plugins.registry
 
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFileFactory
+import io.github.oshai.kotlinlogging.KLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.CliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.cli.jvm.configureContentRootsFromClassPath
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -27,25 +29,79 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.File
 import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 
-class CodeAnalysis(private val classpathUrls: List<Path> = emptyList()) {
+class CodeAnalysis(private val classpathJars: List<Path> = emptyList()) {
+
+    companion object {
+        val logger: KLogger = KotlinLogging.logger(CodeAnalysis::class.simpleName!!)
+    }
+
+    /**
+     * Caches common compiler types when compiling files within a plugin directory.
+     */
+    private val pluginAnalyzers = mutableMapOf<Path, PluginCodeAnalyzer>()
+
+    fun findErrorsAndThrow(sourceRoot: Path, plugin: PluginReference) {
+        findErrors(sourceRoot).ifNotEmpty {
+            logger.error {
+                "Compilation error(s) found in plugin ${plugin.id}:" +
+                        joinToString("\n", "\n") {
+                            with(it) {
+                                "${sourceRoot.absolutePathString()}/$file:$lineNumber:$column: $message"
+                            }
+                        }
+            }
+            throw IllegalArgumentException("Failed to compile sources for plugin: ${plugin.id}")
+        }
+    }
+
+    private fun findErrors(sourceRoot: Path) =
+        pluginAnalyzer(sourceRoot)
+            .findErrors()
+            .filter {
+                !it.message.startsWith("Conflicting overloads")
+            }
+
+    fun parseInstallSnippet(
+        sourceRoot: Path,
+        site: CodeInjectionSite,
+        contents: String,
+        filename: String? = null
+    ): InstallSnippet =
+        pluginAnalyzer(sourceRoot)
+            .parseInstallSnippet(site, contents, filename)
+
+    private fun pluginAnalyzer(sourceRoot: Path) = pluginAnalyzers.computeIfAbsent(sourceRoot) { path ->
+        PluginCodeAnalyzer(
+            classpathJars,
+            path
+        )
+    }
+}
+
+class PluginCodeAnalyzer(
+    classpathJars: List<Path> = emptyList(),
+    private val pluginVersionFolder: Path? = null
+) {
 
     private var environment: KotlinCoreEnvironment
     private var psiFileFactory: PsiFileFactory
     private val analyzer = TopDownAnalyzerFacadeForJVM
 
     init {
-        val messageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, true)
+        val verbose = false
+        val stderrMessages = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, verbose)
         val configuration = CompilerConfiguration().apply {
-            put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
+            put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, stderrMessages)
             put(CommonConfigurationKeys.MODULE_NAME, "PluginRegistry")
+            put(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS, true)
             put(JVMConfigurationKeys.JDK_HOME, File(System.getenv("JAVA_HOME")))
 
-            configureContentRootsFromClassPath(K2JVMCompilerArguments().apply {
-                classpath = classpathUrls.ifNotEmpty {
-                    classpathUrls.joinToString(File.pathSeparator) { it.toString() }
-                } ?: System.getProperty("java.class.path")
-            })
+            pluginVersionFolder?.let {
+                addKotlinSourceRoot(pluginVersionFolder.absolutePathString())
+            }
+            addJvmClasspathRoots(classpathJars.map(Path::toFile))
         }
         environment = KotlinCoreEnvironment.createForProduction(
             Disposer.newDisposable(),
@@ -59,7 +115,6 @@ class CodeAnalysis(private val classpathUrls: List<Path> = emptyList()) {
         when(site.extractionMethod) {
             CodeExtractionMethod.FUNCTION_BODY -> {
                 with(compileKotlinSource(contents, filename)) {
-                    throwIfError()
                     functionBody()?.let { codeBlock ->
                         InstallSnippet.Kotlin(
                             imports = importListAsStrings(),
@@ -70,7 +125,6 @@ class CodeAnalysis(private val classpathUrls: List<Path> = emptyList()) {
             }
             CodeExtractionMethod.CLASS_BODY -> {
                 with(compileKotlinSource(contents, filename)) {
-                    throwIfError()
                     classBody()?.let { codeBlock ->
                         InstallSnippet.Kotlin(
                             imports = importListAsStrings(),
@@ -90,7 +144,9 @@ class CodeAnalysis(private val classpathUrls: List<Path> = emptyList()) {
                 )
             }
             CodeExtractionMethod.VERBATIM -> InstallSnippet.RawContent(contents)
-            CodeExtractionMethod.FILE -> InstallSnippet.RawContent(contents, filename)
+            CodeExtractionMethod.FILE -> {
+                InstallSnippet.RawContent(contents, filename)
+            }
         }
 
     private fun compileKotlinSource(contents: String, filename: String? = null): KtFile =
@@ -100,24 +156,31 @@ class CodeAnalysis(private val classpathUrls: List<Path> = emptyList()) {
             contents
         ) as KtFile
 
-    private fun KtFile.throwIfError() {
+    fun findErrors(): List<CompilationError> {
         val trace = CliBindingTrace()
+        val sourceFiles = environment.getSourceFiles()
         analyzer.analyzeFilesWithJavaIntegration(
             environment.project,
-            listOf(this),
+            sourceFiles,
             trace,
             environment.configuration,
             environment::createPackagePartProvider
         )
-
-        trace.bindingContext.diagnostics.firstOrNull {
+        return trace.bindingContext.diagnostics.filter {
             it.severity == Severity.ERROR
-        }?.let { compileError ->
+        }.map { compileError ->
             val startOffset = compileError.textRanges.first().startOffset
-            val document = compileError.psiFile.viewProvider.document
-            val lineNumber = document?.getLineNumber(startOffset)?.let { it + 1 } ?: "??"
-            throw IllegalArgumentException(
-                "${DefaultErrorMessages.render(compileError)} (${this@throwIfError.name}:$lineNumber)"
+            val (line, column) = compileError.psiFile.viewProvider.document?.let { doc ->
+                val line = doc.getLineNumber(startOffset)
+                val column = startOffset - doc.getLineStartOffset(line)
+                (line + 1) to (column + 1)
+            } ?: (null to null)
+
+            CompilationError(
+                compileError.psiFile.name,
+                line,
+                column,
+                DefaultErrorMessages.render(compileError)
             )
         }
     }
@@ -160,6 +223,13 @@ sealed interface InstallSnippet {
         val filename: String? = null
     ) : InstallSnippet
 }
+
+data class CompilationError(
+    val file: String,
+    val lineNumber: Int?,
+    val column: Int?,
+    val message: String,
+)
 
 // What bits of the code to use for injection
 enum class CodeExtractionMethod {

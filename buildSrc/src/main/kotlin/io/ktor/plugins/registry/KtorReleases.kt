@@ -123,7 +123,7 @@ data class KtorTarget(
     val releaseConfigs: List<String> get() = releases.map(KtorRelease::config)
 
     fun allArtifactsForVersion(version: String): Sequence<String> =
-        pluginsDir.readPluginFiles().allArtifactsForVersion(version)
+        pluginsDir.readPluginFiles(name == "client").allArtifactsForVersion(version)
 }
 
 /**

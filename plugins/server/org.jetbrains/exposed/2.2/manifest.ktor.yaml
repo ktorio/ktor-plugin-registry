@@ -1,0 +1,12 @@
+name: Exposed
+description: Adds Exposed database to your application
+vcsLink: https://github.com/JetBrains/Exposed
+license: Apache 2.0
+category: Databases
+prerequisites:
+  - routing  - kotlinx-serialization
+installation:
+  default: install.kt
+  source_file_kt: UsersSchema.kt
+  inside_app: inside_app.kt
+  in_routing: routing.kt

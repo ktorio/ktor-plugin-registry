@@ -1,0 +1,5 @@
+name: DefaultRequest
+description: Allows you to configure default parameters for all requests.
+vcsLink: https://github.com/ktorio/ktor/blob/main/ktor-client/ktor-client-core/common/src/io/ktor/client/plugins/DefaultRequest.kt
+license: Apache 2.0
+category: HTTP

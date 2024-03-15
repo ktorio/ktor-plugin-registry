@@ -1,0 +1,10 @@
+name: Authentication Digest
+description: Handle Digest authentication
+vcsLink: https://github.com/ktorio/ktor/blob/e03bafda3b3d72fcac166e46cf55e5d2d9383660/ktor-client/ktor-client-features/ktor-client-auth/common/src/io/ktor/client/features/auth/providers/DigestAuthProvider.kt
+license: Apache 2.0
+category: Security
+prerequisites:
+  - auth
+installation:
+  default: install.kt
+  in_routing: routing.kt

@@ -1,0 +1,5 @@
+name: Metrics
+description: Adds supports for monitoring several metrics
+vcsLink: https://github.com/ktorio/ktor/tree/4a50c76c3264b0121b91a203d38473bb4aafbace/ktor-features/ktor-metrics/jvm/src/io/ktor/metrics
+license: Apache 2.0
+category: Monitoring

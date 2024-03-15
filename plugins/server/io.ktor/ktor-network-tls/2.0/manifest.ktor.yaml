@@ -1,0 +1,10 @@
+name: Raw Secure SSL/TLS Sockets
+description: Adds Raw Socket support for listening and connecting to tcp and udp sockets with secure sockets
+vcsLink: https://github.com/ktorio/ktor/tree/465b7573fba8ef2293b1d8866b3842504418d6f1/ktor-network/ktor-network-tls/jvm/src/io/ktor/network/tls
+license: Apache 2.0
+category: Sockets
+prerequisites:
+  - ktor-network
+installation:
+  default: install.kt
+  outside_app: outside_app.kt

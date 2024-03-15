@@ -1,0 +1,12 @@
+name: Freemarker
+description: Serve HTML content using Apache's FreeMarker template engine
+vcsLink: https://github.com/ktorio/ktor/blob/4a50c76c3264b0121b91a203d38473bb4aafbace/ktor-features/ktor-freemarker/jvm/src/io/ktor/freemarker/FreeMarker.kt
+license: Apache 2.0
+category: Templating
+prerequisites:
+  - routing
+installation:
+  default: install.kt
+  resources: templates/index.ftl
+  in_routing: routing.kt
+  outside_app: outside_app.kt
