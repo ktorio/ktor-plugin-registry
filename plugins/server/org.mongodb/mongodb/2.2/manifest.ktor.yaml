@@ -1,0 +1,13 @@
+name: MongoDB
+description: Adds MongoDB database to your application
+vcsLink: https://github.com/mongodb/mongo
+license: Apache 2.0
+category: Databases
+prerequisites:
+  - routing
+  - kotlinx-serialization
+documentation: documentation.md
+installation:
+  outside_app: databases.kt
+  source_file_kt: carsSchema.kt
+
