@@ -1,0 +1,10 @@
+name: Swagger
+description: Serves Swagger UI for your project
+vcsLink: https://github.com/ktorio/ktor/blob/main/ktor-server/ktor-server-plugins/ktor-server-swagger/jvm/src/io/ktor/server/plugins/swagger/Swagger.kt
+license: Apache 2.0
+category: HTTP
+prerequisites:
+  - routing
+installation:
+  default: install.kt
+  resources: openapi/documentation.yaml

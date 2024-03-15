@@ -1,0 +1,10 @@
+name: GSON
+description: Handles JSON serialization using GSON library
+vcsLink: https://github.com/ktorio/ktor/blob/192286740d912cc4767cbbf43d3951ba86eb7a41/ktor-features/ktor-gson/jvm/src/io/ktor/gson/GsonSupport.kt
+license: Apache 2.0
+category: Serialization
+prerequisites:
+  - content-negotiation
+installation:
+  in_routing: routing.kt
+  serialization_config: content_negotiation.kt

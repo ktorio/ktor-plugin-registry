@@ -1,0 +1,7 @@
+name: Status Pages
+description: Allow to respond to thrown exceptions.
+vcsLink: https://github.com/ktorio/ktor/blob/7e78e715cec3ff039cd628f8ff8ce875c35cde4c/ktor-server/ktor-server-core/jvm/src/io/ktor/features/StatusPages.kt
+license: Apache 2.0
+category: Routing
+prerequisites:
+  - routing

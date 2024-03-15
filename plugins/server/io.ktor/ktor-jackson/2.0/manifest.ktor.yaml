@@ -1,0 +1,10 @@
+name: Jackson
+description: Handles JSON serialization using Jackson library
+vcsLink: https://github.com/ktorio/ktor/blob/e03bafda3b3d72fcac166e46cf55e5d2d9383660/ktor-client/ktor-client-features/ktor-client-json/ktor-client-jackson/jvm/src/io/ktor/client/features/json/JacksonSerializer.kt
+license: Apache 2.0
+category: Serialization
+prerequisites:
+  - content-negotiation
+installation:
+  in_routing: routing.kt
+  serialization_config: content_negotiation.kt

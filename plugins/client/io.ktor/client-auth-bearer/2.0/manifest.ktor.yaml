@@ -1,0 +1,5 @@
+name: Authentication Bearer
+description: Authentication with a hash function applied to username and password
+vcsLink: https://github.com/ktorio/ktor/blob/main/ktor-client/ktor-client-plugins/ktor-client-auth/common/src/io/ktor/client/plugins/auth/providers/BearerAuthProvider.kt
+license: Apache 2.0
+category: HTTP

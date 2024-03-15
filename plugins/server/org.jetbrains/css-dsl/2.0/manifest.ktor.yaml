@@ -1,0 +1,18 @@
+name: CSS DSL
+description: Generate CSS using Kotlin code
+vcsLink: https://github.com/JetBrains/kotlin-wrappers/tree/master/kotlin-css
+license: Apache 2.0
+category: Templating
+prerequisites:
+  - html-dsl
+installation:
+  default: install.kt
+  in_routing: routing.kt
+  outside_app: outside_app.kt
+gradle:
+  repositories:
+    - url: https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers
+maven:
+  repositories:
+    - id: kotlin_js
+      url: https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers

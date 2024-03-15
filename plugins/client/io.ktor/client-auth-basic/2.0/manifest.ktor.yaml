@@ -1,0 +1,5 @@
+name: Authentication Basic
+description: Can be used for logging in users
+vcsLink: https://github.com/ktorio/ktor-documentation/tree/main/codeSnippets/snippets/client-auth-basic
+license: Apache 2.0
+category: HTTP

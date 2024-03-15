@@ -135,7 +135,7 @@ class RegistryBuilderTest {
 
     @Test
     fun `fails on unknown types`() {
-        assertRegistryFailure("Unresolved reference: does (install.kt:1)") {
+        assertRegistryFailure("Failed to compile sources for plugin: missing_import") {
             buildRegistry {
                 it == "missing_import"
             }

@@ -1,0 +1,5 @@
+name: GSON Serialization
+description: Serializes request bodies to json using Gson
+vcsLink: https://github.com/ktorio/ktor/blob/main/ktor-client/ktor-client-plugins/ktor-client-json/ktor-client-gson/jvm/src/io/ktor/client/plugins/gson/GsonSerializer.kt
+license: Apache 2.0
+category: Serialization

@@ -1,0 +1,11 @@
+name: Authentication JWT
+description: Handle JWT authentication
+vcsLink: https://github.com/ktorio/ktor/blob/7e78e715cec3ff039cd628f8ff8ce875c35cde4c/ktor-features/ktor-auth-jwt/jvm/src/io/ktor/auth/jwt/JWTAuth.kt
+license: Apache 2.0
+category: Security
+prerequisites:
+  - auth
+installation:
+  default: install.kt
+  application_conf: application.conf
+  application_yaml: application.yaml

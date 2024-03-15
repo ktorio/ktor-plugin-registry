@@ -1,0 +1,8 @@
+name: Raw Sockets
+description: Adds Raw Socket support for listening and connecting to tcp and udp sockets
+vcsLink: https://github.com/ktorio/ktor/tree/d05996269def3ae106eb9779ac85ee448da609de/ktor-network/common/src/io/ktor/network/sockets
+license: Apache 2.0
+category: Sockets
+installation:
+  default: install.kt
+  outside_app: outside_app.kt

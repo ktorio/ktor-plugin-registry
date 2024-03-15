@@ -70,7 +70,7 @@ dependencies {
 
     //logging
     implementation(libs.kotlin.logging)
-    implementation(libs.slf4j)
+    implementation(libs.slf4j.simple)
 
 
     testImplementation(kotlin("test"))

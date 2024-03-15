@@ -16,6 +16,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.InputStream
 import java.net.MalformedURLException
 import java.net.URL
@@ -25,6 +26,7 @@ import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.inputStream
 import kotlin.io.path.outputStream
+import kotlin.io.path.toPath
 
 sealed interface ResolvedPluginManifest {
     fun export(outputFile: Path, json: Json)
@@ -57,17 +59,19 @@ class PluginResolutionContext(
     }
 
     private fun resolveYamlFile(plugin: PluginReference) =
-        plugin.versionPath.resolve("manifest.ktor.yaml").ifExists()?.let { path ->
+        plugin.versionPath.resolve("manifest.ktor.yaml").ifExists()?.let { yamlPath ->
             val model: YamlManifest.ImportManifest =
-                path.inputStream().use(Yaml.default::decodeFromStream)
+                yamlPath.inputStream().use(Yaml.default::decodeFromStream)
 
             logger.info { "${plugin.identifier} resolved from YAML" }
+            codeAnalysis.findErrorsAndThrow(plugin.versionPath, plugin)
+
             YamlManifest(
                 plugin = plugin,
                 release = release,
                 model = model,
                 installSnippets = model.installation.mapValues { (site, installBlock) ->
-                    readCodeSnippet(site, installBlock) {
+                    readCodeSnippet(plugin.versionPath, site, installBlock) {
                         plugin.readFileFromVersionPath(it)
                     }
                 },
@@ -78,23 +82,28 @@ class PluginResolutionContext(
         }
 
     private fun resolveYamlFromClasspath(plugin: PluginReference): YamlManifest? {
-        val model: YamlManifest.ImportManifest = classLoader.getResourceAsStream(plugin.manifestResourceFile)
+        val yamlUrl = classLoader.getResource(plugin.manifestResourceFile) ?: return null
+        val model: YamlManifest.ImportManifest = yamlUrl.openStream()
             ?.use(Yaml.default::decodeFromStream)
             ?: return null
+        val resolvedManifestFolder = yamlUrl.toURI().toPath().parent
 
         logger.info { "${plugin.identifier} resolved from classpath" }
+        codeAnalysis.findErrorsAndThrow(resolvedManifestFolder, plugin)
+
         return YamlManifest(
             plugin = plugin,
             release = release,
             model = model,
             installSnippets = model.installation.mapValues { (site, installBlock) ->
-                readCodeSnippet(site, installBlock) {
+                readCodeSnippet(resolvedManifestFolder, site, installBlock) {
                     plugin.readFileFromClasspath(it)
                 }
             },
             documentationEntry = readDocumentation(model.documentation) {
                 plugin.readFileFromClasspath(it)
             },
+
         )
     }
 
@@ -116,6 +125,7 @@ class PluginResolutionContext(
         "${group.id.replace('.', '/')}/$id"
 
     private fun readCodeSnippet(
+        path: Path,
         site: String,
         codeSnippet: YamlManifest.CodeSnippetSource,
         findCodeInput: (String) -> InputStream?
@@ -129,7 +139,12 @@ class PluginResolutionContext(
                 code to codeSnippet.file
             }
         }
-        return codeAnalysis.parseInstallSnippet(injectionSite, code, filename)
+        return codeAnalysis.parseInstallSnippet(
+            sourceRoot = path,
+            site = injectionSite,
+            contents = code,
+            filename = filename
+        )
     }
 
     private fun readDocumentation(
@@ -182,26 +197,38 @@ data class YamlManifest(
     private fun ImportManifest.toExportModel(
         release: KtorRelease
     ): JsonObject = buildJsonObject {
+        val version = when(plugin.versionRange.stripSpecialChars()) {
+            "2.0" -> "2.0.0"
+            else -> release.versionString
+        }
         put("id", plugin.id)
         put("name", name)
-        put("version", plugin.versionRange.stripSpecialChars())
-        put("ktor_version", release.versionString)
+        put("version", version)
+        put("ktor_version", version)
         put("short_description", description)
         put("github", vcsLink)
         put("copyright", license)
-        put("group", category.titleCase())
         putJsonObject("vendor") {
             put("name", plugin.group.name)
             put("url", plugin.group.url)
-            put("email", plugin.group.email)
-            put("logo", plugin.group.outputLogo)
+            if (plugin.group.name != "Ktor") {
+                put("email", plugin.group.email)
+                put("logo", plugin.group.outputLogo)
+            }
         }
-        putJsonArray("required_feature_ids") {
-            prerequisites?.forEach(::add)
+        put("group", PluginCategory.valueOf(category.uppercase()).nameTitleCase)
+        prerequisites?.ifNotEmpty {
+            putJsonArray("required_feature_ids") {
+                prerequisites.forEach(::add)
+            }
         }
-        putDocumentation()
         putInstallRecipe()
+        putGradleInstall()
+        putMavenInstall()
         putDependencies(release)
+        putDocumentation()
+        if (plugin.client)
+            put("target", "client")
     }
 
     private fun JsonObjectBuilder.putDocumentation() {
@@ -219,6 +246,15 @@ data class YamlManifest(
             putJsonArray("imports") {
                 installSnippets.allExcept(TEST).asSequence()
                     .flatMap { (_, snippet) -> snippet.importsOrEmpty }
+                    // currently always imported anyway
+                    .filter {
+                        it !in setOf(
+                            "io.ktor.server.application.*",
+                            "io.ktor.server.routing.*",
+                            "io.ktor.server.response.*",
+                            "io.ktor.client.*"
+                        )
+                    }
                     .distinct()
                     .forEach(::add)
             }
@@ -231,15 +267,17 @@ data class YamlManifest(
                 }
                 // function template will be included in the following section
             }
-            putJsonArray("templates") {
-                for ((position, snippet) in installSnippets.allExcept(DEFAULT))
-                    add(buildJsonObject {
-                        put("position", position)
-                        put("text", snippet.code)
-                        (snippet as? InstallSnippet.RawContent)?.filename?.let {
-                            put("name", it)
-                        }
-                    })
+            installSnippets.allExcept(DEFAULT).takeIf { it.isNotEmpty() }?.let { templateSnippets ->
+                putJsonArray("templates") {
+                    for ((position, snippet) in templateSnippets)
+                        add(buildJsonObject {
+                            put("position", position)
+                            put("text", snippet.code)
+                            (snippet as? InstallSnippet.RawContent)?.filename?.let {
+                                put("name", it)
+                            }
+                        })
+                }
             }
         }
     }
@@ -259,6 +297,57 @@ data class YamlManifest(
                         MatchKtor -> "\$ktor_version"
                         else -> throw IllegalArgumentException("Unexpected version type ${version::class}")
                     })
+                }
+            }
+        }
+    }
+
+    private fun JsonObjectBuilder.putGradleInstall() {
+        model.gradle?.let { gradle ->
+            put("gradle_install", buildJsonObject {
+                putJsonArray("plugins") {
+                    for (plugin in gradle.plugins) {
+                        addJsonObject {
+                            put("id", plugin.id)
+                            put("version", plugin.version)
+                        }
+                    }
+                }
+                putJsonArray("repositories") {
+                    for (repository in gradle.repositories) {
+                        addJsonObject {
+                            put("url", repository.url)
+                        }
+                    }
+                }
+            })
+        }
+    }
+
+    private fun JsonObjectBuilder.putMavenInstall() {
+        model.maven?.let { maven ->
+            putJsonObject("maven_install") {
+                if (maven.plugins.isNotEmpty()) {
+                    putJsonArray("plugins") {
+                        for (plugin in maven.plugins) {
+                            addJsonObject {
+                                put("group", plugin.group)
+                                put("artifact", plugin.artifact)
+                                put("version", plugin.version)
+                                put("extra", plugin.extra)
+                            }
+                        }
+                    }
+                }
+                if (maven.repositories.isNotEmpty()) {
+                    putJsonArray("repositories") {
+                        for (repository in maven.repositories) {
+                            addJsonObject {
+                                put("id", repository.id)
+                                put("url", repository.url)
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -294,7 +383,9 @@ data class YamlManifest(
             CodeSnippetSource.File("documentation.md"),
         val options: List<ImportOption>? = null,
         val installation: Map<String, CodeSnippetSource> =
-            mapOf(CodeInjectionSite.DEFAULT.name to CodeSnippetSource.File("install.kt"))
+            mapOf(CodeInjectionSite.DEFAULT.lowercaseName to CodeSnippetSource.File("install.kt")),
+        val gradle: GradleInstallRecipe? = null,
+        val maven: MavenInstallRecipe? = null,
     )
 
     @Serializable
@@ -302,6 +393,43 @@ data class YamlManifest(
         val name: String,
         val defaultValue: String,
         val description: String,
+    )
+
+    @Serializable
+    data class GradleInstallRecipe(
+        val repositories: MutableList<GradleRepository> = mutableListOf(),
+        val plugins: List<GradlePlugin> = emptyList()
+    )
+
+    @Serializable
+    data class GradleRepository(
+        val url: String? = null
+    )
+
+    @Serializable
+    data class GradlePlugin(
+        val id: String,
+        val version: String
+    )
+
+    @Serializable
+    data class MavenInstallRecipe(
+        val repositories: MutableList<MavenRepository> = mutableListOf(),
+        val plugins: List<MavenPlugin> = emptyList()
+    )
+
+    @Serializable
+    data class MavenRepository(
+        val id: String,
+        val url: String
+    )
+
+    @Serializable
+    data class MavenPlugin(
+        val group: String,
+        val artifact: String,
+        val version: String? = null,
+        val extra: String? = null
     )
 
     @Serializable(with = CodeBlockSerializer::class)
@@ -342,8 +470,10 @@ enum class PluginCategory(val acronym: Boolean = false) {
 
     companion object {
         val namesUppercase = entries.asSequence().map { it.name }.toSet()
-        val names = entries.asSequence().map { if (it.acronym) it.name else it.name.titleCase() }.toSet()
+        val names = entries.asSequence().map { it.nameTitleCase }.toSet()
     }
+
+    val nameTitleCase get() = if (acronym) name else name.titleCase()
 }
 
 private fun String.titleCase() = get(0) + substring(1).lowercase()

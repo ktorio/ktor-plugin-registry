@@ -1,0 +1,12 @@
+name: Pebble
+description: Allows you to use Pebble templates as views within your application.
+vcsLink: https://github.com/ktorio/ktor/blob/7e78e715cec3ff039cd628f8ff8ce875c35cde4c/ktor-features/ktor-pebble/jvm/src/io/ktor/pebble/Pebble.kt
+license: Apache 2.0
+category: Templating
+prerequisites:
+  - routing
+installation:
+  default: install.kt
+  resources: templates/pebble-index.html
+  outside_app: outside_app.kt
+  in_routing: routing.kt

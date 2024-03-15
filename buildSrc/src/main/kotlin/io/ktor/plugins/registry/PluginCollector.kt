@@ -19,7 +19,7 @@ import kotlin.io.path.*
  *         /<version>
  *             /manifest.ktor.yaml
  */
-fun Path.readPluginFiles(filter: (String) -> Boolean = { true }): Sequence<PluginReference> = sequence {
+fun Path.readPluginFiles(client: Boolean = false, filter: (String) -> Boolean = { true }): Sequence<PluginReference> = sequence {
     val seen = mutableSetOf<String>()
 
     for (groupFolder in listDirectoryEntries()) {
@@ -50,6 +50,7 @@ fun Path.readPluginFiles(filter: (String) -> Boolean = { true }): Sequence<Plugi
                     id = pluginId,
                     group = groupInfo,
                     versions = versions,
+                    client = client,
                 )
             )
         }

@@ -1,0 +1,41 @@
+name: kotlinx.serialization
+description: Handles JSON serialization using kotlinx.serialization library
+vcsLink: https://github.com/ktorio/ktor/blob/2dd2ed73538973e2ff44987ddba0efa0371bb0d6/ktor-features/ktor-serialization/jvm/src/io/ktor/serialization/JsonSupport.kt
+license: Apache 2.0
+category: Serialization
+prerequisites:
+  - content-negotiation
+installation:
+  in_routing: routing.kt
+  serialization_config: content_negotiation.kt
+gradle:
+  plugins:
+    - id: org.jetbrains.kotlin.plugin.serialization
+      version: LAST_KOTLIN_VERSION
+maven:
+  plugins:
+    - group: org.jetbrains.kotlin
+      artifact: kotlin-maven-plugin
+      version: LAST_KOTLIN_VERSION
+      extra: |-
+        <executions>
+            <execution>
+                <id>compile</id>
+                <phase>compile</phase>
+                <goals>
+                    <goal>compile</goal>
+                </goals>
+            </execution>
+        </executions>
+        <configuration>
+            <compilerPlugins>
+                <plugin>kotlinx-serialization</plugin>
+            </compilerPlugins>
+        </configuration>
+        <dependencies>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-serialization</artifactId>
+                <version>${kotlin_version}</version>
+            </dependency>
+        </dependencies>

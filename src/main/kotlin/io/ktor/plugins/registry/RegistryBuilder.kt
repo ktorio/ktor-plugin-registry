@@ -68,16 +68,20 @@ class RegistryBuilder(
         logger.info { "Building registry for $target..." }
         val allPluginIds = mutableSetOf<String>()
         with(ktorReleasesFile.readLines().map(::KtorRelease)) {
-            allPluginIds += resolvePluginVersions(pluginsDir, filter)
+            allPluginIds += resolvePluginVersions(pluginsDir, target == "client", filter)
             outputReleaseMappings(outputDir)
             outputManifestFiles(pluginsDir, artifactsFile, manifestsDir)
         }
         logger.info { "Registry built for $target including plugins: ${allPluginIds.sorted().joinToString()}" }
     }
 
-    private fun List<KtorRelease>.resolvePluginVersions(pluginsDir: Path, filter: (String) -> Boolean): Set<String> {
+    private fun List<KtorRelease>.resolvePluginVersions(
+        pluginsDir: Path,
+        client: Boolean,
+        filter: (String) -> Boolean
+    ): Set<String> {
         val pluginIds = mutableSetOf<String>()
-        for (plugin in pluginsDir.readPluginFiles(filter)) {
+        for (plugin in pluginsDir.readPluginFiles(client, filter)) {
             try {
                 val distributions = mapNotNull { release ->
                     release.pickVersion(plugin)?.let {

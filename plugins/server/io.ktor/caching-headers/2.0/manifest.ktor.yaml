@@ -1,0 +1,5 @@
+name: Caching Headers
+description: Send the headers Cache-Control and Expires used by clients and proxies to cache requests
+vcsLink: https://github.com/ktorio/ktor/blob/419744383223899e69746b2afe50d873d442e568/ktor-server/ktor-server-core/jvm/src/io/ktor/features/CachingHeaders.kt
+license: Apache 2.0
+category: HTTP

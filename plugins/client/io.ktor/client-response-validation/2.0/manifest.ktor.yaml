@@ -1,0 +1,5 @@
+name: Response Validation
+description: Validates responses depending on their status codes
+vcsLink: https://github.com/ktorio/ktor-documentation/tree/main/codeSnippets/snippets/client-retry
+license: Apache 2.0
+category: HTTP
