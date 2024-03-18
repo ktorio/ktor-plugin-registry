@@ -4,7 +4,8 @@ vcsLink: https://github.com/JetBrains/Exposed
 license: Apache 2.0
 category: Databases
 prerequisites:
-  - routing  - kotlinx-serialization
+  - routing
+  - kotlinx-serialization
 installation:
   default: install.kt
   source_file_kt: UsersSchema.kt
