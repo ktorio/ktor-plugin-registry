@@ -8,4 +8,4 @@ prerequisites:
 installation:
   default: install.kt
   in_routing: routing.kt
-  test_function: test.kt
+#  test_function: test.kt
