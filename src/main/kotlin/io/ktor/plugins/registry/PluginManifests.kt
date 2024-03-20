@@ -316,6 +316,7 @@ data class YamlManifest(
                 putJsonArray("repositories") {
                     for (repository in gradle.repositories) {
                         addJsonObject {
+                            put("type", "url_based")
                             put("url", repository.url)
                         }
                     }
