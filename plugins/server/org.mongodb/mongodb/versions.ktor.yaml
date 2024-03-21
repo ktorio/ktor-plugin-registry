@@ -1,0 +1,4 @@
+"[2.2,)":
+  - org.mongodb:mongodb-driver-core:4.9.0
+  - org.mongodb:mongodb-driver-sync:4.9.0
+  - org.mongodb:bson:4.9.0
