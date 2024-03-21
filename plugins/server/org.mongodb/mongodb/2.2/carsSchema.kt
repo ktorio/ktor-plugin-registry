@@ -44,12 +44,12 @@ class CarService(private val database: MongoDatabase) {
     }
 
     // Update a car
-    suspend fun update(id: String, car: Car): Document?= withContext(Dispatchers.IO) {
-    collection.findOneAndReplace(Filters.eq("_id", ObjectId(id)), car.toDocument())
+    suspend fun update(id: String, car: Car): Document? = withContext(Dispatchers.IO) {
+        collection.findOneAndReplace(Filters.eq("_id", ObjectId(id)), car.toDocument())
     }
 
     // Delete a car
-    suspend fun delete(id: String): Document?= withContext(Dispatchers.IO) {
-    collection.findOneAndDelete(Filters.eq("_id", ObjectId(id)))
+    suspend fun delete(id: String): Document? = withContext(Dispatchers.IO) {
+        collection.findOneAndDelete(Filters.eq("_id", ObjectId(id)))
     }
 }
