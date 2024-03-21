@@ -8,6 +8,6 @@ prerequisites:
   - kotlinx-serialization
 documentation: documentation.md
 installation:
-  outside_app: databases.kt
-  source_file_kt: carsSchema.kt
+  outside_app: Databases.kt
+  source_file_kt: CarsSchema.kt
 
