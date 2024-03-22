@@ -1,7 +1,7 @@
 [versions]
 kotlin-version = "1.9.23"
 ktor-version = "3.0.0-beta-1"
-kaml-version = "0.57.0"
+kaml-version = "0.58.0"
 reflections-version = "0.10.2"
 kotlin-logging-version = "6.0.3"
 slf4j-version = "2.0.12"
