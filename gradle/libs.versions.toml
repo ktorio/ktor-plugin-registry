@@ -7,7 +7,7 @@ kotlin-logging-version = "6.0.3"
 slf4j-version = "2.0.12"
 serialization-version = "1.6.3"
 maven-artifact-version = "3.9.6"
-detekt-version = "1.23.5"
+detekt-version = "1.23.6"
 
 [libraries]
 kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-version" }
