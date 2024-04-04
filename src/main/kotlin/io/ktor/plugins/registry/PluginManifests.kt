@@ -246,15 +246,6 @@ data class YamlManifest(
             putJsonArray("imports") {
                 installSnippets.allExcept(TEST).asSequence()
                     .flatMap { (_, snippet) -> snippet.importsOrEmpty }
-                    // currently always imported anyway
-                    .filter {
-                        it !in setOf(
-                            "io.ktor.server.application.*",
-                            "io.ktor.server.routing.*",
-                            "io.ktor.server.response.*",
-                            "io.ktor.client.*"
-                        )
-                    }
                     .distinct()
                     .forEach(::add)
             }
