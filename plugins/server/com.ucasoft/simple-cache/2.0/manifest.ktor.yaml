@@ -1,0 +1,8 @@
+name: Simple Cache
+description: Simple Cache base solution which provides the plugin implementation and abstract class for cache providers
+vcsLink: https://github.com/Scogun/ktor-simple-cache/tree/main/ktor-simple-cache
+license: Apache 2.0
+category: HTTP
+prerequisites:
+  - routing
+installation: {}
