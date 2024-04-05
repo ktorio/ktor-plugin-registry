@@ -1,0 +1,10 @@
+name: Simple Memory Cache
+description: Memory cache provider for Ktor Simple Cache plugin
+vcsLink: https://github.com/Scogun/ktor-simple-cache/tree/main/ktor-simple-memory-cache
+license: Apache 2.0
+category: HTTP
+prerequisites:
+  - simple-cache
+installation:
+  default: install.kt
+  in_routing: routing.kt
