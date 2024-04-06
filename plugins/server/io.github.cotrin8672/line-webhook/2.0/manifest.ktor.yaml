@@ -1,0 +1,9 @@
+name: LineWebhook
+description: This plugin validates the signature of LineBot webhook.
+vcsLink: https://github.com/cotrin8672/ktor-line-webhook-plugin
+license: Apache 2.0
+category: Security
+prerequisites:
+  - double-receive
+installation:
+  in_routing: routing.kt
