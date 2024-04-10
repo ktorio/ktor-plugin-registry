@@ -1,5 +1,5 @@
 
-The [DoubleReceive](https://ktor.io/docs/double-receive.html) plugin provides the ility to invoke `ApplicationCall.receive` several times with no `RequestAlreadyConsumedException`. This usually makes sense when a plugin is consuming a request body, so a handler is unable to receive it again.
+The [DoubleReceive](https://ktor.io/docs/double-receive.html) plugin allows you to invoke `ApplicationCall.receive` several times with no `RequestAlreadyConsumedException`. It usually makes sense when a plugin consumes a request body so a handler cannot receive it again.
 
 ## Usage
 
@@ -7,7 +7,7 @@ The code snippet below shows how to install `DoubleReceive`:
 ```kotlin
 install(DoubleReceive)
 ```
-After that, you can receive from a call multiple times and every invocation may return the same instance:
+After that, you can receive a call multiple times, and every invocation may return the same instance:
 ```kotlin
 val first = call.receiveText()
 val theSame = call.receiveText()
