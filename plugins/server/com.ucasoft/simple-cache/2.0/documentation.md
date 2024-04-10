@@ -1,4 +1,4 @@
-# Ktor Simple Cache
+
 Base solution which provides the plugin implementation and abstract class for cache providers.
 
 [![Maven Central with version prefix filter](https://img.shields.io/maven-central/v/com.ucasoft.ktor/ktor-simple-cache/0.2.8?color=blue)](https://search.maven.org/artifact/com.ucasoft.ktor/ktor-simple-cache/0.2.8/jar)
