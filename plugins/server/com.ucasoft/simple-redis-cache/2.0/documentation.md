@@ -14,12 +14,12 @@ Redis cache provider for Ktor Simple Cache plugin
     routing {
         cacheOutput(2.seconds) {
             get("short-cache") {
-                call.respond(Random.nextInt())
+                call.respond(Random.nextInt().toString())
             }
         }
         cacheOutput {
             get("default-cache") {
-                call.respond(Random.nextInt())
+                call.respond(Random.nextInt().toString())
             }
         }
     }
