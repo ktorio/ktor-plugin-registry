@@ -8,12 +8,12 @@ import kotlin.time.Duration.Companion.seconds
 public fun Route.cachedEndpoints() {
     cacheOutput(2.seconds) {
         get("/short") {
-            call.respond(Random.nextInt())
+            call.respond(Random.nextInt().toString())
         }
     }
     cacheOutput {
         get("/default") {
-            call.respond(Random.nextInt())
+            call.respond(Random.nextInt().toString())
         }
     }
 }
