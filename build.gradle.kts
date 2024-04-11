@@ -135,6 +135,15 @@ tasks {
         }
     }
 
+    // generates the appropriate directory structure with some templates for a new plugin
+    register<JavaExec>("createPlugin") {
+        group = "plugins"
+        description = "Creates a skeleton for a new plugin"
+        mainClass = "io.ktor.plugins.registry.CreatePluginKt"
+        classpath = sourceSets["main"].runtimeClasspath
+        standardInput = System.`in`
+    }
+
     // builds the registry for distributing to the project generator
     register<JavaExec>("buildRegistry") {
         group = "plugins"

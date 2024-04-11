@@ -17,19 +17,20 @@ Repositories.kt in your pull request in step 2.  It should have public read acce
 
 2. **Fork and clone this repository.**<br /><br />
 
-3. **Add files under the `/plugins` folder.**
-    - Use the following structure for the files:
+3. **Run `./gradlew createPlugin`**
+    - This will prompt you with a couple questions about the new plugin.
+    - After it is completed, you should have some new files in this structure:
     ```
-      /plugins
-        /<server|client>
-          /<group>                        -- e.g. "io.ktor"
-            /group.ktor.yaml              -- organization details
-            /<plugin-id>                  -- must be unique
-               /versions.ktor.yaml        -- see templates/versions.ktor.yaml
-               /<version>                 -- ktor version range w/ special chars stripped
-                 /manifest.ktor.yaml      -- use template templates/manifest.ktor.yaml
-                 /install.kt              -- contains install function
-                 /documentation.md        -- contains documentation
+    plugins
+    └── server
+        └── <group>
+            ├── group.ktor.yaml
+            └── <plugin-id>
+                ├── versions.ktor.yaml
+                └── 2.0
+                    ├── manifest.ktor.yaml
+                    ├── install,kt
+                    └── documentation.md
     ```
    - You can include any number of install files for populating new projects.  More information under 
      [templates/manifest.ktor.yaml](templates/manifest.ktor.yaml).  The existing plugin files under the 
@@ -38,7 +39,7 @@ Repositories.kt in your pull request in step 2.  It should have public read acce
      function in the [Repositories.kt](buildSrc/src/main/kotlin/io/ktor/plugins/registry/Repositories.kt) file.
    <br /><br />
    
-4. **Run `./gradlew buildRegistry`** to test the new files.<br /><br />
+4. **Run `./gradlew --console=plain -q buildRegistry`** to test the new files.<br /><br />
 
 5. **Create a pull request** with the new changes.
     - Once merged, your plugin will be available in the ktor project generator.

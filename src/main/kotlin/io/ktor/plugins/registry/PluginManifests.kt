@@ -465,7 +465,7 @@ enum class PluginCategory(val acronym: Boolean = false) {
         val names = entries.asSequence().map { it.nameTitleCase }.toSet()
     }
 
-    val nameTitleCase get() = if (acronym) name else name.titleCase()
+    val nameTitleCase get() = if (acronym) name else name.wordTitleCase()
 }
 
-private fun String.titleCase() = get(0) + substring(1).lowercase()
+private fun String.wordTitleCase() = get(0) + substring(1).lowercase()
