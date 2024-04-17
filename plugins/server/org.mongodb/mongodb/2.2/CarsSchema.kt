@@ -5,6 +5,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.decodeFromString
 import org.bson.Document
 import org.bson.types.ObjectId
 
@@ -14,12 +16,12 @@ data class Car(
     val model: String,
     val number: String
 ) {
-    fun toDocument(): Document = Document.parse(Json.encodeToString(serializer(), this))
+    fun toDocument(): Document = Document.parse(Json.encodeToString(this))
 
     companion object {
         private val json = Json { ignoreUnknownKeys = true }
 
-        fun fromDocument(document: Document): Car = json.decodeFromString(serializer(), document.toJson())
+        fun fromDocument(document: Document): Car = json.decodeFromString(document.toJson())
     }
 }
 
