@@ -8,6 +8,8 @@ slf4j-version = "2.0.13"
 serialization-version = "1.6.3"
 maven-artifact-version = "3.9.6"
 detekt-version = "1.23.6"
+jgit-version="6.9.0.202403050737-r"
+compress-version="1.25.0"
 
 [libraries]
 kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-version" }
@@ -16,6 +18,8 @@ kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml-version" }
 kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging-version" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j-version" }
 maven-artifact = { module = "org.apache.maven:maven-artifact", version.ref = "maven-artifact-version" }
+jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit-version" }
+apache-compress = { module = "org.apache.commons:commons-compress", version.ref = "compress-version" }
 
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt-version" }

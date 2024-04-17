@@ -57,6 +57,7 @@ dependencies {
     // current ktor dependencies for handling manifests
     implementation("io.ktor:ktor-server-core:$latestKtor")
     implementation("io.ktor:ktor-client-core:$latestKtor")
+    implementation("io.ktor:ktor-client-cio:$latestKtor")
 
     // inspection of install blocks
     implementation(libs.kotlin.compiler)
@@ -68,10 +69,12 @@ dependencies {
     // resolving versions
     implementation(libs.maven.artifact)
 
-    //logging
+    // logging
     implementation(libs.kotlin.logging)
     implementation(libs.slf4j.simple)
 
+    // finding changed files
+    implementation(libs.jgit)
 
     testImplementation(kotlin("test"))
 }
@@ -151,6 +154,14 @@ tasks {
         mainClass = "io.ktor.plugins.registry.BuildRegistryKt"
         classpath = sourceSets["main"].runtimeClasspath
         dependsOn("resolvePlugins")
+    }
+
+    // generates a test project using the modified plugins in the repository
+    register<JavaExec>("buildTestProject") {
+        group = "plugins"
+        description = "Generates a test project from the newly registered plugins"
+        mainClass = "io.ktor.plugins.registry.GenerateSampleProjectKt"
+        classpath = sourceSets["main"].runtimeClasspath
     }
 
     // compresses registry output into a tar file
