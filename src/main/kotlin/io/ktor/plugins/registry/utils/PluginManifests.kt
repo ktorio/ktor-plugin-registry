@@ -2,11 +2,12 @@
  * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
  */
 
-package io.ktor.plugins.registry
+package io.ktor.plugins.registry.utils
 
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.ktor.plugins.registry.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -150,7 +151,7 @@ class PluginResolutionContext(
     private fun readDocumentation(
         codeSnippet: YamlManifest.CodeSnippetSource,
         findCodeInput: (String) -> InputStream?
-    ) = DocumentationExtractor.parseDocumentationMarkdown(when(codeSnippet) {
+    ) = DocumentationExtractor.parseDocumentationMarkdown(when (codeSnippet) {
         is YamlManifest.CodeSnippetSource.Text -> codeSnippet.code
         is YamlManifest.CodeSnippetSource.File -> {
             findCodeInput(codeSnippet.file)?.use { it.readAllBytes().toString(Charset.defaultCharset()) }

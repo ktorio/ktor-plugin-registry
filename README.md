@@ -17,7 +17,7 @@ Repositories.kt in your pull request in step 2.  It should have public read acce
 
 2. **Fork and clone this repository.**<br /><br />
 
-3. **Run `./gradlew createPlugin`**
+3. **Run `./gradlew --console=plain -q createPlugin`**
     - This will prompt you with a couple questions about the new plugin.
     - After it is completed, you should have some new files in this structure:
     ```
@@ -39,7 +39,11 @@ Repositories.kt in your pull request in step 2.  It should have public read acce
      function in the [Repositories.kt](buildSrc/src/main/kotlin/io/ktor/plugins/registry/Repositories.kt) file.
    <br /><br />
    
-4. **Run `./gradlew --console=plain -q buildRegistry`** to test the new files.<br /><br />
+4. **Run `./gradlew buildRegistry`** to test the new files.<br /><br />
 
-5. **Create a pull request** with the new changes.
+5. **Run `./gradlew buildTestProject`** to generate a sample project.
+   - You can now experiment with a project generated with your plugin.
+   - Iterate on updating the new files, building the registry, and generating the test project until you're happy with the results.
+
+6. **Create a pull request** with the new changes.
     - Once merged, your plugin will be available in the ktor project generator.

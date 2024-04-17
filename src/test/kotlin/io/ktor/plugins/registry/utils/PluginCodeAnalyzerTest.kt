@@ -2,7 +2,7 @@
  * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
  */
 
-package io.ktor.plugins.registry
+package io.ktor.plugins.registry.utils
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -36,7 +36,8 @@ class PluginCodeAnalyzerTest {
     fun `read install snippet from kotlin`() {
         val result = pluginCodeAnalyzer.parseInstallSnippet(CodeInjectionSite.DEFAULT, KOTLIN_CODE.trimIndent())
 
-        assertEquals(InstallSnippet.Kotlin(
+        assertEquals(
+            InstallSnippet.Kotlin(
             imports = listOf(
                 "java.nio.file.Paths",
             ),
@@ -52,7 +53,8 @@ class PluginCodeAnalyzerTest {
             "Test.kt"
         )
 
-        assertEquals(InstallSnippet.Kotlin(
+        assertEquals(
+            InstallSnippet.Kotlin(
             imports = listOf("java.nio.file.Paths"),
             code = """
                 public fun pwd() {

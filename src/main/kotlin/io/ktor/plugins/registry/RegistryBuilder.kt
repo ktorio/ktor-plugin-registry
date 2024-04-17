@@ -8,6 +8,7 @@ import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.ktor.plugins.registry.utils.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToStream
@@ -179,5 +180,3 @@ data class KtorRelease(
     }
 
 }
-
-class PluginsUnresolvedException : IllegalArgumentException("Run resolvePlugins gradle task BEFORE executing")
