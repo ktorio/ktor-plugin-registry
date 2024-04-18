@@ -4,7 +4,7 @@ ktor-version = "3.0.0-beta-1"
 kaml-version = "0.58.0"
 reflections-version = "0.10.2"
 kotlin-logging-version = "6.0.9"
-slf4j-version = "2.0.13"
+logback-version = "1.5.5"
 serialization-version = "1.6.3"
 maven-artifact-version = "3.9.6"
 detekt-version = "1.23.6"
@@ -15,8 +15,7 @@ compress-version="1.25.0"
 kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-version" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization-version" }
 kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml-version" }
-kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging-version" }
-slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j-version" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback-version" }
 maven-artifact = { module = "org.apache.maven:maven-artifact", version.ref = "maven-artifact-version" }
 jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit-version" }
 apache-compress = { module = "org.apache.commons:commons-compress", version.ref = "compress-version" }

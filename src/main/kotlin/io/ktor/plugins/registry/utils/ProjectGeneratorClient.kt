@@ -26,6 +26,7 @@ private const val DEFAULT_BUILD_SYSTEM = "GRADLE_KTS"
 private const val DEFAULT_ENGINE = "NETTY"
 private const val DEFAULT_OUTPUT_DIR = "test-project"
 private const val DEFAULT_KOTLIN_VERSION = "1.9.23" // TODO get from gradle
+private const val DEFAULT_CONFIGURATION_OPTION = "HOCON"
 
 /**
  * Calls the project generator back-end to produce a new project in the provided
@@ -55,6 +56,8 @@ class ProjectGeneratorClient(
                         put("build_system", buildSystem)
                         put("engine", engine)
                     }
+                    put("configurationOption", configurationOption)
+
                     putJsonArray("features") {
                         features.forEach(::add)
                     }
@@ -104,4 +107,5 @@ class ProjectGeneratorRequestBuilder {
     var kotlinVersion: String = DEFAULT_KOTLIN_VERSION
     var features: List<String> = emptyList()
     var featureOverrides: List<JsonObject> = emptyList()
+    var configurationOption: String = DEFAULT_CONFIGURATION_OPTION
 }

@@ -4,14 +4,17 @@
 
 package io.ktor.plugins.registry
 
-import io.github.oshai.kotlinlogging.KLogger
-import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.*
 import io.ktor.plugins.registry.utils.*
 import io.ktor.plugins.registry.utils.CLIUtils.argsToMap
+import io.ktor.plugins.registry.utils.CLIUtils.ktorLogo
 import io.ktor.plugins.registry.utils.CLIUtils.tree
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonPrimitive
+import org.slf4j.LoggerFactory
 
 private const val GENERATE_URL = "https:/start-ktor-io.labs.jb.gg/project/generate"
 private const val COMPARE_BRANCH = "main"
@@ -23,7 +26,9 @@ private const val OUTPUT_DIR = "test-project"
  * plugins introduced in the local project when compared to main.
  */
 fun main(args: Array<String>) {
-    val logger: KLogger = KotlinLogging.logger("GenerateTestProject")
+    val logger = LoggerFactory.getLogger("GenerateTestProject")
+    logger.info(ktorLogo().prependIndent("    "))
+
     val argsMap = argsToMap(mapOf(
         "url" to GENERATE_URL,
         "branch" to COMPARE_BRANCH,
@@ -34,17 +39,17 @@ fun main(args: Array<String>) {
         ?: GitSupport.getChangedPluginIds(compareBranch = argsMap["branch"]!!)
 
     if (pluginIds.isEmpty()) {
-        logger.info { "No plugins changed or provided for test project generation" }
+        logger.info("No plugins changed or provided for test project generation")
         return
     }
 
-    logger.info { "Creating project from plugins:\n${pluginIds.joinToString("\n") { " - $it" }}" }
+    logger.info("Creating project from plugins:\n${pluginIds.joinToString("\n") { " - $it" }}")
     val registryFiles = RegistryOutputFiles(argsMap["build-dir"]!!)
     val latestRelease = registryFiles.ktorReleases.last()
 
     val generatorBackendUrl = argsMap["url"]!!
     val projectPath = argsMap["path"] ?: OUTPUT_DIR
-    logger.info { "Extracting new project archive from $generatorBackendUrl into $projectPath" }
+    logger.info("Extracting new project archive from $generatorBackendUrl into $projectPath")
     val generatorClient = ProjectGeneratorClient(generatorBackendUrl, HttpClient {})
     runBlocking {
         generatorClient.generate {
@@ -55,9 +60,9 @@ fun main(args: Array<String>) {
         }
     }
 
-    logger.info { "Project generation successful!" }
-    logger.info { "Explore the new project files:\n\n${tree(projectPath)}"}
-    logger.info { "To run the new project:\n  cd $projectPath\n  ./gradlew run" }
+    logger.info("Project generation successful!")
+    logger.info("Explore the new project files:\n\n${tree(projectPath)}")
+    logger.info("To run the new project:\n  cd $projectPath\n  ./gradlew run")
 }
 
 /**

@@ -70,8 +70,7 @@ dependencies {
     implementation(libs.maven.artifact)
 
     // logging
-    implementation(libs.kotlin.logging)
-    implementation(libs.slf4j.simple)
+    implementation(libs.logback.classic)
 
     // finding changed files
     implementation(libs.jgit)
@@ -160,7 +159,7 @@ tasks {
     register<JavaExec>("buildTestProject") {
         group = "plugins"
         description = "Generates a test project from the newly registered plugins"
-        mainClass = "io.ktor.plugins.registry.GenerateSampleProjectKt"
+        mainClass = "io.ktor.plugins.registry.GenerateTestProjectKt"
         classpath = sourceSets["main"].runtimeClasspath
     }
 

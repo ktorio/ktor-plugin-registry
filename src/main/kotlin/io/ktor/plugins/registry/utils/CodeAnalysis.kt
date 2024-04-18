@@ -6,8 +6,6 @@ package io.ktor.plugins.registry.utils
 
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFileFactory
-import io.github.oshai.kotlinlogging.KLogger
-import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.plugins.registry.*
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
@@ -28,6 +26,8 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
@@ -35,7 +35,7 @@ import kotlin.io.path.absolutePathString
 class CodeAnalysis(private val classpathJars: List<Path> = emptyList()) {
 
     companion object {
-        val logger: KLogger = KotlinLogging.logger(CodeAnalysis::class.simpleName!!)
+        val logger: Logger = LoggerFactory.getLogger(CodeAnalysis::class.simpleName!!)
     }
 
     /**
@@ -45,14 +45,14 @@ class CodeAnalysis(private val classpathJars: List<Path> = emptyList()) {
 
     fun findErrorsAndThrow(sourceRoot: Path, plugin: PluginReference) {
         findErrors(sourceRoot).ifNotEmpty {
-            logger.error {
+            logger.error(
                 "Compilation error(s) found in plugin ${plugin.id}:" +
                         joinToString("\n", "\n") {
                             with(it) {
                                 "${sourceRoot.absolutePathString()}/$file:$lineNumber:$column: $message"
                             }
                         }
-            }
+            )
             throw IllegalArgumentException("Failed to compile sources for plugin: ${plugin.id}")
         }
     }

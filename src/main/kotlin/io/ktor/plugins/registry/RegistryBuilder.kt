@@ -6,12 +6,13 @@ package io.ktor.plugins.registry
 
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
-import io.github.oshai.kotlinlogging.KLogger
-import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.plugins.registry.utils.*
+import io.ktor.plugins.registry.utils.CLIUtils.ktorLogo
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToStream
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.net.URLClassLoader
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -22,7 +23,7 @@ import kotlin.io.path.*
     ExperimentalPathApi::class
 )
 class RegistryBuilder(
-    private val logger: KLogger = KotlinLogging.logger("RegistryBuilder"),
+    private val logger: Logger = LoggerFactory.getLogger("RegistryBuilder"),
     private val yaml: Yaml = Yaml.default,
     private val json: Json = Json { prettyPrint = true }
 ) {
@@ -60,20 +61,21 @@ class RegistryBuilder(
         val ktorReleasesFile = buildDir.resolve("ktor_releases")
         check(artifactsFile.exists()) { "Artifacts file $artifactsFile does not exist" }
         check(ktorReleasesFile.exists()) { "Release list file $artifactsFile does not exist" }
-        logger.info { "Cleaning output dir $outputDir..." }
+        logger.info(ktorLogo().prependIndent("    "))
+        logger.info("Cleaning output dir $outputDir...")
         outputDir.apply {
             deleteRecursively()
             createDirectories()
             manifestsDir.createDirectory()
         }
-        logger.info { "Building registry for $target..." }
+        logger.info("Building registry for $target...")
         val allPluginIds = mutableSetOf<String>()
         with(ktorReleasesFile.readLines().map(::KtorRelease)) {
             allPluginIds += resolvePluginVersions(pluginsDir, target == "client", filter)
             outputReleaseMappings(outputDir)
             outputManifestFiles(pluginsDir, artifactsFile, manifestsDir)
         }
-        logger.info { "Registry built for $target including plugins: ${allPluginIds.sorted().joinToString()}" }
+        logger.info("Registry built for $target including plugins: ${allPluginIds.sorted().joinToString()}")
     }
 
     private fun List<KtorRelease>.resolvePluginVersions(
@@ -90,9 +92,9 @@ class RegistryBuilder(
                     }
                 }
                 pluginIds += plugin.id
-                logger.debug { "Plugin ${plugin.id}\n\t${distributions.joinToString("\n\t")}" }
+                logger.debug("Plugin ${plugin.id}\n\t${distributions.joinToString("\n\t")}")
             } catch (e: Exception) {
-                logger.error(e) { "Failed to process plugin ${plugin.id}!" }
+                logger.error("Failed to process plugin ${plugin.id}!", e)
             }
         }
         return pluginIds
@@ -112,15 +114,15 @@ class RegistryBuilder(
             artifactsFile.inputStream().use(yaml::decodeFromStream)
 
         for (release in this) {
-            logger.info {
+            logger.info(
                 if (release.plugins.isEmpty())
                     "No plugins available for ${release.versionString}"
                 else
                     "Fetching manifests for ${release.versionString} ${release.plugins.map { it.id }.sorted()}"
-            }
+            )
             val jars: List<Path> = when (val releaseArtifacts = artifactsByRelease[release.versionString]) {
                 null -> {
-                    logger.error { "No artifacts found for ${release.versionString}!" }
+                    logger.error("No artifacts found for ${release.versionString}!")
                     continue
                 }
                 else -> releaseArtifacts.values.map(Paths::get)
@@ -135,10 +137,10 @@ class RegistryBuilder(
                             continue
 
                         when (val manifest = resolveManifest(plugin)) {
-                            null -> logger.error {
+                            null -> logger.error(
                                 "Could not find manifest for ${plugin.group.id}:${plugin.id} " +
                                     "for ktor ${plugin.versionRange}"
-                            }
+                            )
                             else -> manifest.export(outputFile, json)
                         }
                     }

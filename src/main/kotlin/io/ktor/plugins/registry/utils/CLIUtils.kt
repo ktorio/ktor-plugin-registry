@@ -10,9 +10,29 @@ import kotlin.io.path.isDirectory
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 
+private const val KTOR_ORANGE = 208
+private const val KTOR_BLUE = 105
+
 object CLIUtils {
 
     private val argPattern = Regex("--(\\w+)=(\\S*)")
+
+    /**
+     * Color some text using ANSI escape codes.
+     */
+    fun colored(text: String, colorCode: Int) =
+        "\u001B[38;5;${colorCode}m$text\u001B[0m"
+
+    /**
+     * Because we keep things professional around here.
+     */
+    fun ktorLogo() = buildString {
+        appendLine(colored("  ▗", KTOR_ORANGE))
+        appendLine(colored("▗▟█▙", KTOR_ORANGE))
+        appendLine(colored(" ▜", KTOR_ORANGE) + "  " + colored("▙", KTOR_BLUE))
+        appendLine(colored("  ▜█▛▘", KTOR_BLUE))
+        appendLine(colored("   ▘", KTOR_BLUE))
+    }
 
     /**
      * Builds a map from command line args from formatted args like "--arg=value"

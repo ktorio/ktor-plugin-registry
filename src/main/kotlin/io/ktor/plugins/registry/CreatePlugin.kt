@@ -4,6 +4,9 @@
 
 package io.ktor.plugins.registry
 
+import io.ktor.plugins.registry.utils.CLIUtils.colored
+import io.ktor.plugins.registry.utils.CLIUtils.ktorLogo
+import org.slf4j.LoggerFactory
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -15,30 +18,29 @@ const val TEMPLATES = "templates"
 const val DEFAULT_TYPE = "server"
 const val DEFAULT_KTOR_VERSION_RANGE = "\"[2.0,)\""
 const val DEFAULT_KTOR_VERSION = "2.0"
+const val CYAN = 14
 
 /**
  * Prompts contributor with a series of questions to populate a new plugin from templates.
  */
 fun main() {
-    println("""
-        
-        Thank you for contributing to the Ktor plugin registry!
-        
-        Let's start with a couple questions...
-    """.trimIndent())
+    val logger = LoggerFactory.getLogger("CreatePlugin")
+    logger.info(ktorLogo().prependIndent("    "))
+    logger.info("Thank you for contributing to the Ktor plugin registry!\n")
+    logger.info("Let's start with a couple questions...")
 
     val mavenArtifact = askQuestion(
-        "What is your latest maven artifact?    (\u001B[96mio.ktor:ktor-server-core:2.3.10\u001B[0m)"
+        "What is your latest maven artifact?    (${colored("io.ktor:ktor-server-core:2.3.10", CYAN)})"
     )
     val vcsUrl = askQuestion(
-        "Where can I find your source code?     (\u001B[96mhttps://github.com/ktorio/ktor\u001B[0m)"
+        "Where can I find your source code?     (${colored("https://github.com/ktorio/ktor", CYAN)})"
     )
 
     val (group, artifact, version) = try {
         mavenArtifact.split(":", limit = 3)
     } catch (e: Exception) {
-        System.err.println("Failed to parse maven artifact: $mavenArtifact")
-        System.err.println("${e.message}")
+        logger.error("Failed to parse maven artifact: $mavenArtifact")
+        logger.error("${e.message}")
         exitProcess(1)
     }
     val latestPatchVersion = if (Regex(".*?\\.[0-9]+$").matches(version))
@@ -83,7 +85,7 @@ fun main() {
     writeFromTemplate(templatesDir, versionPath, "install.kt")
     writeFromTemplate(templatesDir, versionPath, "documentation.md")
 
-    println("""
+    logger.info("""
         
         We've populated some metadata for your project, but you'll need to edit these files with your plugin details:
         
@@ -120,7 +122,7 @@ private fun askQuestion(query: String): String {
     println("\n$query")
     var input = readlnOrNull().orEmpty().trim()
     while (input.isEmpty()) {
-        readlnOrNull().orEmpty().trim()
+        input = readlnOrNull().orEmpty().trim()
     }
     return input
 }
