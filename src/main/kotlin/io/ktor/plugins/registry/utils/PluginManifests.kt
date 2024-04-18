@@ -6,7 +6,6 @@ package io.ktor.plugins.registry.utils
 
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
-import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.plugins.registry.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -18,6 +17,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import org.slf4j.LoggerFactory
 import java.io.InputStream
 import java.net.MalformedURLException
 import java.net.URL
@@ -39,7 +39,7 @@ class PluginResolutionContext(
     private val classLoader: ClassLoader,
     private val pluginsDir: Path,
 ) {
-    private val logger = KotlinLogging.logger("PluginResolutionContext")
+    private val logger = LoggerFactory.getLogger("PluginResolutionContext")
 
     /**
      * Preference goes:
@@ -54,7 +54,7 @@ class PluginResolutionContext(
 
     private fun resolvePrebuiltJson(plugin: PluginReference): ResolvedPluginManifest? {
         return plugin.versionPath.resolve("manifest.json").ifExists()?.let { path ->
-            logger.info { "${plugin.identifier} resolved from JSON" }
+            logger.info("${plugin.identifier} resolved from JSON")
             PrebuiltJsonManifest(path)
         }
     }
@@ -64,7 +64,7 @@ class PluginResolutionContext(
             val model: YamlManifest.ImportManifest =
                 yamlPath.inputStream().use(Yaml.default::decodeFromStream)
 
-            logger.info { "${plugin.identifier} resolved from YAML" }
+            logger.info("${plugin.identifier} resolved from YAML")
             codeAnalysis.findErrorsAndThrow(plugin.versionPath, plugin)
 
             YamlManifest(
@@ -89,7 +89,7 @@ class PluginResolutionContext(
             ?: return null
         val resolvedManifestFolder = yamlUrl.toURI().toPath().parent
 
-        logger.info { "${plugin.identifier} resolved from classpath" }
+        logger.info("${plugin.identifier} resolved from classpath")
         codeAnalysis.findErrorsAndThrow(resolvedManifestFolder, plugin)
 
         return YamlManifest(
