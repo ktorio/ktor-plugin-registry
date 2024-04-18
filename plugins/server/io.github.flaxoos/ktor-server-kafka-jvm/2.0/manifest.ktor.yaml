@@ -1,0 +1,6 @@
+name: Kafka
+description: Adds Kafka support to your application
+vcsLink: https://github.com/Flaxoos/extra-ktor-plugins
+license: MIT License
+# Pick one of: Administration, Databases, HTTP, Monitoring, Routing, Security, Serialization, Sockets, Templating
+category: Databases
