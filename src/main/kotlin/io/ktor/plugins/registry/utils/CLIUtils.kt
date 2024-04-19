@@ -16,6 +16,22 @@ private const val KTOR_BLUE = 105
 object CLIUtils {
 
     private val argPattern = Regex("--(\\w+)=(\\S*)")
+    private val ansiEscapeSequenceRegex = "\u001B\\[[;\\d]*m".toRegex()
+    private val ktorLogo = buildString {
+        appendLine(colored("  ▗", KTOR_ORANGE))
+        appendLine(colored("▗▟█▙", KTOR_ORANGE))
+        appendLine(colored(" ▜", KTOR_ORANGE) + "  " + colored("▙", KTOR_BLUE))
+        appendLine(colored("  ▜█▛▘", KTOR_BLUE))
+        appendLine(colored("   ▘", KTOR_BLUE))
+    }.trim('\n')
+    private const val HEADER_POS_LEFT = 8
+
+    private val ktorText = """
+          _  ___           
+         | |/ / |_ ___ _ _ 
+         | ' <|  _/ _ \ '_|
+         |_|\_\\__\___/_|
+    """.trimIndent()
 
     /**
      * Color some text using ANSI escape codes.
@@ -26,13 +42,26 @@ object CLIUtils {
     /**
      * Because we keep things professional around here.
      */
-    fun ktorLogo() = buildString {
-        appendLine(colored("  ▗", KTOR_ORANGE))
-        appendLine(colored("▗▟█▙", KTOR_ORANGE))
-        appendLine(colored(" ▜", KTOR_ORANGE) + "  " + colored("▙", KTOR_BLUE))
-        appendLine(colored("  ▜█▛▘", KTOR_BLUE))
-        appendLine(colored("   ▘", KTOR_BLUE))
+    fun ktorScriptHeader() =
+        appendHorizontal(ktorLogo, ktorText, HEADER_POS_LEFT)
+            .prependIndent("    ") + '\n'
+
+    fun appendHorizontal(left: String, right: String, leftPad: Int): String {
+        val leftLines = left.lines()
+        val rightLines = right.lines()
+        check(leftLines.size >= rightLines.size) {
+            "Left must have >= lines as right"
+        }
+        return leftLines.indices.joinToString("\n") { i ->
+            val gap = generateSequence { " " }.take(leftPad - leftLines[i].visualLength()).joinToString("")
+            leftLines[i] + gap + rightLines.getOrElse(i) { "" }
+        }
     }
+
+    /**
+     * Length of a string, omitting ansi escape sequences.
+     */
+    fun String.visualLength() = replace(ansiEscapeSequenceRegex, "").length
 
     /**
      * Builds a map from command line args from formatted args like "--arg=value"

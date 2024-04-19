@@ -23,4 +23,27 @@ class CLIUtilsTest {
         )
     }
 
+    @Test
+    fun testAppendHorizontal() {
+        val left = """
+            [ LEFT ]
+            [ SIDE ]
+        """.trimIndent()
+
+        val right = """
+            [ RIGHT ]
+            [ SIDE  ]
+        """.trimIndent()
+
+        assertEquals("""
+            [ LEFT ]  [ RIGHT ]
+            [ SIDE ]  [ SIDE  ]
+        """.trimIndent(), CLIUtils.appendHorizontal(left, right, 10))
+    }
+
+    @Test
+    fun printHeader() {
+        println(CLIUtils.ktorScriptHeader())
+    }
+
 }

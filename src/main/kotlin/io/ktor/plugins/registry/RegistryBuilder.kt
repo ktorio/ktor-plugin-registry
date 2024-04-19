@@ -7,7 +7,7 @@ package io.ktor.plugins.registry
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
 import io.ktor.plugins.registry.utils.*
-import io.ktor.plugins.registry.utils.CLIUtils.ktorLogo
+import io.ktor.plugins.registry.utils.CLIUtils.ktorScriptHeader
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToStream
@@ -61,7 +61,7 @@ class RegistryBuilder(
         val ktorReleasesFile = buildDir.resolve("ktor_releases")
         check(artifactsFile.exists()) { "Artifacts file $artifactsFile does not exist" }
         check(ktorReleasesFile.exists()) { "Release list file $artifactsFile does not exist" }
-        logger.info(ktorLogo().prependIndent("    "))
+        logger.info(ktorScriptHeader())
         logger.info("Cleaning output dir $outputDir...")
         outputDir.apply {
             deleteRecursively()
