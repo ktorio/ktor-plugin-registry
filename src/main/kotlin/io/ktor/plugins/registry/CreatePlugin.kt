@@ -5,7 +5,7 @@
 package io.ktor.plugins.registry
 
 import io.ktor.plugins.registry.utils.CLIUtils.colored
-import io.ktor.plugins.registry.utils.CLIUtils.ktorLogo
+import io.ktor.plugins.registry.utils.CLIUtils.ktorScriptHeader
 import org.slf4j.LoggerFactory
 import java.nio.file.Files
 import java.nio.file.Path
@@ -25,7 +25,7 @@ const val CYAN = 14
  */
 fun main() {
     val logger = LoggerFactory.getLogger("CreatePlugin")
-    logger.info(ktorLogo().prependIndent("    "))
+    logger.info(ktorScriptHeader())
     logger.info("Thank you for contributing to the Ktor plugin registry!\n")
     logger.info("Let's start with a couple questions...")
 

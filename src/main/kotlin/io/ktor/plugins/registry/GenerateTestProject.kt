@@ -7,7 +7,7 @@ package io.ktor.plugins.registry
 import io.ktor.client.*
 import io.ktor.plugins.registry.utils.*
 import io.ktor.plugins.registry.utils.CLIUtils.argsToMap
-import io.ktor.plugins.registry.utils.CLIUtils.ktorLogo
+import io.ktor.plugins.registry.utils.CLIUtils.ktorScriptHeader
 import io.ktor.plugins.registry.utils.CLIUtils.tree
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.JsonObject
@@ -27,7 +27,7 @@ private const val OUTPUT_DIR = "test-project"
  */
 fun main(args: Array<String>) {
     val logger = LoggerFactory.getLogger("GenerateTestProject")
-    logger.info(ktorLogo().prependIndent("    "))
+    logger.info(ktorScriptHeader())
 
     val argsMap = argsToMap(mapOf(
         "url" to GENERATE_URL,
