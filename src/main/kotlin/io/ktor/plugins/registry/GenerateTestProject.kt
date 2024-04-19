@@ -16,7 +16,7 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
 import org.slf4j.LoggerFactory
 
-private const val GENERATE_URL = "https:/start-ktor-io.labs.jb.gg/project/generate"
+private const val GENERATE_URL = "https://start-ktor-io.labs.jb.gg/project/generate"
 private const val COMPARE_BRANCH = "main"
 private const val BUILD_DIR = "build"
 private const val OUTPUT_DIR = "test-project"

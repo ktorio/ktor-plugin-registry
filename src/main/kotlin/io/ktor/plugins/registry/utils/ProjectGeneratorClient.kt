@@ -64,6 +64,7 @@ class ProjectGeneratorClient(
                     putJsonArray("featureOverrides") {
                         addAll(featureOverrides)
                     }
+                    put("addWrapper", addWrapper)
                 }))
             }
 
@@ -108,4 +109,5 @@ class ProjectGeneratorRequestBuilder {
     var features: List<String> = emptyList()
     var featureOverrides: List<JsonObject> = emptyList()
     var configurationOption: String = DEFAULT_CONFIGURATION_OPTION
+    var addWrapper: Boolean = true
 }
