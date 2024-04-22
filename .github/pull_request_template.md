@@ -8,4 +8,4 @@ Before submitting your pull request, be sure to run the following:
 We encourage you to experiment with the different options listed [here](https://github.com/ktorio/ktor-plugin-registry/blob/main/templates/manifest.ktor.yaml)
 and explore the results in the generated test project.
 
-Feel free to reach out with any issues with the registry or generator in a pull request or any of the [channels listed here](https://ktor.io/support/).
+Feel free to reach out with any issues with the registry or generator in a pull request or any of the channels listed [here](https://ktor.io/support/).
