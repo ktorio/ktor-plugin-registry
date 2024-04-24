@@ -6,6 +6,8 @@ import java.sql.*
 import kotlinx.coroutines.*
 
 public fun Application.configureDatabases() {
+    val mongoDatabase = connectToMongoDB()
+    val carService = CarService(mongoDatabase)
     routing {
         // Create car
         post("/cars") {

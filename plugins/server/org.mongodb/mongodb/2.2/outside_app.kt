@@ -6,8 +6,6 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-val mongoDatabase = connectToMongoDB()
-val carService = CarService(mongoDatabase)
 /**
  * Establishes connection with a MongoDB database.
  *
