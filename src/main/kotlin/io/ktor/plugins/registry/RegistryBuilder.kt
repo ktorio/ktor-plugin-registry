@@ -8,6 +8,8 @@ import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
 import io.ktor.plugins.registry.utils.*
 import io.ktor.plugins.registry.utils.CLIUtils.ktorScriptHeader
+import io.ktor.plugins.registry.utils.FileUtils.listImages
+import io.ktor.plugins.registry.utils.FileUtils.listSubDirectories
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToStream
@@ -27,27 +29,11 @@ class RegistryBuilder(
     private val yaml: Yaml = Yaml.default,
     private val json: Json = Json { prettyPrint = true }
 ) {
-    fun processAssets(
-        pluginsRoot: Path,
-        buildDir: Path,
-    ) {
-        val outputDir = buildDir.resolve("registry/assets")
-        outputDir.createDirectories()
-
-        for (target in sequenceOf("client", "server")) {
-            val pluginsDir = pluginsRoot.resolve(target)
-            for (groupFolder in pluginsDir.listDirectoryEntries()) {
-                val group = groupFolder.resolve("group.ktor.yaml").readPluginGroup() ?: continue
-                val logo = group.logo ?: continue
-                val logoFile = groupFolder.resolve(logo).takeIf { it.exists() } ?: continue
-                logoFile.copyTo(outputDir.resolve(group.outputLogo!!), overwrite = true)
-            }
-        }
-    }
 
     fun buildRegistry(
         pluginsRoot: Path,
         buildDir: Path,
+        assetsDir: Path,
         target: String,
         filter: (String) -> Boolean = { true },
     ) {
@@ -59,6 +45,7 @@ class RegistryBuilder(
         val outputDir = buildDir.resolve("registry").resolve(target)
         val manifestsDir = outputDir.resolve("manifests")
         val ktorReleasesFile = buildDir.resolve("ktor_releases")
+
         check(artifactsFile.exists()) { "Artifacts file $artifactsFile does not exist" }
         check(ktorReleasesFile.exists()) { "Release list file $artifactsFile does not exist" }
         logger.info(ktorScriptHeader())
@@ -68,14 +55,42 @@ class RegistryBuilder(
             createDirectories()
             manifestsDir.createDirectory()
         }
+        logger.info("Processing assets for $target...")
+        processAssets(pluginsDir, assetsDir)
+
         logger.info("Building registry for $target...")
         val allPluginIds = mutableSetOf<String>()
         with(ktorReleasesFile.readLines().map(::KtorRelease)) {
             allPluginIds += resolvePluginVersions(pluginsDir, target == "client", filter)
             outputReleaseMappings(outputDir)
-            outputManifestFiles(pluginsDir, artifactsFile, manifestsDir)
+            outputManifestFiles(
+                pluginsDir,
+                artifactsFile,
+                manifestsDir,
+                assetsDir
+            )
         }
+
         logger.info("Registry built for $target including plugins: ${allPluginIds.sorted().joinToString()}")
+    }
+
+    private fun processAssets(pluginsDir: Path, assetsDir: Path) {
+        if (!assetsDir.exists())
+            assetsDir.createDirectories()
+
+        for (groupFolder in pluginsDir.listSubDirectories()) {
+            for (pluginFolder in groupFolder.listSubDirectories()) {
+                val pluginLogoFile = pluginFolder.listImages().firstOrNull() ?: continue
+                val dest = assetsDir.resolve(
+                    pluginFolder.name + '.' + pluginLogoFile.name.substringAfterLast('.')
+                )
+                pluginLogoFile.copyTo(dest, overwrite = true)
+            }
+            val group = groupFolder.resolve("group.ktor.yaml").readPluginGroup() ?: continue
+            val logo = group.logo ?: continue
+            val logoFile = groupFolder.resolve(logo).takeIf { it.exists() } ?: continue
+            logoFile.copyTo(assetsDir.resolve(group.outputLogo!!), overwrite = true)
+        }
     }
 
     private fun List<KtorRelease>.resolvePluginVersions(
@@ -108,7 +123,12 @@ class RegistryBuilder(
         }
     }
 
-    private fun List<KtorRelease>.outputManifestFiles(pluginsDir: Path, artifactsFile: Path, manifestsDir: Path) {
+    private fun List<KtorRelease>.outputManifestFiles(
+        pluginsDir: Path,
+        artifactsFile: Path,
+        manifestsDir: Path,
+        assetsDir: Path,
+    ) {
 
         val artifactsByRelease: Map<String, Map<String, String>> =
             artifactsFile.inputStream().use(yaml::decodeFromStream)
@@ -136,7 +156,7 @@ class RegistryBuilder(
                         if (plugin.isUnresolved() || outputFile.exists())
                             continue
 
-                        when (val manifest = resolveManifest(plugin)) {
+                        when (val manifest = resolveManifest(plugin, assetsDir)) {
                             null -> logger.error(
                                 "Could not find manifest for ${plugin.group.id}:${plugin.id} " +
                                     "for ktor ${plugin.versionRange}"
