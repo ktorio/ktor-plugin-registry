@@ -148,7 +148,7 @@ class RegistryBuilderTest {
     }
 
     private fun buildRegistry(dir: Path = testResources, filter: (String) -> Boolean = { true }) {
-        registryBuilder.buildRegistry(dir, buildDir, target, filter)
+        registryBuilder.buildRegistry(dir, buildDir, buildDir.resolve("registry/assets"), target, filter)
     }
 
     private fun clonePlugin(id: String): PluginTestContext =

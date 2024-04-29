@@ -14,11 +14,11 @@ import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.system.exitProcess
 
-const val TEMPLATES = "templates"
-const val DEFAULT_TYPE = "server"
-const val DEFAULT_KTOR_VERSION_RANGE = "\"[2.0,)\""
-const val DEFAULT_KTOR_VERSION = "2.0"
-const val CYAN = 14
+private const val TEMPLATES = "templates"
+private const val DEFAULT_TYPE = "server"
+private const val DEFAULT_KTOR_VERSION_RANGE = "\"[2.0,)\""
+private const val DEFAULT_KTOR_VERSION = "2.0"
+private const val CYAN = 14
 
 /**
  * Prompts contributor with a series of questions to populate a new plugin from templates.

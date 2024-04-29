@@ -7,6 +7,7 @@ package io.ktor.plugins.registry.utils
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
 import io.ktor.plugins.registry.*
+import io.ktor.plugins.registry.utils.FileUtils.listImages
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -24,10 +25,7 @@ import java.net.URL
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.exists
-import kotlin.io.path.inputStream
-import kotlin.io.path.outputStream
-import kotlin.io.path.toPath
+import kotlin.io.path.*
 
 sealed interface ResolvedPluginManifest {
     fun export(outputFile: Path, json: Json)
@@ -47,10 +45,10 @@ class PluginResolutionContext(
      * - local YAML
      * - YAML from artifacts
      */
-    fun resolveManifest(plugin: PluginReference): ResolvedPluginManifest? =
+    fun resolveManifest(plugin: PluginReference, assetsDir: Path): ResolvedPluginManifest? =
         resolvePrebuiltJson(plugin)
-            ?: resolveYamlFile(plugin)
-            ?: resolveYamlFromClasspath(plugin)
+            ?: resolveYamlFile(plugin, assetsDir)
+            ?: resolveYamlFromClasspath(plugin, assetsDir)
 
     private fun resolvePrebuiltJson(plugin: PluginReference): ResolvedPluginManifest? {
         return plugin.versionPath.resolve("manifest.json").ifExists()?.let { path ->
@@ -59,7 +57,7 @@ class PluginResolutionContext(
         }
     }
 
-    private fun resolveYamlFile(plugin: PluginReference) =
+    private fun resolveYamlFile(plugin: PluginReference, assetsDir: Path) =
         plugin.versionPath.resolve("manifest.ktor.yaml").ifExists()?.let { yamlPath ->
             val model: YamlManifest.ImportManifest =
                 yamlPath.inputStream().use(Yaml.default::decodeFromStream)
@@ -79,10 +77,11 @@ class PluginResolutionContext(
                 documentationEntry = readDocumentation(model.documentation) {
                     plugin.readFileFromVersionPath(it)
                 },
+                logo = assetsDir.listImages(plugin.id).firstOrNull()
             )
         }
 
-    private fun resolveYamlFromClasspath(plugin: PluginReference): YamlManifest? {
+    private fun resolveYamlFromClasspath(plugin: PluginReference, assetsDir: Path): YamlManifest? {
         val yamlUrl = classLoader.getResource(plugin.manifestResourceFile) ?: return null
         val model: YamlManifest.ImportManifest = yamlUrl.openStream()
             ?.use(Yaml.default::decodeFromStream)
@@ -104,7 +103,7 @@ class PluginResolutionContext(
             documentationEntry = readDocumentation(model.documentation) {
                 plugin.readFileFromClasspath(it)
             },
-
+            logo = assetsDir.listImages(plugin.id).firstOrNull()
         )
     }
 
@@ -178,6 +177,7 @@ data class YamlManifest(
     private val model: ImportManifest,
     private val installSnippets: Map<String, InstallSnippet>,
     private val documentationEntry: DocumentationEntry,
+    private val logo: Path?,
 ): ResolvedPluginManifest {
     companion object {
         val DEFAULT = CodeInjectionSite.DEFAULT.lowercaseName
@@ -214,7 +214,7 @@ data class YamlManifest(
             put("url", plugin.group.url)
             if (plugin.group.name != "Ktor") {
                 put("email", plugin.group.email)
-                put("logo", plugin.group.outputLogo)
+                put("logo", logo?.name ?: plugin.group.outputLogo)
             }
         }
         put("group", PluginCategory.valueOf(category.uppercase()).nameTitleCase)
