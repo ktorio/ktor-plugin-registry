@@ -1,2 +1,0 @@
-^1.4.0: ktor-auth:==
-">=2.0.0": ktor-server-auth-jvm:==
