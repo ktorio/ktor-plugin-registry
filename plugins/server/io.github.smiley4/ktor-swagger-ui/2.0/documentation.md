@@ -32,7 +32,7 @@ dependencies {
 }
 ```
 
-## Example
+## Usage
 Full examples can be found in [src/test/examples](https://github.com/SMILEY4/ktor-swagger-ui/tree/develop/src/test/kotlin/io/github/smiley4/ktorswaggerui/examples).
 ### Configuration
 ```kotlin

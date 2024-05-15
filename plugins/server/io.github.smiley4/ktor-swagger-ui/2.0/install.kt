@@ -1,5 +1,6 @@
-import io.ktor.server.application.*
-import org.group.plugin.sample.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
+import io.github.smiley4.ktorswaggerui.SwaggerUI
 
 // The contents of the `install` function will be used for the project template
 public fun Application.install() {
