@@ -1,0 +1,11 @@
+# This file contains all the information needed for including your plugin.
+# See templates/manifest.ktor.yaml for more details
+name: Ktor-swagger-ui
+description: Kotlin Ktor plugin to generate OpenAPI and provide Swagger UI
+vcsLink: https://github.com/SMILEY4/ktor-swagger-ui
+license: Apache 2.0
+# Pick one of: Administration, Databases, HTTP, Monitoring, Routing, Security, Serialization, Sockets, Templating
+category: Routing
+prerequisites:
+  - io.ktor.routing
+  - io.ktor.webjars
