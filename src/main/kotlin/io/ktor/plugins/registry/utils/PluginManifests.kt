@@ -286,9 +286,12 @@ data class YamlManifest(
                     put("version", when (val version = dependency.version) {
                         is VersionNumber -> version.toString()
                         is VersionRange -> version.toString()
+                        is CatalogVersion -> version.normalizedName
                         MatchKtor -> "\$ktor_version"
                         else -> throw IllegalArgumentException("Unexpected version type ${version::class}")
                     })
+                    if (dependency.version is CatalogVersion)
+                        put("version_value", dependency.version.toString())
                 }
             }
         }
@@ -469,4 +472,9 @@ enum class PluginCategory(val acronym: Boolean = false) {
     val nameTitleCase get() = if (acronym) name else name.wordTitleCase()
 }
 
-private fun String.wordTitleCase() = get(0) + substring(1).lowercase()
+fun String.wordTitleCase() = get(0) + substring(1).lowercase()
+
+val CatalogVersion.normalizedName: String get() {
+    val variableName = name.replace(Regex("(?<=[a-z])[A-Z]"), "_$0").replace('-', '_').lowercase()
+    return '$' + if (variableName.endsWith("_version")) variableName else variableName + "_version"
+}

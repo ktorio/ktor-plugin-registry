@@ -22,7 +22,7 @@ import java.io.File
  * @property versions A map of version ranges to artifacts for the plugin.
  * @property client A flag indicating whether the plugin is a client plugin.
  */
-@Serializable
+// @Serializable
 data class PluginReference(
     val id: String,
     val group: PluginGroup,
@@ -61,7 +61,6 @@ fun PluginReference.allArtifactsForVersion(ktorVersion: String): Artifacts =
         }.orEmpty()
     }
 
-@Serializable(with = ArtifactReferenceStringSerializer::class)
 data class ArtifactReference(
     val group: String? = null,
     val name: String,
@@ -70,14 +69,14 @@ data class ArtifactReference(
     companion object {
         private val referenceStringRegex = Regex("""(?:(.+?):)?(.+?):(.+)""")
 
-        fun parseReferenceString(text: String, defaultGroup: String? = null): ArtifactReference =
+        fun parse(text: String, defaultGroup: String? = null, versionVariables: Map<String, String> = emptyMap()): ArtifactReference =
             referenceStringRegex.matchEntire(text)?.destructured?.let { (group, name, version) ->
                 ArtifactReference(
                     group.takeIf(String::isNotEmpty) ?: defaultGroup,
                     name,
-                    ArtifactVersion.parse(version)
+                    ArtifactVersion.parse(version, versionVariables)
                 )
-            } ?: throw IllegalArgumentException("Invalid reference string $text")
+            } ?: throw IllegalArgumentException("Invalid artifact reference string \"$text\"")
     }
 
     override fun toString() = buildString {
@@ -89,8 +88,11 @@ data class ArtifactReference(
 
 sealed interface ArtifactVersion {
     companion object {
-        fun parse(text: String): ArtifactVersion = when {
+        fun parse(text: String, versionVariables: Map<String, String> = emptyMap()): ArtifactVersion = when {
             text == "==" -> MatchKtor
+            text.startsWith('$') -> text.substring(1).let { name ->
+                CatalogVersion(name, parse(versionVariables[name] ?: throw IllegalArgumentException("Unresolved version variable: $name"), versionVariables))
+            }
             text.contains(Regex("[+,\\[\\]()]")) -> VersionRange(text)
             else -> VersionNumber(text)
         }
@@ -107,7 +109,7 @@ object MatchKtor : ArtifactVersion {
 }
 
 /**
- * Standard semantic version number references (i.e. 1.0.0)
+ * Standard semantic version number references (i.e., 1.0.0)
  */
 data class VersionNumber(
     val number: String,
@@ -123,16 +125,11 @@ data class VersionRange(private val range: org.apache.maven.artifact.versioning.
     override fun toString(): String = range.toString()
 }
 
-object ArtifactReferenceStringSerializer : KSerializer<ArtifactReference> {
-    override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("ArtifactReference", PrimitiveKind.STRING)
-
-    override fun serialize(encoder: Encoder, value: ArtifactReference) {
-        encoder.encodeString(value.toString())
-    }
-
-    override fun deserialize(decoder: Decoder): ArtifactReference =
-        ArtifactReference.parseReferenceString(decoder.decodeString())
+/**
+ * Variable name for version represented in catalog (i.e., $ktor_version)
+ */
+data class CatalogVersion(val name: String, val version: ArtifactVersion): ArtifactVersion by version {
+    override fun toString() = version.toString()
 }
 
 object FilePathSerializer : KSerializer<File> {
