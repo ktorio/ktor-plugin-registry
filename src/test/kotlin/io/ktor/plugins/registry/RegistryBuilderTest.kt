@@ -49,8 +49,11 @@ class RegistryBuilderTest {
     }
 
     @Test
-    fun `bad version range string`() {
-        assertRegistryFailure("Failed to parse versions.ktor.yaml for plugin \"bad_semver\"") {
+    fun `bad artifact reference`() {
+        assertRegistryFailure(
+            "Failed to parse versions.ktor.yaml for plugin \"bad_semver\". " +
+                    "Invalid artifact reference string \"what??\""
+        ) {
             buildRegistry {
                 it == "bad_semver"
             }
