@@ -158,7 +158,7 @@ class PluginCodeAnalyzer(
         ) as KtFile
 
     fun findErrors(): List<CompilationError> {
-        val trace = CliBindingTrace()
+        val trace = CliBindingTrace(environment.project)
         val sourceFiles = environment.getSourceFiles()
         analyzer.analyzeFilesWithJavaIntegration(
             environment.project,

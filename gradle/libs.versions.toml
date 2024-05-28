@@ -1,9 +1,6 @@
 [versions]
-kotlin-version = "1.9.23"
-ktor-version = "3.0.0-beta-1"
+kotlin-version = "2.0.0"
 kaml-version = "0.59.0"
-reflections-version = "0.10.2"
-kotlin-logging-version = "6.0.9"
 logback-version = "1.5.6"
 serialization-version = "1.6.3"
 maven-artifact-version = "3.9.7"

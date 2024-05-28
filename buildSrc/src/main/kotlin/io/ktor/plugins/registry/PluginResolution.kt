@@ -32,12 +32,12 @@ fun Sequence<PluginReference>.allArtifactsForVersion(ktorRelease: String): Seque
  */
 fun outputReleaseArtifacts(outputFile: Path, configurations: Map<String, Set<ResolvedArtifact>>) {
 
-    val artifactsByRelease: Map<String, Map<String, @Serializable(with = FilePathSerializer::class) File>> =
+    val artifactsByRelease =
         configurations.mapValues { (_, artifacts) ->
             artifacts.associate { resolvedArtifact ->
                 Pair(
                     resolvedArtifact.referenceString(),
-                    resolvedArtifact.file
+                    resolvedArtifact.file.path
                 )
             }
         }
