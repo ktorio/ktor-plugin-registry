@@ -5,7 +5,6 @@
 package io.ktor.plugins.registry
 
 import com.charleskorn.kaml.*
-import java.io.IOException
 import java.nio.file.Path
 import kotlin.io.path.*
 
