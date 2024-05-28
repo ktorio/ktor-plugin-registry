@@ -5,7 +5,6 @@
 package io.ktor.plugins.registry
 
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -22,7 +21,6 @@ import java.io.File
  * @property versions A map of version ranges to artifacts for the plugin.
  * @property client A flag indicating whether the plugin is a client plugin.
  */
-// @Serializable
 data class PluginReference(
     val id: String,
     val group: PluginGroup,
@@ -39,7 +37,6 @@ data class PluginReference(
  * @property email The contact email of the plugin group.
  * @property logo The logo URL of the plugin group.
  */
-@Serializable
 data class PluginGroup(
     val id: String,
     val name: String?,
