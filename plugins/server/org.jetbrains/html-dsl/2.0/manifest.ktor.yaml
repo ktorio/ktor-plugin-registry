@@ -1,5 +1,5 @@
 name: HTML DSL
-description: Generate HTML using Kotlin code like a pure-core template engine
+description: Generates HTML from Kotlin DSL
 vcsLink: https://github.com/Kotlin/kotlinx.html
 license: Apache 2.0
 category: Templating

@@ -1,5 +1,5 @@
 name: CSS DSL
-description: Generate CSS using Kotlin code
+description: Generates CSS from Kotlin DSL
 vcsLink: https://github.com/JetBrains/kotlin-wrappers/tree/master/kotlin-css
 license: Apache 2.0
 category: Templating

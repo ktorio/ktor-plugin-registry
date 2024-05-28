@@ -1,5 +1,5 @@
 name: Conditional Headers
-description: Avoids sending content if the client already has the same content using ETag or LastModified
+description: Skips response body, depending on ETag and LastModified headers
 vcsLink: https://github.com/ktorio/ktor/blob/4517e3856a3cae8f157d2f6966635217827d2abd/ktor-server/ktor-server-core/jvm/src/io/ktor/features/ConditionalHeaders.kt
 license: Apache 2.0
 category: HTTP

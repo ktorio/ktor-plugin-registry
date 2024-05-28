@@ -1,5 +1,5 @@
 name: Routing
-description: Allows to define structured routes and associated handlers.
+description: Provides a structured routing DSL
 vcsLink: https://github.com/ktorio/ktor/blob/4517e3856a3cae8f157d2f6966635217827d2abd/ktor-server/ktor-server-core/jvm/src/io/ktor/routing/Routing.kt
 license: Apache 2.0
 category: Routing

@@ -1,5 +1,5 @@
 name: Authentication LDAP
-description: Handle LDAP authentication
+description: Handles Lightweight Directory Access Protocol (LDAP) authentication
 vcsLink: https://github.com/ktorio/ktor/blob/4a50c76c3264b0121b91a203d38473bb4aafbace/ktor-features/ktor-auth-ldap/jvm/src/io/ktor/auth/ldap/Ldap.kt
 license: Apache 2.0
 category: Security

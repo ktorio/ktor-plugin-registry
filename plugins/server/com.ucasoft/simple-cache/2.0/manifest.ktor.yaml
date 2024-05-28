@@ -1,5 +1,5 @@
 name: Simple Cache
-description: Simple Cache base solution which provides the plugin implementation and abstract class for cache providers
+description: Provides API for cache management
 vcsLink: https://github.com/Scogun/ktor-simple-cache/tree/main/ktor-simple-cache
 license: Apache 2.0
 category: HTTP
