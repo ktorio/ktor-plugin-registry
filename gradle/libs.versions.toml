@@ -1,5 +1,5 @@
 [versions]
-kotlin-version = "1.9.23"
+kotlin-version = "1.9.24"
 ktor-version = "3.0.0-beta-1"
 kaml-version = "0.59.0"
 reflections-version = "0.10.2"
