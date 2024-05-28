@@ -1,5 +1,5 @@
 name: Simple Redis Cache
-description: Redis cache provider for Ktor Simple Cache plugin
+description: Provides Redis cache for Simple Cache plugin
 vcsLink: https://github.com/Scogun/ktor-simple-cache/tree/main/ktor-simple-redis-cache
 license: Apache 2.0
 category: HTTP

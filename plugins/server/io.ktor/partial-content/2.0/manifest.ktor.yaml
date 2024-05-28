@@ -1,5 +1,5 @@
 name: Partial Content
-description: Handles requests with the Range header. Generating Accept-Ranges and the Content-Range headers and slicing the served content when required.
+description: Handles requests with the Range header
 vcsLink: https://github.com/ktorio/ktor/blob/4517e3856a3cae8f157d2f6966635217827d2abd/ktor-server/ktor-server-core/jvm/src/io/ktor/features/PartialContent.kt
 license: Apache 2.0
 category: HTTP
