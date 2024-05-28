@@ -4,14 +4,7 @@
 
 package io.ktor.plugins.registry
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
-import java.io.File
 
 /**
  * Represents a reference to a plugin, including its ID, group, versions, and client flag.
@@ -127,16 +120,4 @@ data class VersionRange(private val range: org.apache.maven.artifact.versioning.
  */
 data class CatalogVersion(val name: String, val version: ArtifactVersion): ArtifactVersion by version {
     override fun toString() = version.toString()
-}
-
-object FilePathSerializer : KSerializer<File> {
-    override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("FilePath", PrimitiveKind.STRING)
-
-    override fun serialize(encoder: Encoder, value: File) {
-        encoder.encodeString(value.path)
-    }
-
-    override fun deserialize(decoder: Decoder): File =
-        File(decoder.decodeString())
 }
