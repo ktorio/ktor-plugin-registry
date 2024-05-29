@@ -18,10 +18,6 @@ plugins {
 group = "io.ktor"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    allRepositories()
-}
-
 configurations {
     for (target in targets)
         target.releaseConfigs.forEach(::create)
