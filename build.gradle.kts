@@ -107,8 +107,8 @@ tasks {
 
     // download all sources
     compileKotlin {
-        kotlinOptions {
-            freeCompilerArgs = listOf("-XdownloadSources=true")
+        compilerOptions {
+            freeCompilerArgs.addAll("-XdownloadSources=true")
         }
         dependsOn("copyPluginTypes")
     }
