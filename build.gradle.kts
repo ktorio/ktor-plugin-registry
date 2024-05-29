@@ -28,10 +28,7 @@ configurations {
 }
 
 kotlin {
-    jvmToolchain {
-        check(this is JavaToolchainSpec)
-        languageVersion.set(JavaLanguageVersion.of(11))
-    }
+    jvmToolchain(11)
 }
 
 dependencies {
