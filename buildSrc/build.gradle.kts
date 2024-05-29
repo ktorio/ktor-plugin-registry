@@ -8,10 +8,6 @@ plugins {
     alias(libs.plugins.jvm)
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(libs.kaml)
     implementation(libs.maven.artifact)
