@@ -96,7 +96,7 @@ tasks {
      *  We copy this shared source file with the parent project because there is otherwise
      *  a chicken/egg problem with building the project which confuses the IDEA.
      */
-    register<Copy>("copyPluginTypes") {
+    val copyPluginTypes by registering(Copy::class) {
         group = "build"
         from(
             "buildSrc/src/main/kotlin/io/ktor/plugins/registry/PluginReference.kt",
@@ -110,11 +110,11 @@ tasks {
         compilerOptions {
             freeCompilerArgs.addAll("-XdownloadSources=true")
         }
-        dependsOn("copyPluginTypes")
+        dependsOn(copyPluginTypes)
     }
 
     // resolving plugin jars from custom classpaths
-    register("resolvePlugins") {
+    val resolvePlugins by registering {
         group = "plugins"
         description = "Locate plugin resources from version definitions"
         doLast {
@@ -131,7 +131,7 @@ tasks {
     }
 
     // generates the appropriate directory structure with some templates for a new plugin
-    register<JavaExec>("createPlugin") {
+    val createPlugin by registering(JavaExec::class) {
         group = "plugins"
         description = "Creates a skeleton for a new plugin"
         mainClass = "io.ktor.plugins.registry.CreatePluginKt"
@@ -140,16 +140,16 @@ tasks {
     }
 
     // builds the registry for distributing to the project generator
-    register<JavaExec>("buildRegistry") {
+    val buildRegistry by registering(JavaExec::class) {
         group = "plugins"
         description = "Build the registry from plugin resources"
         mainClass = "io.ktor.plugins.registry.BuildRegistryKt"
         classpath = sourceSets["main"].runtimeClasspath
-        dependsOn("resolvePlugins")
+        dependsOn(resolvePlugins)
     }
 
     // generates a test project using the modified plugins in the repository
-    register<JavaExec>("buildTestProject") {
+    val buildTestProject by registering(JavaExec::class) {
         group = "plugins"
         description = "Generates a test project from the newly registered plugins"
         mainClass = "io.ktor.plugins.registry.GenerateTestProjectKt"
@@ -157,13 +157,13 @@ tasks {
     }
 
     // compresses registry output into a tar file
-    register<Tar>("packageRegistry") {
+    val packageRegistry by registering(Tar::class) {
         group = "plugins"
         description = "Compresses registry to tar file for distribution"
         archiveFileName.set("registry.tar.gz")
         destinationDirectory.set(file("build/distributions"))
         compression = Compression.GZIP
         from("build/registry")
-        dependsOn("buildRegistry")
+        dependsOn(buildRegistry)
     }
 }
