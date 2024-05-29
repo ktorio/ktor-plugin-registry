@@ -91,8 +91,8 @@ detekt {
 }
 
 tasks {
-    // use junit 5
-    test {
+    // use JUnit 5 for all test tasks
+    withType<Test> {
         useJUnitPlatform()
     }
 
