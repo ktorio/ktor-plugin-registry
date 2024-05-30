@@ -27,7 +27,7 @@ The plugin provides a DSL for defining task managers and tasks
         database = org.jetbrains.exposed.sql.Database.connect(
             url = "jdbc:postgresql://host:port",
             driver = "org.postgresql.Driver",
-            username = "my_username",
+            user = "my_username",
             password = "my_password"
         ).also {
             transaction { SchemaUtils.create(DefaultTaskLockTable) }

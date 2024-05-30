@@ -1,3 +1,5 @@
-# This file maps ktor versions to the required artifacts
-# See templates/versions.ktor.yaml for more details
-"[2.0,)": io.github.flaxoos:ktor-server-task-scheduling-core:1.2.+
+"[2.0,)":
+  - io.github.flaxoos:ktor-server-task-scheduling-core-jvm:1.2.9+
+  - io.github.flaxoos:ktor-server-task-scheduling-redis-jvm:1.2.9+
+  - io.github.flaxoos:ktor-server-task-scheduling-mongodb-jvm:1.2.9+
+  - io.github.flaxoos:ktor-server-task-scheduling-jdbc-jvm:1.2.9+
