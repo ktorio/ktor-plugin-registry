@@ -1,5 +1,5 @@
 name: Resources
-description: Allows you to implement type-safe routing
+description: Provides type-safe routing
 vcsLink: https://github.com/ktorio/ktor/blob/main/ktor-shared/ktor-resources/common/src/io/ktor/resources/Resources.kt
 license: Apache 2.0
 category: Routing

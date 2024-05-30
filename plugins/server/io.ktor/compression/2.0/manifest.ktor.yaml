@@ -1,5 +1,5 @@
 name: Compression
-description: Compress outgoing content using gzip, deflate or custom encoder and thus reduce the size of the response
+description: Compresses responses using encoding algorithms like GZIP
 vcsLink: https://github.com/ktorio/ktor/blob/4517e3856a3cae8f157d2f6966635217827d2abd/ktor-server/ktor-server-core/jvm/src/io/ktor/features/Compression.kt
 license: Apache 2.0
 category: HTTP

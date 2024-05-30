@@ -4,6 +4,7 @@
 
 package io.ktor.plugins.registry
 
+import org.slf4j.LoggerFactory
 import javax.xml.parsers.DocumentBuilderFactory
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,6 +18,7 @@ class KtorReleasesTest {
             db.parse(input)
         }
     }
+    private val logger = LoggerFactory.getLogger(KtorReleasesTest::class.java)
 
 
     @Test
@@ -27,7 +29,7 @@ class KtorReleasesTest {
                 2.3.7
                 3.0.0-beta-1
             """.trimIndent(),
-            fetchKtorVersionsFromMaven(1, ktorVersionsDoc).joinToString("\n")
+            fetchKtorVersionsFromMaven(1, logger, ktorVersionsDoc).joinToString("\n")
         )
     }
 
@@ -45,7 +47,7 @@ class KtorReleasesTest {
                 2.3.7
                 3.0.0-beta-1
             """.trimIndent(),
-            fetchKtorVersionsFromMaven(2, ktorVersionsDoc).joinToString("\n")
+            fetchKtorVersionsFromMaven(2, logger, ktorVersionsDoc).joinToString("\n")
         )
     }
 

@@ -8,4 +8,7 @@
 # For multiple gradle imports, use a list.
 2.+:
   - org.sample:sample-artifact:1.+
-  - io.ktor:ktor-serialization-kotlinx-json:1.6.+
+  - io.ktor:ktor-serialization-kotlinx-json:$serialization
+
+# You can declare version variables here, they will appear in the version catalog or properties
+serialization: 1.6.+

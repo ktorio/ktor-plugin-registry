@@ -1,5 +1,5 @@
 name: Authentication JWT
-description: Handle JWT authentication
+description: Handles JSON Web Token (JWT) bearer authentication scheme
 vcsLink: https://github.com/ktorio/ktor/blob/7e78e715cec3ff039cd628f8ff8ce875c35cde4c/ktor-features/ktor-auth-jwt/jvm/src/io/ktor/auth/jwt/JWTAuth.kt
 license: Apache 2.0
 category: Security

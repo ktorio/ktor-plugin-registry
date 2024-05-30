@@ -1,0 +1,7 @@
+name: Firebase authentication
+description: Handles Firebase bearer authentication
+vcsLink: https://github.com/krizzu/firebase-auth-provider
+license: Apache 2.0
+category: Security
+prerequisites:
+  - auth

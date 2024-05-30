@@ -1,5 +1,5 @@
 name: Velocity
-description: Serve HTML content using Apache's Velocity template engine
+description: Serves HTML content, templated using Apache Velocity
 vcsLink: https://github.com/ktorio/ktor/blob/7e78e715cec3ff039cd628f8ff8ce875c35cde4c/ktor-features/ktor-velocity/jvm/src/io/ktor/velocity/Velocity.kt
 license: Apache 2.0
 category: Templating

@@ -1,5 +1,5 @@
 name: Webjars
-description: Allows you to package your assets such as javascript libraries and css as part of your uber-jar.
+description: Bundles static assets into your built JAR file
 vcsLink: https://github.com/ktorio/ktor/blob/7e78e715cec3ff039cd628f8ff8ce875c35cde4c/ktor-features/ktor-webjars/jvm/src/io/ktor/webjars/Webjars.kt
 license: Apache 2.0
 category: Routing

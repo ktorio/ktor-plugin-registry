@@ -5,7 +5,6 @@
 package io.ktor.plugins.registry
 
 import com.charleskorn.kaml.*
-import java.io.IOException
 import java.nio.file.Path
 import kotlin.io.path.*
 
@@ -19,8 +18,10 @@ import kotlin.io.path.*
  *         /<version>
  *             /manifest.ktor.yaml
  */
-fun Path.readPluginFiles(client: Boolean = false, filter: (String) -> Boolean = { true }): Sequence<PluginReference> = sequence {
+fun Path.readPluginFiles(client: Boolean = false, filter: (String) -> Boolean = { true }): Sequence<PluginReference> {
     val seen = mutableSetOf<String>()
+    val versionVariables = mutableMapOf<String, String>()
+    val unparsedReferences = mutableListOf<UnparsedPluginReference>()
 
     for (groupFolder in listDirectoryEntries()) {
         val groupId = groupFolder.name
@@ -41,56 +42,71 @@ fun Path.readPluginFiles(client: Boolean = false, filter: (String) -> Boolean = 
             if (!pluginFile.exists())
                 throw IllegalArgumentException("Missing \"versions.ktor.yaml\" in $pluginId")
 
-            val versions: Map<String, Artifacts> = readVersionsMapping(pluginFile, groupId)
-            require(versions.isNotEmpty()) { "Version mapping is required" }
+            // Split version ranges and variables for resolution
+            val versionsFileMap = pluginFile.readYamlMap()
+                ?: throw IllegalArgumentException("Could not find versions.ktor.yaml")
+            val versionsMap = mutableMapOf<String, YamlNode>()
+
+            for ((key, value) in versionsFileMap.entries.mapKeys { it.key.content }) {
+                if (key.first().isLetter())
+                    versionVariables[key] = value.yamlScalar.content
+                else
+                    versionsMap[key] = value
+            }
+
             require(groupInfo != null) { "Missing group.ktor.yaml for plugin $pluginId"}
 
-            yield(
-                PluginReference(
-                    id = pluginId,
-                    group = groupInfo,
-                    versions = versions,
-                    client = client,
-                )
-            )
+            unparsedReferences += UnparsedPluginReference(pluginId, groupInfo, versionsMap)
         }
+    }
+
+    return unparsedReferences.asSequence().map {
+        it.resolve(versionVariables, client)
     }
 }
 
-private fun readVersionsMapping(pluginFile: Path, groupId: String): Map<String, Artifacts> {
-    try {
-        val versionsYamlNode = pluginFile.readYamlMap()
-            ?: throw IllegalArgumentException("Could not find versions.ktor.yaml")
+private data class UnparsedPluginReference(
+    val id: String,
+    val group: PluginGroup,
+    val versions: Map<String, YamlNode>,
+) {
+    fun resolve(variables: Map<String, String>, client: Boolean): PluginReference {
+        val versions = readVersionsMapping(id, group.id, versions, variables)
+        require(versions.isNotEmpty()) { "Version mapping is required" }
+        return PluginReference(
+            id = id,
+            group = group,
+            versions = versions,
+            client = client,
+        )
+    }
+}
 
+private fun readVersionsMapping(id: String, groupId: String, versionsYamlNode: Map<String, YamlNode>, versionVariables: Map<String, String>): Map<String, Artifacts> {
+    try {
         val versions: Map<String, Artifacts> =
-            versionsYamlNode.entries.entries.associate { (range, artifacts) ->
-                val ktorVersionRange = range.content
+            versionsYamlNode.entries.associate { (ktorVersionRange, artifacts) ->
                 val artifactReferences = when (artifacts) {
                     is YamlList -> artifacts.items.map {
-                        ArtifactReference.parseReferenceString(
-                            it.yamlScalar.content,
-                            groupId
-                        )
+                        ArtifactReference.parse(it.yamlScalar.content, groupId, versionVariables)
                     }
-
-                    is YamlScalar -> listOf(ArtifactReference.parseReferenceString(artifacts.content, groupId))
-
+                    is YamlScalar -> listOf(
+                        ArtifactReference.parse(artifacts.content, groupId, versionVariables)
+                    )
                     else -> throw IllegalArgumentException("Unexpected node $versionsYamlNode")
                 }
                 try {
                     ArtifactVersion.parse(ktorVersionRange)
                 } catch (e: Exception) {
-                    throw IllegalArgumentException("Invalid version range $ktorVersionRange in $pluginFile", e)
+                    throw IllegalArgumentException("Invalid version range $ktorVersionRange in plugin $id", e)
                 }
 
                 ktorVersionRange to artifactReferences
             }
         return versions
 
-    } catch (e: IOException) {
-        throw IllegalArgumentException("Failed to read versions.ktor.yaml for plugin \"${pluginFile.parent.name}\"", e)
-    } catch (e: YamlException) {
-        throw IllegalArgumentException("Failed to parse versions.ktor.yaml for plugin \"${pluginFile.parent.name}\"", e)
+    } catch (e: Exception) {
+        throw IllegalArgumentException("Failed to parse versions.ktor.yaml for plugin \"$id\". ${e.message ?: ""}", e)
     }
 }
 

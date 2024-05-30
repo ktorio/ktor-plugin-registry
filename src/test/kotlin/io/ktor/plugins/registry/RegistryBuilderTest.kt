@@ -49,8 +49,11 @@ class RegistryBuilderTest {
     }
 
     @Test
-    fun `bad version range string`() {
-        assertRegistryFailure("Failed to parse versions.ktor.yaml for plugin \"bad_semver\"") {
+    fun `bad artifact reference`() {
+        assertRegistryFailure(
+            "Failed to parse versions.ktor.yaml for plugin \"bad_semver\". " +
+                    "Invalid artifact reference string \"what??\""
+        ) {
             buildRegistry {
                 it == "bad_semver"
             }
@@ -148,7 +151,7 @@ class RegistryBuilderTest {
     }
 
     private fun buildRegistry(dir: Path = testResources, filter: (String) -> Boolean = { true }) {
-        registryBuilder.buildRegistry(dir, buildDir, target, filter)
+        registryBuilder.buildRegistry(dir, buildDir, buildDir.resolve("registry/assets"), target, filter)
     }
 
     private fun clonePlugin(id: String): PluginTestContext =

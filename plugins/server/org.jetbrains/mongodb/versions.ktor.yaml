@@ -1,0 +1,10 @@
+"[2.2,3.0.0-beta-1)":
+  - org.mongodb:mongodb-driver-core:$mongo
+  - org.mongodb:mongodb-driver-sync:$mongo
+  - org.mongodb:bson:$mongo
+"[3.0.0-beta-1,)":
+  - org.mongodb:mongodb-driver-core:$mongo
+  - org.mongodb:mongodb-driver-sync:$mongo
+  - org.mongodb:bson:$mongo
+
+mongo: 4.9.0

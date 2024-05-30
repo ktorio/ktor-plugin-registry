@@ -1,0 +1,10 @@
+name: HTML DSL
+description: Generates HTML from Kotlin DSL
+vcsLink: https://github.com/Kotlin/kotlinx.html
+license: Apache 2.0
+category: Templating
+prerequisites:
+  - routing
+installation:
+  default: install.kt
+  in_routing: routing.kt

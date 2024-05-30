@@ -1,0 +1,12 @@
+name: Postgres
+description: Adds Postgres database to your application
+vcsLink: https://github.com/pgjdbc
+license: Apache 2.0
+category: Databases
+prerequisites:
+  - routing
+  - kotlinx-serialization
+installation:
+  default: install.kt
+  outside_app: outside_app.kt
+  source_file_kt: CitySchema.kt

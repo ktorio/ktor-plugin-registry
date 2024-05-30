@@ -1,4 +1,7 @@
 "[2.2,)":
-  - org.jetbrains.exposed:exposed-core:0.41.1
-  - org.jetbrains.exposed:exposed-jdbc:0.41.1
-  - com.h2database:h2:2.1.214
+  - org.jetbrains.exposed:exposed-core:$exposed
+  - org.jetbrains.exposed:exposed-jdbc:$exposed
+  - com.h2database:h2:$h2
+
+exposed: 0.41.+
+h2: 2.1.214

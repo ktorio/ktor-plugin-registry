@@ -18,20 +18,13 @@ plugins {
 group = "io.ktor"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    allRepositories()
-}
-
 configurations {
     for (target in targets)
         target.releaseConfigs.forEach(::create)
 }
 
 kotlin {
-    jvmToolchain {
-        check(this is JavaToolchainSpec)
-        languageVersion.set(JavaLanguageVersion.of(11))
-    }
+    jvmToolchain(11)
 }
 
 dependencies {
@@ -57,6 +50,7 @@ dependencies {
     // current ktor dependencies for handling manifests
     implementation("io.ktor:ktor-server-core:$latestKtor")
     implementation("io.ktor:ktor-client-core:$latestKtor")
+    implementation("io.ktor:ktor-client-cio:$latestKtor")
 
     // inspection of install blocks
     implementation(libs.kotlin.compiler)
@@ -68,10 +62,11 @@ dependencies {
     // resolving versions
     implementation(libs.maven.artifact)
 
-    //logging
-    implementation(libs.kotlin.logging)
-    implementation(libs.slf4j.simple)
+    // logging
+    implementation(libs.logback.classic)
 
+    // finding changed files
+    implementation(libs.jgit)
 
     testImplementation(kotlin("test"))
 }
@@ -92,8 +87,8 @@ detekt {
 }
 
 tasks {
-    // use junit 5
-    test {
+    // use JUnit 5 for all test tasks
+    withType<Test> {
         useJUnitPlatform()
     }
 
@@ -101,7 +96,7 @@ tasks {
      *  We copy this shared source file with the parent project because there is otherwise
      *  a chicken/egg problem with building the project which confuses the IDEA.
      */
-    register<Copy>("copyPluginTypes") {
+    val copyPluginTypes by registering(Copy::class) {
         group = "build"
         from(
             "buildSrc/src/main/kotlin/io/ktor/plugins/registry/PluginReference.kt",
@@ -112,14 +107,14 @@ tasks {
 
     // download all sources
     compileKotlin {
-        kotlinOptions {
-            freeCompilerArgs = listOf("-XdownloadSources=true")
+        compilerOptions {
+            freeCompilerArgs.addAll("-XdownloadSources=true")
         }
-        dependsOn("copyPluginTypes")
+        dependsOn(copyPluginTypes)
     }
 
     // resolving plugin jars from custom classpaths
-    register("resolvePlugins") {
+    val resolvePlugins by registering {
         group = "plugins"
         description = "Locate plugin resources from version definitions"
         doLast {
@@ -136,7 +131,7 @@ tasks {
     }
 
     // generates the appropriate directory structure with some templates for a new plugin
-    register<JavaExec>("createPlugin") {
+    val createPlugin by registering(JavaExec::class) {
         group = "plugins"
         description = "Creates a skeleton for a new plugin"
         mainClass = "io.ktor.plugins.registry.CreatePluginKt"
@@ -145,22 +140,30 @@ tasks {
     }
 
     // builds the registry for distributing to the project generator
-    register<JavaExec>("buildRegistry") {
+    val buildRegistry by registering(JavaExec::class) {
         group = "plugins"
         description = "Build the registry from plugin resources"
         mainClass = "io.ktor.plugins.registry.BuildRegistryKt"
         classpath = sourceSets["main"].runtimeClasspath
-        dependsOn("resolvePlugins")
+        dependsOn(resolvePlugins)
+    }
+
+    // generates a test project using the modified plugins in the repository
+    val buildTestProject by registering(JavaExec::class) {
+        group = "plugins"
+        description = "Generates a test project from the newly registered plugins"
+        mainClass = "io.ktor.plugins.registry.GenerateTestProjectKt"
+        classpath = sourceSets["main"].runtimeClasspath
     }
 
     // compresses registry output into a tar file
-    register<Tar>("packageRegistry") {
+    val packageRegistry by registering(Tar::class) {
         group = "plugins"
         description = "Compresses registry to tar file for distribution"
         archiveFileName.set("registry.tar.gz")
         destinationDirectory.set(file("build/distributions"))
         compression = Compression.GZIP
         from("build/registry")
-        dependsOn("buildRegistry")
+        dependsOn(buildRegistry)
     }
 }

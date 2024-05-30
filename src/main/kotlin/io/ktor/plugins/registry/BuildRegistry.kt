@@ -5,17 +5,21 @@
 package io.ktor.plugins.registry
 
 import java.nio.file.Paths
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.deleteRecursively
 
 /**
  * Builds registry for use in ktor project generator back end.
  */
+@OptIn(ExperimentalPathApi::class)
 fun main() {
     val pluginsRoot = Paths.get("plugins")
     val buildDir = Paths.get("build")
     with(RegistryBuilder()) {
-        processAssets(pluginsRoot, buildDir)
-        for (target in listOf("server", "client")) {
-            buildRegistry(pluginsRoot, buildDir, target)
+        val assetsDir = buildDir.resolve("registry/assets").also {
+            it.deleteRecursively()
         }
+        for (target in listOf("server", "client"))
+            buildRegistry(pluginsRoot, buildDir, assetsDir, target)
     }
 }

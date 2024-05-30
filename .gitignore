@@ -51,3 +51,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Generated from scripts ###
+test-project

@@ -5,11 +5,6 @@
 plugins {
     `kotlin-dsl`
     alias(libs.plugins.serialization)
-    alias(libs.plugins.jvm)
-}
-
-repositories {
-    mavenCentral()
 }
 
 dependencies {
@@ -18,6 +13,10 @@ dependencies {
     testImplementation(kotlin("test"))
 }
 
-tasks.test {
+tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+kotlin {
+    jvmToolchain(11)
 }
