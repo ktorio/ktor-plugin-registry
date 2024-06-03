@@ -4,5 +4,5 @@ vcsLink: https://github.com/SMILEY4/ktor-swagger-ui
 license: Apache 2.0
 category: Routing
 prerequisites:
-  - io.ktor.routing
-  - io.ktor.webjars
+  - routing
+  - webjars
