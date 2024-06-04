@@ -145,6 +145,13 @@ class RegistryBuilderTest {
         }
     }
 
+    @Test
+    fun `fails on missing prerequisite`() {
+        assertRegistryFailure("Missing prerequisite plugin(s): this_does_not_exist") {
+            buildRegistry { it == "missing_prerequisite" }
+        }
+    }
+
     private fun assertRegistryFailure(message: String, block: () -> Unit) {
         val ex = assertFailsWith<IllegalArgumentException>(message = "Expected failure", block = block)
         assertEquals(message, ex.message)

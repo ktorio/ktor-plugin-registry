@@ -148,7 +148,10 @@ class RegistryBuilder(
                         continue
 
                     resolveManifest(plugin, assetsDir)
-                        ?.export(outputFile, json)
+                        ?.apply {
+                            validate(release)
+                            export(outputFile, json)
+                        }
                         ?: logger.error("Missing $plugin for ktor ${plugin.versionRange}")
                 }
             }
