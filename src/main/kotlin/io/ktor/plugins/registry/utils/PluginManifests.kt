@@ -15,6 +15,9 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
+import org.slf4j.LoggerFactory
+import java.io.InputStream
 import java.net.MalformedURLException
 import java.net.URL
 import java.nio.file.Files
@@ -22,6 +25,7 @@ import java.nio.file.Path
 import kotlin.io.path.*
 
 sealed interface ResolvedPluginManifest {
+    fun validate(release: KtorRelease)
     context(ReleasePluginResolution)
     fun export(outputFile: Path, json: Json)
 }
@@ -30,6 +34,10 @@ sealed interface ResolvedPluginManifest {
  * Migrated JSON files from earlier iterations of the project generator backend.
  */
 data class PrebuiltJsonManifest(private val path: Path) : ResolvedPluginManifest {
+    override fun validate(release: KtorRelease) {
+        // Assumed to be validated when built
+    }
+
     context(ReleasePluginResolution)
     override fun export(outputFile: Path, json: Json) {
         Files.copy(path, outputFile)
@@ -51,8 +59,20 @@ data class YamlManifest(
         val TEST = CodeInjectionSite.TEST_FUNCTION.lowercaseName
     }
 
-    init {
-        model.validateImportModel()
+    override fun validate(release: KtorRelease) {
+        require(model.name.isNotBlank()) { "Property 'name' requires a value" }
+        require(model.description.isNotBlank()) { "Property 'description' requires a value" }
+        model.validateVcsLink()
+        require(model.license.isNotBlank()) { "Property 'license' requires a value" }
+        require(model.category.uppercase() in PluginCategory.namesUppercase) {
+            "Property 'category' must be one of ${PluginCategory.names}"
+        }
+        require(model.prerequisites.orEmpty().all { it in release.pluginIds }) {
+            val missingPrerequisites = model.prerequisites.orEmpty()
+                .filter { it !in release.pluginIds }
+                .joinToString()
+            "Missing prerequisite plugin(s): $missingPrerequisites"
+        }
     }
 
     context(ReleasePluginResolution)
@@ -220,16 +240,6 @@ data class YamlManifest(
         }
     }
 
-    private fun ImportManifest.validateImportModel() {
-        require(name.isNotBlank()) { "Property 'name' requires a value" }
-        require(description.isNotBlank()) { "Property 'description' requires a value" }
-        validateVcsLink()
-        require(license.isNotBlank()) { "Property 'license' requires a value" }
-        require(category.uppercase() in PluginCategory.namesUppercase) {
-            "Property 'category' must be one of ${PluginCategory.names}"
-        }
-    }
-
     private fun ImportManifest.validateVcsLink() {
         try {
             URL(vcsLink)
@@ -301,8 +311,8 @@ data class YamlManifest(
 
     @Serializable(with = CodeBlockSerializer::class)
     sealed class CodeSnippetSource {
-        data class Text(val code: String): CodeSnippetSource()
-        data class File(val file: String): CodeSnippetSource()
+        data class Text(val code: String) : CodeSnippetSource()
+        data class File(val file: String) : CodeSnippetSource()
     }
 
     object CodeBlockSerializer : KSerializer<CodeSnippetSource> {
@@ -349,3 +359,5 @@ val VersionVariable.normalizedName: String get() {
     val variableName = name.replace(Regex("(?<=[a-z])[A-Z]"), "_$0").replace('-', '_').lowercase()
     return '$' + if (variableName.endsWith("_version")) variableName else variableName + "_version"
 }
+
+val KtorRelease.pluginIds: Set<String> get() = plugins.mapToSetOrEmpty { it.id }

@@ -1,0 +1,11 @@
+name: Missing prerequisite
+description: Validation will fail because of missing prerequisite
+vcsLink: https://github.com/fail/missing_prerequisite
+license: Apache 2.0
+category: Templating
+documentation: |
+  Here are the docs
+  #Usage
+  doThing()
+prerequisites:
+  - this_does_not_exist
