@@ -10,14 +10,13 @@ import io.ktor.plugins.registry.utils.*
 import io.ktor.plugins.registry.utils.CLIUtils.ktorScriptHeader
 import io.ktor.plugins.registry.utils.FileUtils.listImages
 import io.ktor.plugins.registry.utils.FileUtils.listSubDirectories
+import io.ktor.plugins.registry.utils.ReleasePluginResolution.Companion.withResolution
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToStream
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.net.URLClassLoader
 import java.nio.file.Path
-import java.nio.file.Paths
 import kotlin.io.path.*
 
 @OptIn(
@@ -130,8 +129,9 @@ class RegistryBuilder(
         assetsDir: Path,
     ) {
 
-        val artifactsByRelease: Map<String, Map<String, String>> =
+        val artifacts = ReleaseArtifactsMapping(
             artifactsFile.inputStream().use(yaml::decodeFromStream)
+        )
 
         for (release in this) {
             logger.info(
@@ -140,30 +140,16 @@ class RegistryBuilder(
                 else
                     "Fetching manifests for ${release.versionString} ${release.plugins.map { it.id }.sorted()}"
             )
-            val jars: List<Path> = when (val releaseArtifacts = artifactsByRelease[release.versionString]) {
-                null -> {
-                    logger.error("No artifacts found for ${release.versionString}!")
-                    continue
-                }
-                else -> releaseArtifacts.values.map(Paths::get)
-            }
-            val codeAnalysis = CodeAnalysis(jars)
 
-            URLClassLoader(jars.map { it.toUri().toURL() }.toTypedArray()).use { classLoader ->
-                with(PluginResolutionContext(codeAnalysis, release, classLoader, pluginsDir)) {
-                    for (plugin in release.plugins) {
-                        val outputFile = manifestsDir.resolve(plugin.manifestOutputFile)
-                        if (plugin.isUnresolved() || outputFile.exists())
-                            continue
+            withResolution(release, artifacts[release], pluginsDir) {
+                for (plugin in release.plugins) {
+                    val outputFile = manifestsDir.resolve(plugin.manifestOutputFile)
+                    if (plugin.isUnresolved() || outputFile.exists())
+                        continue
 
-                        when (val manifest = resolveManifest(plugin, assetsDir)) {
-                            null -> logger.error(
-                                "Could not find manifest for ${plugin.group.id}:${plugin.id} " +
-                                    "for ktor ${plugin.versionRange}"
-                            )
-                            else -> manifest.export(outputFile, json)
-                        }
-                    }
+                    resolveManifest(plugin, assetsDir)
+                        ?.export(outputFile, json)
+                        ?: logger.error("Missing $plugin for ktor ${plugin.versionRange}")
                 }
             }
         }
@@ -202,3 +188,4 @@ data class KtorRelease(
     }
 
 }
+

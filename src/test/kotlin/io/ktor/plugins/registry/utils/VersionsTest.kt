@@ -17,6 +17,6 @@ class VersionsTest {
     }
 
     private fun catalogVersion(name: String) =
-        CatalogVersion(name, VersionNumber("1.2.3"))
+        VersionVariable(name, VersionNumber("1.2.3"))
 
 }
