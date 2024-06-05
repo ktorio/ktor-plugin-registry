@@ -4,10 +4,7 @@
 
 package io.ktor.plugins.registry.utils
 
-import com.charleskorn.kaml.Yaml
-import com.charleskorn.kaml.decodeFromStream
 import io.ktor.plugins.registry.*
-import io.ktor.plugins.registry.utils.FileUtils.listImages
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -18,151 +15,22 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-import org.slf4j.LoggerFactory
-import java.io.InputStream
 import java.net.MalformedURLException
 import java.net.URL
-import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.*
 
 sealed interface ResolvedPluginManifest {
+    context(ReleasePluginResolution)
     fun export(outputFile: Path, json: Json)
-}
-
-class PluginResolutionContext(
-    private val codeAnalysis: CodeAnalysis,
-    private val release: KtorRelease,
-    private val classLoader: ClassLoader,
-    private val pluginsDir: Path,
-) {
-    private val logger = LoggerFactory.getLogger("PluginResolutionContext")
-
-    /**
-     * Preference goes:
-     * - prebuilt JSON
-     * - local YAML
-     * - YAML from artifacts
-     */
-    fun resolveManifest(plugin: PluginReference, assetsDir: Path): ResolvedPluginManifest? =
-        resolvePrebuiltJson(plugin)
-            ?: resolveYamlFile(plugin, assetsDir)
-            ?: resolveYamlFromClasspath(plugin, assetsDir)
-
-    private fun resolvePrebuiltJson(plugin: PluginReference): ResolvedPluginManifest? {
-        return plugin.versionPath.resolve("manifest.json").ifExists()?.let { path ->
-            logger.info("${plugin.identifier} resolved from JSON")
-            PrebuiltJsonManifest(path)
-        }
-    }
-
-    private fun resolveYamlFile(plugin: PluginReference, assetsDir: Path) =
-        plugin.versionPath.resolve("manifest.ktor.yaml").ifExists()?.let { yamlPath ->
-            val model: YamlManifest.ImportManifest =
-                yamlPath.inputStream().use(Yaml.default::decodeFromStream)
-
-            logger.info("${plugin.identifier} resolved from YAML")
-            codeAnalysis.findErrorsAndThrow(plugin.versionPath, plugin)
-
-            YamlManifest(
-                plugin = plugin,
-                release = release,
-                model = model,
-                installSnippets = model.installation.mapValues { (site, installBlock) ->
-                    readCodeSnippet(plugin.versionPath, site, installBlock) {
-                        plugin.readFileFromVersionPath(it)
-                    }
-                },
-                documentationEntry = readDocumentation(model.documentation) {
-                    plugin.readFileFromVersionPath(it)
-                },
-                logo = assetsDir.listImages(plugin.id).firstOrNull()
-            )
-        }
-
-    private fun resolveYamlFromClasspath(plugin: PluginReference, assetsDir: Path): YamlManifest? {
-        val yamlUrl = classLoader.getResource(plugin.manifestResourceFile) ?: return null
-        val model: YamlManifest.ImportManifest = yamlUrl.openStream()
-            ?.use(Yaml.default::decodeFromStream)
-            ?: return null
-        val resolvedManifestFolder = yamlUrl.toURI().toPath().parent
-
-        logger.info("${plugin.identifier} resolved from classpath")
-        codeAnalysis.findErrorsAndThrow(resolvedManifestFolder, plugin)
-
-        return YamlManifest(
-            plugin = plugin,
-            release = release,
-            model = model,
-            installSnippets = model.installation.mapValues { (site, installBlock) ->
-                readCodeSnippet(resolvedManifestFolder, site, installBlock) {
-                    plugin.readFileFromClasspath(it)
-                }
-            },
-            documentationEntry = readDocumentation(model.documentation) {
-                plugin.readFileFromClasspath(it)
-            },
-            logo = assetsDir.listImages(plugin.id).firstOrNull()
-        )
-    }
-
-    private val PluginReference.versionPath: Path get() =
-        pluginsDir.resolve("${group.id}/$id/${versionRange.stripSpecialChars()}")
-
-    private fun PluginReference.readFileFromVersionPath(filename: String) =
-        versionPath.resolve(filename).ifExists()?.inputStream()
-
-    private fun PluginReference.readFileFromClasspath(filename: String) =
-        classLoader.getResourceAsStream("$resourcePath/${filename}")
-
-    private fun Path.ifExists(): Path? = takeIf { it.exists() }
-
-    private val PluginReference.manifestResourceFile: String get() =
-        "$resourcePath/manifest.ktor.yaml"
-
-    private val PluginReference.resourcePath: String get() =
-        "${group.id.replace('.', '/')}/$id"
-
-    private fun readCodeSnippet(
-        path: Path,
-        site: String,
-        codeSnippet: YamlManifest.CodeSnippetSource,
-        findCodeInput: (String) -> InputStream?
-    ): InstallSnippet {
-        val injectionSite = CodeInjectionSite.valueOf(site.uppercase())
-        val (code: String, filename: String?) = when (codeSnippet) {
-            is YamlManifest.CodeSnippetSource.Text -> codeSnippet.code to null
-            is YamlManifest.CodeSnippetSource.File -> {
-                val code = findCodeInput(codeSnippet.file)?.use { it.readAllBytes().toString(Charset.defaultCharset()) }
-                    ?: throw IllegalArgumentException("Missing install snippet ${codeSnippet.file}")
-                code to codeSnippet.file
-            }
-        }
-        return codeAnalysis.parseInstallSnippet(
-            sourceRoot = path,
-            site = injectionSite,
-            contents = code,
-            filename = filename
-        )
-    }
-
-    private fun readDocumentation(
-        codeSnippet: YamlManifest.CodeSnippetSource,
-        findCodeInput: (String) -> InputStream?
-    ) = DocumentationExtractor.parseDocumentationMarkdown(when (codeSnippet) {
-        is YamlManifest.CodeSnippetSource.Text -> codeSnippet.code
-        is YamlManifest.CodeSnippetSource.File -> {
-            findCodeInput(codeSnippet.file)?.use { it.readAllBytes().toString(Charset.defaultCharset()) }
-                ?: throw IllegalArgumentException("Missing documentation file ${codeSnippet.file}")
-        }
-    })
 }
 
 /**
  * Migrated JSON files from earlier iterations of the project generator backend.
  */
 data class PrebuiltJsonManifest(private val path: Path) : ResolvedPluginManifest {
+    context(ReleasePluginResolution)
     override fun export(outputFile: Path, json: Json) {
         Files.copy(path, outputFile)
     }
@@ -173,7 +41,6 @@ data class PrebuiltJsonManifest(private val path: Path) : ResolvedPluginManifest
  */
 data class YamlManifest(
     private val plugin: PluginReference,
-    private val release: KtorRelease,
     private val model: ImportManifest,
     private val installSnippets: Map<String, InstallSnippet>,
     private val documentationEntry: DocumentationEntry,
@@ -188,16 +55,17 @@ data class YamlManifest(
         model.validateImportModel()
     }
 
+    context(ReleasePluginResolution)
     @OptIn(ExperimentalSerializationApi::class)
     override fun export(outputFile: Path, json: Json) {
         outputFile.outputStream().use { out ->
-            json.encodeToStream(model.toExportModel(release), out)
+            json.encodeToStream(model.toExportModel(), out)
         }
     }
 
-    private fun ImportManifest.toExportModel(
-        release: KtorRelease
-    ): JsonObject = buildJsonObject {
+    context(ReleasePluginResolution)
+    @OptIn(ExperimentalSerializationApi::class)
+    private fun ImportManifest.toExportModel(): JsonObject = buildJsonObject {
         val version = when(plugin.versionRange.stripSpecialChars()) {
             "2.0" -> "2.0.0"
             else -> release.versionString
@@ -220,7 +88,7 @@ data class YamlManifest(
         put("group", PluginCategory.valueOf(category.uppercase()).nameTitleCase)
         prerequisites?.ifNotEmpty {
             putJsonArray("required_feature_ids") {
-                prerequisites.forEach(::add)
+                addAll(prerequisites)
             }
         }
         putInstallRecipe()
@@ -277,20 +145,23 @@ data class YamlManifest(
     private fun Map<String, InstallSnippet>.allExcept(site: String) =
         entries.filter { (key) -> key != site }
 
+    context(ReleasePluginResolution)
     private fun JsonObjectBuilder.putDependencies(release: KtorRelease) {
         putJsonArray("dependencies") {
-            for (dependency in plugin.allArtifactsForVersion(release.versionString)) {
+            val artifacts = plugin.allArtifactsForVersion(release.versionString)
+                .map { releaseArtifacts.resolveActualVersion(it) }
+            for (dependency in artifacts) {
                 addJsonObject {
                     put("group", dependency.group)
                     put("artifact", dependency.name)
                     put("version", when (val version = dependency.version) {
                         is VersionNumber -> version.toString()
                         is VersionRange -> version.toString()
-                        is CatalogVersion -> version.normalizedName
+                        is VersionVariable -> version.normalizedName
                         MatchKtor -> "\$ktor_version"
                         else -> throw IllegalArgumentException("Unexpected version type ${version::class}")
                     })
-                    if (dependency.version is CatalogVersion)
+                    if (dependency.version is VersionVariable)
                         put("version_value", dependency.version.toString())
                 }
             }
@@ -474,7 +345,7 @@ enum class PluginCategory(val acronym: Boolean = false) {
 
 fun String.wordTitleCase() = get(0) + substring(1).lowercase()
 
-val CatalogVersion.normalizedName: String get() {
+val VersionVariable.normalizedName: String get() {
     val variableName = name.replace(Regex("(?<=[a-z])[A-Z]"), "_$0").replace('-', '_').lowercase()
     return '$' + if (variableName.endsWith("_version")) variableName else variableName + "_version"
 }
