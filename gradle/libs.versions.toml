@@ -2,7 +2,7 @@
 kotlin-version = "2.0.0"
 kaml-version = "0.59.0"
 logback-version = "1.5.6"
-serialization-version = "1.6.3"
+serialization-version = "1.7.0"
 maven-artifact-version = "3.9.7"
 detekt-version = "1.23.6"
 jgit-version="6.9.0.202403050737-r"
