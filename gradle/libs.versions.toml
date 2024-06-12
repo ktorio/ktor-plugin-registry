@@ -5,7 +5,7 @@ logback-version = "1.5.6"
 serialization-version = "1.7.0"
 maven-artifact-version = "3.9.7"
 detekt-version = "1.23.6"
-jgit-version="6.9.0.202403050737-r"
+jgit-version="6.10.0.202406032230-r"
 compress-version="1.26.2"
 
 [libraries]
