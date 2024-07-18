@@ -1,2 +1,2 @@
 "[2.0,)":
-  - io.github.flaxoos:ktor-server-kafka-jvm:1.+
+  - io.github.flaxoos:ktor-server-kafka-jvm:1.2.9
