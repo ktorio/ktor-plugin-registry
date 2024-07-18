@@ -10,9 +10,7 @@ To add a new plugin, follow these easy steps:
 1. **Publish your project to Maven.**
    - Use the gradle [maven publish plugin](https://docs.gradle.org/current/userguide/publishing_maven.html) to publish 
      to [Maven Central](https://central.sonatype.org/) or some other public Maven repository.
-   - We read from repositories listed in [Repositories.kt](buildSrc/src/main/kotlin/io/ktor/plugins/registry/Repositories.kt). 
-   - If you'd like to include another Maven repository for your plugin, include an update to
-Repositories.kt in your pull request in step 2.  It should have public read access.
+   - If you'd like to reference another repository, this can be referenced from the plugin manifest in Step 3.
      <br /><br />
 
 2. **Fork and clone this repository.**<br /><br />
