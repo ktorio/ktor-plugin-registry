@@ -107,7 +107,8 @@ class RegistryBuilderTest {
     fun `fails on incorrect category`() {
         assertRegistryFailure(
             "Property 'category' must be one of " +
-                "[Administration, Databases, HTTP, Monitoring, Routing, Security, Serialization, Sockets, Templating]"
+                "[Administration, Databases, Frameworks, HTTP, Monitoring, " +
+                    "Routing, Security, Serialization, Sockets, Templating]"
         ) {
             clonePlugin("csrf")
                 .substitute("category" to "Some wrong value")

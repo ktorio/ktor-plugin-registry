@@ -42,7 +42,7 @@ scope<RequestScope>{
 }
 ```
 
-And from your http call, just call call.scope.get() to resolve the right dependency:
+And from your http call, just call `call.scope.get()` to resolve the right dependency:
 
 ```kotlin
 routing {
@@ -57,7 +57,7 @@ Note: for each new request, the scope will be recreated. This creates and drops 
 
 ### Run Koin from an external Ktor Module
 
-For a Ktor module, you can load specific Koin modules. Just declare them with koin { } function:
+For a Ktor module, you can load specific Koin modules. Just declare them with `koin { }` function:
 
 ```kotlin
 fun Application.module2() {
