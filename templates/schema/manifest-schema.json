@@ -28,6 +28,7 @@
       "enum": [
         "Administration",
         "Databases",
+        "Frameworks",
         "HTTP",
         "Monitoring",
         "Routing",

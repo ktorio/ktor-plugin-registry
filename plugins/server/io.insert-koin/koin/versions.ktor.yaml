@@ -1,0 +1,5 @@
+"[2.0,)":
+  - io.insert-koin:koin-ktor:$koin
+  - io.insert-koin:koin-logger-slf4j:$koin
+
+koin: 3.5.+
