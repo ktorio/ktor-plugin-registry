@@ -6,7 +6,7 @@ serialization-version = "1.7.1"
 maven-artifact-version = "3.9.8"
 detekt-version = "1.23.6"
 jgit-version="6.10.0.202406032230-r"
-compress-version="1.26.2"
+compress-version="1.27.0"
 
 [libraries]
 kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-version" }
