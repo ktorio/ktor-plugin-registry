@@ -337,6 +337,7 @@ data class YamlManifest(
 enum class PluginCategory(val acronym: Boolean = false) {
     ADMINISTRATION,
     DATABASES,
+    FRAMEWORKS,
     HTTP(acronym = true),
     MONITORING,
     ROUTING,

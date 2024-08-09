@@ -32,6 +32,9 @@ fun main() {
     val mavenArtifact = askQuestion(
         "What is your latest maven artifact?    (${colored("io.ktor:ktor-server-core:2.3.10", CYAN)})"
     )
+    check(mavenArtifact.count { it == ':' } == 2) {
+        "Artifact should appear as `group:name:version` with two colons"
+    }
     val vcsUrl = askQuestion(
         "Where can I find your source code?     (${colored("https://github.com/ktorio/ktor", CYAN)})"
     )

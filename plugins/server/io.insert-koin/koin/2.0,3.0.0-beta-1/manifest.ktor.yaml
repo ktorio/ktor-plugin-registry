@@ -1,0 +1,8 @@
+name: Koin
+description: Provides dependency injection
+vcsLink: https://github.com/InsertKoinIO/koin
+license: Apache 2.0
+category: Frameworks
+installation:
+  default: install.kt
+  source_file_kt: HelloService.kt
