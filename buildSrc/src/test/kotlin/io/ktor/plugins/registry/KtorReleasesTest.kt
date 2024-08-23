@@ -25,7 +25,6 @@ class KtorReleasesTest {
     fun `fetch latest 1 ktor versions`() {
         assertEquals(
             """
-                1.6.8
                 2.3.7
                 3.0.0-beta-1
             """.trimIndent(),
@@ -37,10 +36,6 @@ class KtorReleasesTest {
     fun `fetch latest 2 ktor versions`() {
         assertEquals(
             """
-                1.5.3
-                1.5.4
-                1.6.7
-                1.6.8
                 2.2.3
                 2.2.4
                 2.3.6
