@@ -14,7 +14,7 @@ dependencyResolutionManagement {
         maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers") {
             name = "SpaceKotlinJsWrappers"
         }
-        mavenLocal()
+        maven("https://packages.confluent.io/maven/")
     }
 }
 

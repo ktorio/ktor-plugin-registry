@@ -3,3 +3,10 @@ description: Manages scheduled tasks across instances of your distributed Ktor s
 vcsLink: https://github.com/Flaxoos/extra-ktor-plugins
 license: Apache 2.0
 category: Administration
+gradle:
+  repositories:
+    - url: https://packages.confluent.io/maven/
+maven:
+  repositories:
+    - id: confluence
+      url: https://packages.confluent.io/maven/
