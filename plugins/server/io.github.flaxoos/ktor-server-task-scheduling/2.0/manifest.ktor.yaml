@@ -1,5 +1,5 @@
 name: Ktor-server-task-scheduling-core
-description: Manage scheduled tasks across instances of your distributed ktor server, using various strategies and a kotlin flavoured cron tab
+description: Manages scheduled tasks across instances of your distributed Ktor server
 vcsLink: https://github.com/Flaxoos/extra-ktor-plugins
 license: Apache 2.0
 category: Administration
