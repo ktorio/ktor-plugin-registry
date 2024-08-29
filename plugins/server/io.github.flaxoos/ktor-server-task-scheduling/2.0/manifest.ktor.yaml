@@ -1,5 +1,3 @@
-# This file contains all the information needed for including your plugin.
-# See templates/manifest.ktor.yaml for more details
 name: Ktor-server-task-scheduling-core
 description: Manage scheduled tasks across instances of your distributed ktor server, using various strategies and a kotlin flavoured cron tab
 vcsLink: https://github.com/Flaxoos/extra-ktor-plugins
