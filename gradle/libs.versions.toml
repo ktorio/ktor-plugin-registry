@@ -4,7 +4,7 @@ kaml-version = "0.61.0"
 logback-version = "1.5.8"
 serialization-version = "1.7.2"
 maven-artifact-version = "3.9.9"
-detekt-version = "1.23.6"
+detekt-version = "1.23.7"
 jgit-version="6.10.0.202406032230-r"
 compress-version="1.27.1"
 
