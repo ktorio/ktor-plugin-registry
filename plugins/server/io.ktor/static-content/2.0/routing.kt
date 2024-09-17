@@ -5,7 +5,5 @@ import io.ktor.server.routing.*
 
 public fun Routing.configureRouting() {
     // Static plugin. Try to access `/static/index.html`
-    static("/static") {
-        resources("static")
-    }
+    staticResources("/static", "static")
 }
