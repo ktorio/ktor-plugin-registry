@@ -1,23 +1,24 @@
 [versions]
-kotlin-version = "2.0.20"
-kaml-version = "0.61.0"
-logback-version = "1.5.7"
-serialization-version = "1.7.2"
-maven-artifact-version = "3.9.9"
-detekt-version = "1.23.6"
-jgit-version="6.10.0.202406032230-r"
-compress-version="1.27.1"
+kotlin = "2.0.20"
+kaml = "0.61.0"
+logback = "1.5.7"
+serialization = "1.7.2"
+maven-artifact = "3.9.9"
+detekt = "1.23.6"
+jgit="6.10.0.202406032230-r"
+compress="1.27.1"
+kotlinx-browser="0.1"
 
 [libraries]
-kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-version" }
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization-version" }
-kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml-version" }
-logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback-version" }
-maven-artifact = { module = "org.apache.maven:maven-artifact", version.ref = "maven-artifact-version" }
-jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit-version" }
-apache-compress = { module = "org.apache.commons:commons-compress", version.ref = "compress-version" }
+kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+maven-artifact = { module = "org.apache.maven:maven-artifact", version.ref = "maven-artifact" }
+jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
+apache-compress = { module = "org.apache.commons:commons-compress", version.ref = "compress" }
 
 [plugins]
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt-version" }
-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin-version" }
-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-version" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

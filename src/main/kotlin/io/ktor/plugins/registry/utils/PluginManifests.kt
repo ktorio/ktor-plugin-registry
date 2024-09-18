@@ -5,6 +5,7 @@
 package io.ktor.plugins.registry.utils
 
 import io.ktor.plugins.registry.*
+import io.ktor.plugins.registry.utils.TargetPlatform.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -22,6 +23,7 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.enums.enumEntries
 import kotlin.io.path.*
 
 sealed interface ResolvedPluginManifest {
@@ -73,6 +75,9 @@ data class YamlManifest(
                 .joinToString()
             "Missing prerequisite plugin(s): $missingPrerequisites"
         }
+        require(model.platforms == null || model.platforms.all { it in TargetPlatform.names }) {
+            "Property 'platforms' must be one of ${TargetPlatform.entries.map { it.name }}"
+        }
     }
 
     context(ReleasePluginResolution)
@@ -106,6 +111,11 @@ data class YamlManifest(
             }
         }
         put("group", PluginCategory.valueOf(category.uppercase()).nameTitleCase)
+        platforms?.let { platforms ->
+            putJsonArray("platforms") {
+                addAll(platforms.map { it.enumCase() })
+            }
+        }
         prerequisites?.ifNotEmpty {
             putJsonArray("required_feature_ids") {
                 addAll(prerequisites)
@@ -181,8 +191,12 @@ data class YamlManifest(
                         MatchKtor -> "\$ktor_version"
                         else -> throw IllegalArgumentException("Unexpected version type ${version::class}")
                     })
-                    if (dependency.version is VersionVariable)
-                        put("version_value", dependency.version.toString())
+                    (dependency.version as? VersionVariable)?.let {
+                        put("version_value", it.toString())
+                    }
+                    dependency.function?.let {
+                        put("function", it.enumCase())
+                    }
                 }
             }
         }
@@ -255,6 +269,7 @@ data class YamlManifest(
         val vcsLink: String,
         val license: String,
         val category: String,
+        val platforms: List<String>? = null,
         val prerequisites: List<String>? = null,
         val documentation: CodeSnippetSource =
             CodeSnippetSource.File("documentation.md"),
@@ -334,6 +349,15 @@ data class YamlManifest(
 
 }
 
+enum class TargetPlatform {
+    JVM,
+    JS;
+
+    companion object {
+        val names get() = entries.map { it.name.variableCase() }
+    }
+}
+
 enum class PluginCategory(val acronym: Boolean = false) {
     ADMINISTRATION,
     DATABASES,
@@ -355,6 +379,8 @@ enum class PluginCategory(val acronym: Boolean = false) {
 }
 
 fun String.wordTitleCase() = get(0) + substring(1).lowercase()
+fun String.variableCase() = lowercase().replace(Regex("_[a-z]")) { it.value[1].uppercase() }
+fun String.enumCase() = replace(Regex("[a-z][A-Z]")) { it.value[0] + "_" + it.value[1] }.uppercase()
 
 val VersionVariable.normalizedName: String get() {
     val variableName = name.replace(Regex("(?<=[a-z])[A-Z]"), "_$0").replace('-', '_').lowercase()

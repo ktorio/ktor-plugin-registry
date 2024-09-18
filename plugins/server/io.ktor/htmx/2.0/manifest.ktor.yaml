@@ -1,0 +1,15 @@
+name: HTMX
+description: Provides HTMX front-end support
+vcsLink: https://github.com/ktorio/ktor # TODO link to source
+license: Apache 2.0
+category: Templating
+prerequisites:
+  - routing
+  - html-dsl
+installation:
+  default: install.kt
+  in_routing: routing.kt
+  js_source_file_kt: main.kt
+platforms:
+  - jvm
+  - js

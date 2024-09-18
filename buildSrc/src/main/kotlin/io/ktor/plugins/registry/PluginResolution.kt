@@ -15,14 +15,16 @@ import kotlin.io.path.outputStream
  */
 fun Sequence<PluginReference>.allArtifactsForVersion(ktorRelease: String): Sequence<String> =
     flatMap { plugin ->
-        plugin.allArtifactsForVersion(ktorRelease).map { artifact ->
-            with(artifact) {
-                "$group:$name:" + when(version) {
-                    is MatchKtor -> ktorRelease
-                    else -> version.toString()
+        plugin.allArtifactsForVersion(ktorRelease)
+            .filter { it.function == null } // TODO ignore function deps for now
+            .map { artifact ->
+                with(artifact) {
+                    "$group:$name:" + when(version) {
+                        is MatchKtor -> ktorRelease
+                        else -> version.toString()
+                    }
                 }
             }
-        }
     }
 
 /**

@@ -77,7 +77,7 @@ sourceSets {
 }
 
 detekt {
-    toolVersion = libs.versions.detekt.version.get()
+    toolVersion = libs.versions.detekt.get()
     config.setFrom(file("detekt.yml"))
     buildUponDefaultConfig = true
 }

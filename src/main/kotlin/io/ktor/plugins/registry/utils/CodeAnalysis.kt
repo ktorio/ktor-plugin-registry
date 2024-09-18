@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.readText
 
 class CodeAnalysis(private val classpathJars: List<Path> = emptyList()) {
 
@@ -44,17 +45,22 @@ class CodeAnalysis(private val classpathJars: List<Path> = emptyList()) {
     private val pluginAnalyzers = mutableMapOf<Path, PluginCodeAnalyzer>()
 
     fun findErrorsAndThrow(sourceRoot: Path, plugin: PluginReference) {
-        findErrors(sourceRoot).ifNotEmpty {
-            logger.error(
-                "Compilation error(s) found in plugin ${plugin.id}:" +
-                        joinToString("\n", "\n") {
-                            with(it) {
-                                "${sourceRoot.absolutePathString()}/$file:$lineNumber:$column: $message"
+        findErrors(sourceRoot)
+            .filter { error ->
+                // TODO include JS std lib for these files
+                !sourceRoot.resolve(error.file).readText().contains("kotlinx.browser")
+            }
+            .ifNotEmpty {
+                logger.error(
+                    "Compilation error(s) found in plugin ${plugin.id}:" +
+                            joinToString("\n", "\n") {
+                                with(it) {
+                                    "${sourceRoot.absolutePathString()}/$file:$lineNumber:$column: $message"
+                                }
                             }
-                        }
-            )
-            throw IllegalArgumentException("Failed to compile sources for plugin: ${plugin.id}")
-        }
+                )
+                throw IllegalArgumentException("Failed to compile sources for plugin: ${plugin.id}")
+            }
     }
 
     private fun findErrors(sourceRoot: Path) =
@@ -275,8 +281,11 @@ enum class CodeInjectionSite(
     // In application resources folder as a separate resource file
     RESOURCES(CodeExtractionMethod.FILE),
 
-    // In separate file near the code
+    // In a separate file near the code
     SOURCE_FILE_KT(CodeExtractionMethod.FILE),
+
+    // In a separate file in JS source
+    JS_SOURCE_FILE_KT(CodeExtractionMethod.FILE),
 
     // In application.conf file
     APPLICATION_CONF(CodeExtractionMethod.VERBATIM, "application.conf"),

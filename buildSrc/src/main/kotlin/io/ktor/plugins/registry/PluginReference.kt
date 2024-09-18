@@ -57,11 +57,18 @@ data class ArtifactReference(
     val group: String? = null,
     val name: String,
     val version: ArtifactVersion,
+    val function: String? = null,
 ) {
     companion object {
+        private val functionReference = Regex("""(\w+)\((.+?)\)""")
         private val referenceStringRegex = Regex("""(?:(.+?):)?(.+?):(.+)""")
 
         fun parse(text: String, defaultGroup: String? = null, versionVariables: Map<String, String> = emptyMap()): ArtifactReference =
+            functionReference.matchEntire(text)?.destructured?.let { (function, reference) ->
+                parseReference(reference, defaultGroup, versionVariables).copy(function = function)
+            } ?: parseReference(text, defaultGroup, versionVariables)
+
+        private fun parseReference(text: String, defaultGroup: String? = null, versionVariables: Map<String, String> = emptyMap()) =
             referenceStringRegex.matchEntire(text)?.destructured?.let { (group, name, version) ->
                 ArtifactReference(
                     group.takeIf(String::isNotEmpty) ?: defaultGroup,
