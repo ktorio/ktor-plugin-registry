@@ -22,10 +22,8 @@ fun Routing.configureRouting() {
             }
             body {
                 button {
-                    attributes.hx {
-                        get = "/"
-                        swap = HxSwap.innerHTML
-                    }
+                    attributes["hx-get"] = "/"
+                    attributes["hx-swap"] = "innerHTML"
 
                     +"Test"
                 }

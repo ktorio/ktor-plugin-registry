@@ -15,6 +15,8 @@ dependencyResolutionManagement {
             name = "SpaceKotlinJsWrappers"
         }
         maven("https://packages.confluent.io/maven/")
+        maven("https://packages.jetbrains.team/maven/p/ktor-htmx-hackathon-2024/htmx")
+        maven("https://packages.jetbrains.team/maven/p/ktor-htmx-hackathon-2024/kotlinx-html")
     }
 }
 
