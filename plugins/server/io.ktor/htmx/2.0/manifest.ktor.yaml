@@ -10,6 +10,13 @@ installation:
   default: install.kt
   in_routing: routing.kt
   js_source_file_kt: main.kt
+gradle:
+  plugins:
+    - id: org.jetbrains.kotlin.plugin.assignment
+      version: LAST_KOTLIN_VERSION
+  repositories:
+    - url: https://packages.jetbrains.team/maven/p/ktor-htmx-hackathon-2024/htmx
+    - url: https://packages.jetbrains.team/maven/p/ktor-htmx-hackathon-2024/kotlinx-html
 platforms:
   - jvm
   - js

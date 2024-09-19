@@ -3,8 +3,11 @@ import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
+import io.ktor.server.plugins.htmx.*
 import io.ktor.server.routing.*
 import kotlinx.html.*
+import org.jetbrains.hackathon.extension.html.*
+import org.jetbrains.htmx.*
 import java.io.File
 
 fun Routing.configureRouting() {
@@ -19,8 +22,10 @@ fun Routing.configureRouting() {
             }
             body {
                 button {
-                    attributes["hx-get"] = "/htmx"
-                    attributes["hx-swap"] = "outerHtml"
+                    attributes.hx {
+                        get = "/"
+                        swap = HxSwap.innerHTML
+                    }
 
                     +"Test"
                 }
@@ -29,12 +34,10 @@ fun Routing.configureRouting() {
     }
 
     // Htmx endpoint
-    get("/htmx") {
-        call.respondHtml {
-            body {
-                div {
-                    +"Hello, HTMX"
-                }
+    hx.get("/") {
+        call.respondHtmlFragment {
+            div {
+                +"Hello, HTMX"
             }
         }
     }
