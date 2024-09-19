@@ -1,0 +1,5 @@
+name: LiveReload
+description: Refreshes your browser after changes to project files
+vcsLink: https://github.com/ktorio/ktor # TODO link to source
+license: Apache 2.0
+category: HTTP

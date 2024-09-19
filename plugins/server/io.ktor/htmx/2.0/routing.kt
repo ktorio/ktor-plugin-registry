@@ -10,6 +10,7 @@ import java.io.File
 fun Routing.configureRouting() {
     val scriptPattern = Regex(".+?\\.js(\\.map)?")
 
+    // Index page
     get("/") {
         call.respondHtml {
             head {
@@ -27,14 +28,7 @@ fun Routing.configureRouting() {
         }
     }
 
-    get(scriptPattern) {
-        val requestPath = call.request.path()
-        val resolvedFile = File("build/dist/js/productionExecutable/$requestPath")
-        if (resolvedFile.exists())
-            call.respondFile(resolvedFile)
-        else call.respond(HttpStatusCode.NotFound)
-    }
-
+    // Htmx endpoint
     get("/htmx") {
         call.respondHtml {
             body {
@@ -43,5 +37,13 @@ fun Routing.configureRouting() {
                 }
             }
         }
+    }
+
+    get(scriptPattern) {
+        val requestPath = call.request.path()
+        val resolvedFile = File("build/dist/js/productionExecutable/$requestPath")
+        if (resolvedFile.exists())
+            call.respondFile(resolvedFile)
+        else call.respond(HttpStatusCode.NotFound)
     }
 }
