@@ -4,16 +4,25 @@
 
 package io.ktor.plugins.registry
 
+import com.charleskorn.kaml.Yaml
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.serializer
+import org.slf4j.LoggerFactory
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.*
 import kotlin.jvm.optionals.getOrNull
+import kotlin.reflect.typeOf
 import kotlin.test.Test
 import kotlin.test.*
 
 class RegistryBuilderTest {
+
+    companion object {
+        val logger = LoggerFactory.getLogger("RegistryBuilderTest")
+    }
 
     private val registryBuilder = RegistryBuilder()
     private val testResources = Paths.get("src/test/resources")
@@ -36,6 +45,17 @@ class RegistryBuilderTest {
     fun `happy path`() {
         buildRegistry {
             it == "csrf"
+        }
+    }
+
+    @Test
+    fun `multiple sources`() {
+        val json = Json { prettyPrint = true }
+        val typeInfo = typeOf<String>()
+        val deserializer = Json.serializersModule.serializer(typeInfo)
+        json.decodeFromString(deserializer, "\"hello\"")
+        buildRegistry {
+            it == "exposed"
         }
     }
 
@@ -159,8 +179,23 @@ class RegistryBuilderTest {
         assertEquals(message, ex.message)
     }
 
-    private fun buildRegistry(dir: Path = testResources, filter: (String) -> Boolean = { true }) {
-        registryBuilder.buildRegistry(dir, buildDir, buildDir.resolve("registry/assets"), target, filter)
+    private fun buildRegistry(
+        pluginsRoot: Path = testResources,
+        filter: (String) -> Boolean = { true }
+    ): String {
+        registryBuilder.buildRegistry(
+            pluginsRoot,
+            buildDir,
+            buildDir.resolve("registry/assets"),
+            target,
+            filter
+        )
+
+        return buildDir.toFile().walkTopDown()
+            .filter { it.isFile && it.extension == "json" }
+            .map { file -> file.name to file.readText(Charset.defaultCharset()) }
+            .joinToString(separator = "\n\n") { (name, content) -> "## $name\n\n$content" }
+            .also { logger.info(it) }
     }
 
     private fun clonePlugin(id: String): PluginTestContext =
@@ -213,7 +248,7 @@ class RegistryBuilderTest {
                 }
             }
 
-            buildRegistry(dir = tempDir)
+            buildRegistry(pluginsRoot = tempDir)
         }
     }
 }
