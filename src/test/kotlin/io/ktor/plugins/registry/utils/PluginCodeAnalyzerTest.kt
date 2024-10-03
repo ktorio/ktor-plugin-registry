@@ -24,43 +24,41 @@ class PluginCodeAnalyzerTest {
     @Test
     fun `read install snippet verbatim`() {
         val result = pluginCodeAnalyzer.parseInstallSnippet(
-            CodeInjectionSite.SOURCE_FILE_KT,
             KOTLIN_CODE.trimIndent(),
-            "Test.kt"
+            CodeInjectionSite.SOURCE_FILE_KT.asMeta(file = "Test.kt"),
         )
 
-        assertEquals(InstallSnippet.RawContent(KOTLIN_CODE.trimIndent(), "Test.kt"), result)
+        assertEquals(KOTLIN_CODE.trimIndent(), result.code)
+        assertEquals(CodeInjectionSite.SOURCE_FILE_KT, result.site)
+        assertEquals(emptyList(), result.importsOrEmpty)
+        assertEquals("Test.kt", result.file)
     }
 
     @Test
     fun `read install snippet from kotlin`() {
-        val result = pluginCodeAnalyzer.parseInstallSnippet(CodeInjectionSite.DEFAULT, KOTLIN_CODE.trimIndent())
+        val result = pluginCodeAnalyzer.parseInstallSnippet(
+            KOTLIN_CODE.trimIndent(),
+            CodeInjectionSite.DEFAULT.asMeta()
+        )
 
-        assertEquals(
-            InstallSnippet.Kotlin(
-            imports = listOf(
-                "java.nio.file.Paths",
-            ),
-            code = """println(Paths.get("").toAbsolutePath().toString())"""
-        ), result)
+        assertEquals("""println(Paths.get("").toAbsolutePath().toString())""", result.code)
+        assertEquals(CodeInjectionSite.DEFAULT, result.site)
+        assertEquals(listOf("java.nio.file.Paths"), result.importsOrEmpty)
     }
 
     @Test
     fun `read install snippet code contents`() {
         val result = pluginCodeAnalyzer.parseInstallSnippet(
-            CodeInjectionSite.OUTSIDE_APP,
             KOTLIN_CODE.trimIndent(),
-            "Test.kt"
+            CodeInjectionSite.OUTSIDE_APP.asMeta(file = "Test.kt"),
         )
 
-        assertEquals(
-            InstallSnippet.Kotlin(
-            imports = listOf("java.nio.file.Paths"),
-            code = """
-                public fun pwd() {
-                    println(Paths.get("").toAbsolutePath().toString())
-                }
-            """.trimIndent()
-        ), result)
+        assertEquals("""
+            public fun pwd() {
+                println(Paths.get("").toAbsolutePath().toString())
+            }
+        """.trimIndent(), result.code)
+        assertEquals(CodeInjectionSite.OUTSIDE_APP, result.site)
+        assertEquals(listOf("java.nio.file.Paths"), result.importsOrEmpty)
     }
 }
