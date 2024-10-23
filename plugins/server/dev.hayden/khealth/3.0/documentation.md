@@ -1,6 +1,3 @@
-# KHealth
-[![Release](https://jitpack.io/v/haydenmeloche/khealth.svg)](https://jitpack.io/#dev.hayden/khealth)
-
 KHealth is a simple & customizable health plugin for Ktor.
 
 ## Usage
