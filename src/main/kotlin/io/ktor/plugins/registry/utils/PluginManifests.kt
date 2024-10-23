@@ -176,7 +176,7 @@ data class YamlManifest(
                 addJsonObject {
                     put("group", dependency.group)
                     put("artifact", dependency.name)
-                    put("version", when (val version = dependency.version) {
+                    put("version", when(val version = dependency.version) {
                         is VersionNumber -> version.toString()
                         is VersionRange -> version.toString()
                         is VersionVariable -> version.normalizedName
@@ -185,6 +185,9 @@ data class YamlManifest(
                     })
                     if (dependency.version is VersionVariable)
                         put("version_value", dependency.version.toString())
+                    dependency.version.asRange()?.let { range ->
+                        put("version_range", range.toString())
+                    }
                 }
             }
         }

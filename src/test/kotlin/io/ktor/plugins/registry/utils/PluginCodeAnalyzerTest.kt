@@ -4,6 +4,7 @@
 
 package io.ktor.plugins.registry.utils
 
+import io.ktor.util.reflect.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
