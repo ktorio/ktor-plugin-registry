@@ -30,20 +30,24 @@ data class ReleaseArtifacts(
     fun resolveActualVersion(artifact: ArtifactReference): ArtifactReference {
         val versionRange = artifact.version.asRange() ?: return artifact
         val artifactNameRegex = Regex(Regex.escape(artifact.name) + "(?:-jvm)?", RegexOption.IGNORE_CASE)
-        val actual = references.find {
+        val actualArtifact = references.find {
             it.group == artifact.group && artifactNameRegex.matches(it.name)
         }
-        check(actual != null) { "Could not find actual version for $artifact" }
-        check(versionRange.contains(actual.version)) {
-            "Resolved version ${actual.version} is not in ${artifact.version} for $artifact"
+        check(actualArtifact != null) {
+            "Could not find actual version for $artifact"
         }
-        return when(artifact.version) {
-            // keep the variable but with the actual version
-            is VersionVariable -> actual.copy(
-                version = artifact.version.copy(version = actual.version)
-            )
-            else -> actual
+        val actualVersion = actualArtifact.version
+        check(actualVersion is VersionNumber) {
+            "Unexpected version during resolution $actualVersion"
         }
+        check(versionRange.contains(actualVersion)) {
+            "Resolved version $actualVersion is not in ${artifact.version} for $artifact"
+        }
+
+        return artifact.copy(
+            name = actualArtifact.name,
+            version = versionRange.resolve(actualVersion)
+        )
     }
 
     fun newClassloader(): URLClassLoader =

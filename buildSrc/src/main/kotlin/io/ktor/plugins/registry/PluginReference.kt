@@ -91,6 +91,8 @@ sealed interface ArtifactVersion {
         }
     }
     fun asRange(): VersionRange? = null
+    fun asNumber(): VersionNumber? = null
+    fun resolve(version: VersionNumber): ArtifactVersion = this
     fun contains(other: ArtifactVersion): Boolean
 }
 
@@ -110,14 +112,20 @@ data class VersionNumber(
     val mavenVersion: DefaultArtifactVersion = DefaultArtifactVersion(number)
 ) : ArtifactVersion, org.apache.maven.artifact.versioning.ArtifactVersion by mavenVersion {
     override fun contains(other: ArtifactVersion): Boolean = this == other
+    override fun asNumber(): VersionNumber = this
     override fun toString(): String = number
 }
 
-data class VersionRange(private val range: org.apache.maven.artifact.versioning.VersionRange) : ArtifactVersion {
+data class VersionRange(
+    private val range: org.apache.maven.artifact.versioning.VersionRange,
+    private val resolved: VersionNumber? = null,
+) : ArtifactVersion {
     constructor(text: String): this(org.apache.maven.artifact.versioning.VersionRange.createFromVersionSpec(text))
     override fun contains(other: ArtifactVersion): Boolean = other is VersionNumber && range.containsVersion(other.mavenVersion)
+    override fun resolve(version: VersionNumber): ArtifactVersion = copy(resolved = version)
     override fun asRange(): VersionRange = this
-    override fun toString(): String = range.toString()
+    override fun asNumber(): VersionNumber? = resolved
+    override fun toString(): String = resolved?.toString() ?: range.toString()
 }
 
 /**
