@@ -15,6 +15,7 @@ dependencyResolutionManagement {
             name = "SpaceKotlinJsWrappers"
         }
         maven("https://packages.confluent.io/maven/")
+        maven("https://jitpack.io")
     }
 }
 

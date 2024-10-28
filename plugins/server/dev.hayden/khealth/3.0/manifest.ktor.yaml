@@ -1,0 +1,12 @@
+name: KHealth
+description: A simple and customizable health plugin
+vcsLink: https://github.com/HaydenMeloche/khealth
+license: MIT
+category: Monitoring
+gradle:
+  repositories:
+    - url: https://jitpack.io
+maven:
+  repositories:
+    - id: jitpack
+      url: https://jitpack.io
