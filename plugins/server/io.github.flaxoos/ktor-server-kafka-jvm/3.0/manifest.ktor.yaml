@@ -1,0 +1,12 @@
+name: Kafka
+description: Adds Kafka support to your application
+vcsLink: https://github.com/Flaxoos/extra-ktor-plugins/tree/main/ktor-server-kafka
+license: MIT License
+category: Databases
+gradle:
+  repositories:
+    - url: https://packages.confluent.io/maven/
+maven:
+  repositories:
+    - id: confluence
+      url: https://packages.confluent.io/maven/

@@ -106,7 +106,11 @@ private fun GroupedVersions.filterByLatest(latestCount: Int): MutableList<Versio
         minorVersions.values.toList().takeLast(latestCount)
     }.forEach { minorVersions ->
         minorVersions.forEach { versions ->
-            filteredVersions.addAll(versions.takeLast(latestCount))
+            val versionsRefined = if (versions.any { it.qualifier.isNullOrEmpty() })
+                versions.filter { it.qualifier.isNullOrEmpty() }
+            else versions
+
+            filteredVersions.addAll(versionsRefined.takeLast(latestCount))
         }
     }
     return filteredVersions

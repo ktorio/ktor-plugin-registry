@@ -129,6 +129,24 @@ tasks {
         }
     }
 
+    // print jar origins for finding problematic classpath imports
+    val outputDependencies by registering {
+        group = "plugins"
+        description = "Print all artifacts and their origins to deps-server.txt and deps-client.txt"
+        dependsOn(resolvePlugins)
+        doLast {
+            val reportDir = Paths.get("${project.rootDir.absolutePath}/dependencies")
+            prepareDirectory(reportDir)
+
+            for (target in targets) {
+                val resolvedArtifacts = target.releases.associate { release ->
+                    release.version to configurations[release.config].resolvedConfiguration
+                }
+                outputDependencyTrees(reportDir.resolve(target.name), resolvedArtifacts)
+            }
+        }
+    }
+
     // generates the appropriate directory structure with some templates for a new plugin
     val createPlugin by registering(JavaExec::class) {
         group = "plugins"

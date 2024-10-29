@@ -36,6 +36,13 @@ class CodeAnalysis(private val classpathJars: List<Path> = emptyList()) {
 
     companion object {
         val logger: Logger = LoggerFactory.getLogger(CodeAnalysis::class.simpleName!!)
+
+        fun List<CompilationError>.formatErrors(sourceRoot: Path) =
+            joinToString("\n", "\n") {
+                with(it) {
+                    "${sourceRoot.absolutePathString()}/$file:$lineNumber:$column: $message"
+                }
+            }
     }
 
     /**
@@ -45,19 +52,12 @@ class CodeAnalysis(private val classpathJars: List<Path> = emptyList()) {
 
     fun findErrorsAndThrow(sourceRoot: Path, plugin: PluginReference) {
         findErrors(sourceRoot).ifNotEmpty {
-            logger.error(
-                "Compilation error(s) found in plugin ${plugin.id}:" +
-                        joinToString("\n", "\n") {
-                            with(it) {
-                                "${sourceRoot.absolutePathString()}/$file:$lineNumber:$column: $message"
-                            }
-                        }
-            )
+            logger.error("Compilation error(s) found in plugin ${plugin.id}: ${formatErrors(sourceRoot)}")
             throw IllegalArgumentException("Failed to compile sources for plugin: ${plugin.id}")
         }
     }
 
-    private fun findErrors(sourceRoot: Path) =
+    fun findErrors(sourceRoot: Path) =
         pluginAnalyzer(sourceRoot)
             .findErrors()
             .filter {
