@@ -13,7 +13,7 @@ The plugin provides a DSL for defining task managers and tasks
 - Setting up task manager:
 
 ```kotlin
-    install(TaskScheduling) {
+install(TaskScheduling) {
     redis { //<-- given no name, this will be the default manager
         connectionPoolInitialSize = 1
         host = "host"

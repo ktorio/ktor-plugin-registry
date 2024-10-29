@@ -8,5 +8,5 @@ gradle:
     - url: https://packages.confluent.io/maven/
 maven:
   repositories:
-    - id: confluence
+    - id: confluent
       url: https://packages.confluent.io/maven/
