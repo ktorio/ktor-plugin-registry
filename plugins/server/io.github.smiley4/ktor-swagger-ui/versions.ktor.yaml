@@ -1,3 +1,1 @@
-# This file maps ktor versions to the required artifacts
-# See templates/versions.ktor.yaml for more details
-"[2.0,)": io.github.smiley4:ktor-swagger-ui:2.9.+
+"[2.0,3.0)": io.github.smiley4:ktor-swagger-ui:2.+

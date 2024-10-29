@@ -1,0 +1,12 @@
+name: Ktor-server-task-scheduling-core
+description: Manages scheduled tasks across instances of your distributed Ktor server
+vcsLink: https://github.com/Flaxoos/extra-ktor-plugins
+license: Apache 2.0
+category: Administration
+gradle:
+  repositories:
+    - url: https://packages.confluent.io/maven/
+maven:
+  repositories:
+    - id: confluent
+      url: https://packages.confluent.io/maven/
