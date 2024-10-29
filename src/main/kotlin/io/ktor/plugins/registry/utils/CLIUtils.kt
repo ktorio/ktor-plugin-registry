@@ -10,19 +10,19 @@ import kotlin.io.path.isDirectory
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 
-private const val KTOR_ORANGE = 208
-private const val KTOR_BLUE = 105
+private const val KTOR_VIOLET = 56
+private const val KTOR_MAGENTA = 200
 
 object CLIUtils {
 
     private val argPattern = Regex("--(\\w+)=(\\S*)")
     private val ansiEscapeSequenceRegex = "\u001B\\[[;\\d]*m".toRegex()
     private val ktorLogo = buildString {
-        appendLine(colored("  ▗", KTOR_ORANGE))
-        appendLine(colored("▗▟█▙", KTOR_ORANGE))
-        appendLine(colored(" ▜", KTOR_ORANGE) + "  " + colored("▙", KTOR_BLUE))
-        appendLine(colored("  ▜█▛▘", KTOR_BLUE))
-        appendLine(colored("   ▘", KTOR_BLUE))
+        appendLine(colored("  ▗", KTOR_VIOLET))
+        appendLine(colored("▗▟█▙", KTOR_VIOLET))
+        appendLine(colored(" ▜", KTOR_VIOLET) + "  " + colored("▙", KTOR_MAGENTA))
+        appendLine(colored("  ▜█▛▘", KTOR_MAGENTA))
+        appendLine(colored("   ▘", KTOR_MAGENTA))
     }.trim('\n')
     private const val HEADER_POS_LEFT = 8
 

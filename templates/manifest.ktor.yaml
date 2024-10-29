@@ -4,7 +4,8 @@ name: Plugin Name
 description: Short description
 vcsLink: https://github.com/link/to/repository
 license: Apache 2.0
-# Pick one of: Administration, Databases, HTTP, Monitoring, Routing, Security, Serialization, Sockets, Templating
+# Pick one of:
+# Administration, Databases, Frameworks, HTTP, Monitoring, Routing, Security, Serialization, Sockets, Templating
 category: Routing
 # Plugin ID references which are required for this
 prerequisites:

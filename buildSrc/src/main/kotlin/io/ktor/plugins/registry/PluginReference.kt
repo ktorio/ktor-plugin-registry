@@ -19,7 +19,9 @@ data class PluginReference(
     val group: PluginGroup,
     val versions: Map<String, Artifacts>,
     val client: Boolean,
-)
+) {
+    override fun toString() = "${group.id}:$id"
+}
 
 /**
  * The credited vendor of the plugin, for displaying links, logo, etc. in the generator.
@@ -81,12 +83,14 @@ sealed interface ArtifactVersion {
         fun parse(text: String, versionVariables: Map<String, String> = emptyMap()): ArtifactVersion = when {
             text == "==" -> MatchKtor
             text.startsWith('$') -> text.substring(1).let { name ->
-                CatalogVersion(name, parse(versionVariables[name] ?: throw IllegalArgumentException("Unresolved version variable: $name"), versionVariables))
+                VersionVariable(name, parse(versionVariables[name] ?: throw IllegalArgumentException("Unresolved version variable: $name"), versionVariables))
             }
-            text.contains(Regex("[+,\\[\\]()]")) -> VersionRange(text)
+            text.endsWith(".+") -> VersionRange(prefixVersionToMavenRange(text))
+            text.contains(Regex("[,\\[\\]()]")) -> VersionRange(text)
             else -> VersionNumber(text)
         }
     }
+    fun asRange(): VersionRange? = null
     fun contains(other: ArtifactVersion): Boolean
 }
 
@@ -112,12 +116,26 @@ data class VersionNumber(
 data class VersionRange(private val range: org.apache.maven.artifact.versioning.VersionRange) : ArtifactVersion {
     constructor(text: String): this(org.apache.maven.artifact.versioning.VersionRange.createFromVersionSpec(text))
     override fun contains(other: ArtifactVersion): Boolean = other is VersionNumber && range.containsVersion(other.mavenVersion)
+    override fun asRange(): VersionRange = this
     override fun toString(): String = range.toString()
 }
 
 /**
  * Variable name for version represented in catalog (i.e., $ktor_version)
  */
-data class CatalogVersion(val name: String, val version: ArtifactVersion): ArtifactVersion by version {
+data class VersionVariable(val name: String, val version: ArtifactVersion): ArtifactVersion by version {
     override fun toString() = version.toString()
+}
+
+/**
+ * This will replace prefix versions ending with .+ with the corresponding Maven version range.
+ * For example, 2.+ -> [2,3)
+ */
+fun prefixVersionToMavenRange(text: String): String {
+    check(text.endsWith(".+")) { "Expected \"$text\" to end with .+" }
+    val prefix = text.substringBeforeLast(".+")
+    val nextPrefix = prefix.split('.').mapIndexed { index, part ->
+        if (index < prefix.count { it == '.' }) part else (part.toInt() + 1).toString()
+    }.joinToString(".")
+    return "[$prefix,$nextPrefix)"
 }

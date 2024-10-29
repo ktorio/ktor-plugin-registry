@@ -6,9 +6,7 @@ package io.ktor.plugins.registry
 
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.encodeToStream
-import kotlinx.serialization.Serializable
 import org.gradle.api.artifacts.ResolvedArtifact
-import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.outputStream
 

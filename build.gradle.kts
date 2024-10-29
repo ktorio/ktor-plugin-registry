@@ -23,10 +23,6 @@ configurations {
         target.releaseConfigs.forEach(::create)
 }
 
-kotlin {
-    jvmToolchain(11)
-}
-
 dependencies {
     // each ktor version has its own classpath
     for (target in targets) {
@@ -108,7 +104,10 @@ tasks {
     // download all sources
     compileKotlin {
         compilerOptions {
-            freeCompilerArgs.addAll("-XdownloadSources=true")
+            freeCompilerArgs.addAll(
+                "-Xcontext-receivers",
+                "-XdownloadSources=true"
+            )
         }
         dependsOn(copyPluginTypes)
     }

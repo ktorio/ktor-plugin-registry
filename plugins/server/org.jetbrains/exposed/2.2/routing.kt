@@ -12,8 +12,8 @@ public fun Routing.configureRouting(userService: UserService) {
         val id = userService.create(user)
         call.respond(HttpStatusCode.Created, id)
     }
-    
-        // Read user
+
+    // Read user
     get("/users/{id}") {
         val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
         val user = userService.read(id)
@@ -23,16 +23,16 @@ public fun Routing.configureRouting(userService: UserService) {
             call.respond(HttpStatusCode.NotFound)
         }
     }
-    
-        // Update user
+
+    // Update user
     put("/users/{id}") {
         val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
         val user = call.receive<ExposedUser>()
         userService.update(id, user)
         call.respond(HttpStatusCode.OK)
     }
-    
-        // Delete user
+
+    // Delete user
     delete("/users/{id}") {
         val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
         userService.delete(id)

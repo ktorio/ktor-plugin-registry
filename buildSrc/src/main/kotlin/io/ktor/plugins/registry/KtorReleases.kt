@@ -18,7 +18,7 @@ import kotlin.io.path.writeText
 
 const val KTOR_MAVEN_REPO = "https://repo1.maven.org/maven2/io/ktor/ktor-server/maven-metadata.xml"
 const val LOCAL_LIST = "build/ktor_releases"
-
+val DEPRECATED_VERSIONS = setOf(1)
 
 /**
  * Retrieve all Ktor versions from maven, presented by client/server targets.
@@ -54,7 +54,9 @@ internal fun fetchKtorVersionsFromMaven(
 ): List<String> {
     val groupedVersions = source.readVersionNumbers(log).groupByVersions()
 
-    return groupedVersions.filterByLatest(latestCount)
+    return groupedVersions
+        .filterKeys { it !in DEPRECATED_VERSIONS }
+        .filterByLatest(latestCount)
         .map(VersionNumber::number)
 }
 

@@ -1,12 +1,12 @@
 [versions]
-kotlin-version = "2.0.0"
-kaml-version = "0.59.0"
-logback-version = "1.5.6"
-serialization-version = "1.6.3"
-maven-artifact-version = "3.9.7"
-detekt-version = "1.23.6"
-jgit-version="6.9.0.202403050737-r"
-compress-version="1.26.2"
+kotlin-version = "2.0.21"
+kaml-version = "0.61.0"
+logback-version = "1.5.11"
+serialization-version = "1.7.3"
+maven-artifact-version = "3.9.9"
+detekt-version = "1.23.7"
+jgit-version="7.0.0.202409031743-r"
+compress-version="1.27.1"
 
 [libraries]
 kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-version" }
