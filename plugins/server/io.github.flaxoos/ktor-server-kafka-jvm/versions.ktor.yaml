@@ -1,7 +1,4 @@
-"[2.0,3.0)":
-  - io.github.flaxoos:ktor-server-kafka-jvm:$flaxoosExtraPluginsV1
-"[3.0,)":
+"[2.0,)":
   - io.github.flaxoos:ktor-server-kafka-jvm:$flaxoosExtraPlugins
 
-flaxoosExtraPluginsV1: 1.+
-flaxoosExtraPlugins: 2.+
+flaxoosExtraPlugins: 1.+
