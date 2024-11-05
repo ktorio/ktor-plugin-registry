@@ -1,0 +1,26 @@
+name: kotlinx.rpc
+description: Adds remote procedure call (RPC) routing
+vcsLink: https://github.com/Kotlin/kotlinx-rpc
+license: Apache 2.0
+category: Frameworks
+gradle:
+  plugins:
+    - id: org.jetbrains.kotlinx.rpc.plugin
+      version: $kotlinx-rpc
+      module: core
+    - id: org.jetbrains.kotlinx.rpc.plugin
+      version: $kotlinx-rpc
+      module: client
+    - id: org.jetbrains.kotlinx.rpc.platform
+      version: $kotlinx-rpc
+      module: server
+prerequisites:
+  - routing
+  - kotlinx-serialization
+installation:
+  default: install.kt
+  in_routing: routing.kt
+  test_function: test.kt
+  client: client.kt
+sources:
+  - SampleService.kt (core)

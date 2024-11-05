@@ -2,5 +2,5 @@
   - org.postgresql:postgresql:$postgres
   - com.h2database:h2:$h2
 
-postgres: 42.5.1
+postgres: 42.7.+
 h2: 2.1.214

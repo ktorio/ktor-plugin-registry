@@ -1,0 +1,6 @@
+"[3.0,)":
+  server: org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-server:$kotlinx-rpc
+  client: org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-client:$kotlinx-rpc
+  core: org.jetbrains.kotlinx:kotlinx-rpc-krpc-serialization-json:$kotlinx-rpc
+
+kotlinx-rpc: 0.3.+

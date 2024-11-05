@@ -58,18 +58,14 @@ maven:
 #   - serialization_config: inside the serialization configuration block
 #   - test_function: adds a function to the test suite
 #   - resources: adds a file to the project's resources
+#   - client: in the installation of the HttpClient, in the client module
 # Optional, defaults to "default: install.kt"
 installation:
   default: install.kt
 # Set of additional source files to include in the project
 sources:
-  # Relative path in the plugin folder; maps to the corresponding folder in the project
-  - file: path/to/File.kt
-    # Platform or additional module:
-    #  - server (default)
-    #  - web
-    module: server
-    # Boolean attribute to indicate this source will be sent to the test sources (default false)
-    test: false
+  # Relative path in the source folder; maps to the corresponding folder in the project
+  # You can specify module, compile targets, or test in parentheses
+  - path/to/File.kt (client, test)
 # Same structure as "sources", but files are included under the project's resources folder
 resources: []

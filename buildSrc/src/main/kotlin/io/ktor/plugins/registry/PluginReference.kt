@@ -4,6 +4,13 @@
 
 package io.ktor.plugins.registry
 
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
 
 /**
@@ -53,20 +60,28 @@ fun PluginReference.allArtifactsForVersion(ktorVersion: String): Artifacts =
         }.orEmpty()
     }
 
+@Serializable(ArtifactReferenceSerializer::class)
 data class ArtifactReference(
     val group: String? = null,
     val name: String,
     val version: ArtifactVersion,
+    val module: String? = null,
 ) {
     companion object {
         private val referenceStringRegex = Regex("""(?:(.+?):)?(.+?):(.+)""")
 
-        fun parse(text: String, defaultGroup: String? = null, versionVariables: Map<String, String> = emptyMap()): ArtifactReference =
+        fun parse(
+            text: String,
+            defaultGroup: String? = null,
+            versionVariables: Map<String, String> = emptyMap(),
+            module: String? = null,
+        ): ArtifactReference =
             referenceStringRegex.matchEntire(text)?.destructured?.let { (group, name, version) ->
                 ArtifactReference(
-                    group.takeIf(String::isNotEmpty) ?: defaultGroup,
-                    name,
-                    ArtifactVersion.parse(version, versionVariables)
+                    group = group.takeIf(String::isNotEmpty) ?: defaultGroup,
+                    name = name,
+                    version = ArtifactVersion.parse(version, versionVariables),
+                    module = module,
                 )
             } ?: throw IllegalArgumentException("Invalid artifact reference string \"$text\"")
     }
@@ -78,6 +93,7 @@ data class ArtifactReference(
     }
 }
 
+@Serializable(ArtifactVersionSerializer::class)
 sealed interface ArtifactVersion {
     companion object {
         fun parse(text: String, versionVariables: Map<String, String> = emptyMap()): ArtifactVersion = when {
@@ -146,4 +162,27 @@ fun prefixVersionToMavenRange(text: String): String {
         if (index < prefix.count { it == '.' }) part else (part.toInt() + 1).toString()
     }.joinToString(".")
     return "[$prefix,$nextPrefix)"
+}
+
+class ArtifactReferenceSerializer: KSerializer<ArtifactReference> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ArtifactReference", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: ArtifactReference) {
+        encoder.encodeString(value.toString())
+    }
+
+    override fun deserialize(decoder: Decoder): ArtifactReference =
+        ArtifactReference.parse(decoder.decodeString())
+}
+
+// TODO maintain variables
+class ArtifactVersionSerializer: KSerializer<ArtifactVersion> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ArtifactVersion", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: ArtifactVersion) {
+        encoder.encodeString(value.toString())
+    }
+
+    override fun deserialize(decoder: Decoder): ArtifactVersion =
+        ArtifactVersion.parse(decoder.decodeString())
 }

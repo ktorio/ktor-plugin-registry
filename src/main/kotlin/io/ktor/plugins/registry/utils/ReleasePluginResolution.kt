@@ -120,10 +120,10 @@ class ReleasePluginResolution private constructor(
         val codeInjections = model.installation.map { (site, installBlock) ->
             codeAnalysis.readCodeSnippet(versionPath, site, installBlock, findCodeInput)
         }
-        val sourceFiles = model.sources.map { template ->
-            codeAnalysis.readSourceFile(versionPath, template, findCodeInput = findCodeInput)
+        val sourceFiles = model.sources.filterIsInstance<YamlManifest.CodeSnippetSource.File>().map { file ->
+            codeAnalysis.readSourceFile(versionPath, file, findCodeInput = findCodeInput)
         }
-        val resourceFiles = model.resources.map { template ->
+        val resourceFiles = model.resources.filterIsInstance<YamlManifest.CodeSnippetSource.File>().map { template ->
             codeAnalysis.readSourceFile(versionPath, template, CodeInjectionSite.RESOURCES, findCodeInput)
         }
 
@@ -187,7 +187,7 @@ private fun CodeAnalysis.readCodeSnippet(
 
 private fun CodeAnalysis.readSourceFile(
     path: Path,
-    template: YamlManifest.CustomSourceFileTemplate,
+    template: YamlManifest.CodeSnippetSource.File,
     site: CodeInjectionSite = CodeInjectionSite.SOURCE_FILE_KT,
     findCodeInput: (String) -> InputStream?,
 ): CodeRef {
@@ -201,7 +201,7 @@ private fun CodeAnalysis.readSourceFile(
     )
 }
 
-private fun YamlManifest.CustomSourceFileTemplate.atSite(site: CodeInjectionSite): SourceCodeMeta =
+private fun YamlManifest.CodeSnippetSource.File.atSite(site: CodeInjectionSite): SourceCodeMeta =
     object: SourceCodeMeta {
         override val site = site
         override val file = this@atSite.file

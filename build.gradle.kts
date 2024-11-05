@@ -4,10 +4,14 @@
 
 @file:Suppress("UnstableApiUsage")
 
+import com.charleskorn.kaml.Yaml
+import com.charleskorn.kaml.encodeToStream
 import io.ktor.plugins.registry.*
 import java.nio.file.Paths
+import kotlin.io.path.outputStream
 
 val targets by lazy { fetchKtorTargets(logger) }
+val pluginConfigs by lazy { collectPluginConfigs(logger) }
 
 plugins {
     alias(libs.plugins.serialization)
@@ -18,13 +22,52 @@ plugins {
 group = "io.ktor"
 version = "1.0-SNAPSHOT"
 
+// create build config for each valid release-plugin-target triple
 configurations {
+    for (pluginConfig in pluginConfigs) {
+        create(pluginConfig.name) {
+            pluginConfig.parent?.let { parent ->
+                extendsFrom(get(parent))
+            }
+        }
+    }
     for (target in targets)
         target.releaseConfigs.forEach(::create)
 }
 
+sourceSets {
+    for (pluginConfig in pluginConfigs.latestByPath()) {
+        create(pluginConfig.name) {
+            kotlin.srcDir(pluginConfig.path)
+            compileClasspath += configurations[pluginConfig.name]
+            pluginConfig.parent?.let { parent ->
+                compileClasspath += configurations[parent]
+                compileClasspath += sourceSets[parent].output
+            }
+        }
+    }
+}
+
 dependencies {
     // each ktor version has its own classpath
+    for (pluginConfig in pluginConfigs) {
+        val (path, id, type, release, module) = pluginConfig
+        val config = pluginConfig.name
+
+        // common dependencies
+        config(kotlin("stdlib"))
+        config(kotlin("test"))
+        config(kotlin("test-junit"))
+        config("io.ktor:ktor-$type-core:$release")
+        config("io.ktor:ktor-server-test-host:$release")
+
+//        pluginConfig.parent?.let {
+//            config(project(":$it"))
+//        }
+        // gradle dependencies for module
+        for ((group, name, version) in pluginConfig.artifacts)
+            config("$group:$name:$version")
+    }
     for (target in targets) {
         for ((config, version) in target.releases) {
             config("io.ktor:ktor-${target.name}-core:$version")
@@ -126,13 +169,16 @@ tasks {
                     configurations = resolvedArtifacts
                 )
             }
+            Paths.get("build/plugin-artifacts.yaml").outputStream().use { output ->
+                Yaml.default.encodeToStream(pluginConfigs, output)
+            }
         }
     }
 
     // print jar origins for finding problematic classpath imports
     val outputDependencies by registering {
         group = "plugins"
-        description = "Print all artifacts and their origins to deps-server.txt and deps-client.txt"
+        description = "Outputs all artifacts and their origins to /dependencies"
         dependsOn(resolvePlugins)
         doLast {
             val reportDir = Paths.get("${project.rootDir.absolutePath}/dependencies")

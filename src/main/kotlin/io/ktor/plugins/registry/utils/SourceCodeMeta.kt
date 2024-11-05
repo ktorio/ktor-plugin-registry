@@ -16,6 +16,7 @@ interface SourceCodeMeta {
 enum class CodeInjectionSite(
     val extractionMethod: CodeExtractionMethod,
     val defaultFileLocation: String? = null,
+    val module: String? = null,
 ) {
     // In category's install file
     DEFAULT(CodeExtractionMethod.FUNCTION_BODY, "install.kt"),
@@ -48,7 +49,10 @@ enum class CodeInjectionSite(
     APPLICATION_CONF(CodeExtractionMethod.VERBATIM, "application.conf"),
 
     // In application.yaml file
-    APPLICATION_YAML(CodeExtractionMethod.VERBATIM, "application.yaml");
+    APPLICATION_YAML(CodeExtractionMethod.VERBATIM, "application.yaml"),
+
+    // In client module, when specified from a server plugin
+    CLIENT(CodeExtractionMethod.FUNCTION_BODY, module = "client");
 
     val lowercaseName: String get() = name.lowercase()
 }

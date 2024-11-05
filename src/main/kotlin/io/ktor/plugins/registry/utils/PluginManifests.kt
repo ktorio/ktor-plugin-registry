@@ -53,11 +53,6 @@ data class YamlManifest(
     private val documentationEntry: DocumentationEntry,
     private val logo: Path?,
 ): ResolvedPluginManifest {
-    companion object {
-        val DEFAULT = CodeInjectionSite.DEFAULT.lowercaseName
-        val TEST = CodeInjectionSite.TEST_FUNCTION.lowercaseName
-    }
-
     override fun validate(release: KtorRelease) {
         require(model.name.isNotBlank()) { "Property 'name' requires a value" }
         require(model.description.isNotBlank()) { "Property 'description' requires a value" }
@@ -266,8 +261,8 @@ data class YamlManifest(
         val options: List<ImportOption>? = null,
         val installation: Map<String, CodeSnippetSource> =
             mapOf(CodeInjectionSite.DEFAULT.lowercaseName to CodeSnippetSource.File("install.kt")),
-        val sources: List<CustomSourceFileTemplate> = emptyList(),
-        val resources: List<CustomSourceFileTemplate> = emptyList(),
+        val sources: List<CodeSnippetSource> = emptyList(),
+        val resources: List<CodeSnippetSource> = emptyList(),
         val gradle: GradleInstallRecipe? = null,
         val maven: MavenInstallRecipe? = null,
     )
@@ -293,7 +288,8 @@ data class YamlManifest(
     @Serializable
     data class GradlePlugin(
         val id: String,
-        val version: String
+        val version: String,
+        val module: String? = null,
     )
 
     @Serializable
@@ -313,7 +309,8 @@ data class YamlManifest(
         val group: String,
         val artifact: String,
         val version: String? = null,
-        val extra: String? = null
+        val extra: String? = null,
+        val module: String? = null,
     )
 
     @Serializable
@@ -326,10 +323,16 @@ data class YamlManifest(
     @Serializable(with = CodeBlockSerializer::class)
     sealed class CodeSnippetSource {
         data class Text(val code: String) : CodeSnippetSource()
-        data class File(val file: String) : CodeSnippetSource()
+        data class File(
+            val file: String,
+            val module: String? = null,
+            val test: Boolean = false,
+        ) : CodeSnippetSource()
     }
 
     object CodeBlockSerializer : KSerializer<CodeSnippetSource> {
+        private val fileReferenceRegex = Regex("((\\S+\\.\\S{1,5})\\s*\\([^\\)]+\\))?")
+
         override val descriptor: SerialDescriptor =
             PrimitiveSerialDescriptor("CodeBlock", PrimitiveKind.STRING)
 
@@ -339,10 +342,15 @@ data class YamlManifest(
 
         override fun deserialize(decoder: Decoder): CodeSnippetSource {
             val text = decoder.decodeString()
-            return if (text.matches(Regex("\\S+\\.\\S{1,5}")))
-                CodeSnippetSource.File(text)
-            else
-                CodeSnippetSource.Text(text)
+            return fileReferenceRegex.matchEntire(text)?.let { match ->
+                val (fileName, keywordsString) = match.destructured
+                val keywords = keywordsString.trim().split("\\s*,\\s*".toRegex()).toSet()
+                CodeSnippetSource.File(
+                    file = fileName,
+                    module = (keywords - "test").firstOrNull(),
+                    test = "test" in keywords
+                )
+            } ?: CodeSnippetSource.Text(text)
         }
     }
 
