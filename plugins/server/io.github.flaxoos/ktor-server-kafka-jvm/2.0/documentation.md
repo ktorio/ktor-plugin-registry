@@ -1,3 +1,5 @@
+# Ktor Server Kafka
+
 Integrate Apache Kafka into your Ktor applications with this plugin. 
 It provides flexible configuration options, admin client functionality, easy producer and consumer setup, and built-in Avro4k support. 
 Simplify event-driven communication and real-time data processing within your Ktor projects.

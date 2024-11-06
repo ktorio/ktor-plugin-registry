@@ -10,3 +10,8 @@ maven:
   repositories:
     - id: confluence
       url: https://packages.confluent.io/maven/
+
+installation:
+  default: install.kt
+  application_conf: application.conf
+  application_yaml: application.yaml
