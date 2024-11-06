@@ -56,9 +56,20 @@ maven:
 #   - outside_app: top-level of main kotlin file, outside application scope
 #   - call_logging_config: inside the call logging configuration block
 #   - serialization_config: inside the serialization configuration block
-#   - source_file_kt: in a separate file
 #   - test_function: adds a function to the test suite
 #   - resources: adds a file to the project's resources
 # Optional, defaults to "default: install.kt"
 installation:
   default: install.kt
+# Set of additional source files to include in the project
+sources:
+  # Relative path in the plugin folder; maps to the corresponding folder in the project
+  - file: path/to/File.kt
+    # Platform or additional module:
+    #  - server (default)
+    #  - web
+    module: server
+    # Boolean attribute to indicate this source will be sent to the test sources (default false)
+    test: false
+# Same structure as "sources", but files are included under the project's resources folder
+resources: []

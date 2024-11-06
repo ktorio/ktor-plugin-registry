@@ -118,6 +118,48 @@
         }
       }
     },
+    "sources": {
+      "description": "List of custom source file paths with multi-module support",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "description": "Path to the file"
+          },
+          "module": {
+            "type": "string",
+            "description": "The target module where the file should be created"
+          },
+          "test": {
+            "type": "boolean",
+            "description": "Whether this should be created under the test sources"
+          }
+        }
+      }
+    },
+    "resources": {
+      "description": "List of custom source file paths with multi-module support",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "description": "Path to the file"
+          },
+          "module": {
+            "type": "string",
+            "description": "The target module where the file should be created"
+          },
+          "test": {
+            "type": "boolean",
+            "description": "Whether this should be created under the test sources"
+          }
+        }
+      }
+    },
     "documentation": {
       "description": "Markdown string or file reference to populate the plugin details. Must include a 'Usage' header.",
       "type": "string"

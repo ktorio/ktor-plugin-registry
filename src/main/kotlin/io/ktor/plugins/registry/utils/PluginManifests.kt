@@ -16,13 +16,12 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
-import org.slf4j.LoggerFactory
-import java.io.InputStream
 import java.net.MalformedURLException
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.*
+import kotlin.io.path.name
+import kotlin.io.path.outputStream
 
 sealed interface ResolvedPluginManifest {
     fun validate(release: KtorRelease)
@@ -50,7 +49,7 @@ data class PrebuiltJsonManifest(private val path: Path) : ResolvedPluginManifest
 data class YamlManifest(
     private val plugin: PluginReference,
     private val model: ImportManifest,
-    private val installSnippets: Map<String, InstallSnippet>,
+    private val codeRefs: List<CodeRef>,
     private val documentationEntry: DocumentationEntry,
     private val logo: Path?,
 ): ResolvedPluginManifest {
@@ -133,37 +132,40 @@ data class YamlManifest(
     private fun JsonObjectBuilder.putInstallRecipe() {
         putJsonObject("install_recipe") {
             putJsonArray("imports") {
-                installSnippets.allExcept(TEST).asSequence()
-                    .flatMap { (_, snippet) -> snippet.importsOrEmpty }
+                codeRefs.asSequence()
+                    .filter { it.isMainInjectionSite() }
+                    .flatMap { it.importsOrEmpty }
                     .distinct()
                     .forEach(::add)
             }
-            installSnippets[DEFAULT]?.let { defaultInstall ->
-                put("install_block", defaultInstall.code)
+            codeRefs.find { it.site == CodeInjectionSite.DEFAULT }?.let { ref ->
+                put("install_block", ref.code)
             }
-            installSnippets[TEST]?.let { testFunctionInstall ->
+            codeRefs.find { it.site == CodeInjectionSite.TEST_FUNCTION }?.let { ref ->
                 putJsonArray("test_imports") {
-                    testFunctionInstall.importsOrEmpty.forEach(::add)
+                    ref.importsOrEmpty.forEach(::add)
                 }
                 // function template will be included in the following section
             }
-            installSnippets.allExcept(DEFAULT).takeIf { it.isNotEmpty() }?.let { templateSnippets ->
+            codeRefs.filter { it.site != CodeInjectionSite.DEFAULT }.takeIf { it.isNotEmpty() }?.let { refs ->
                 putJsonArray("templates") {
-                    for ((position, snippet) in templateSnippets)
+                    for (ref in refs)
                         add(buildJsonObject {
-                            put("position", position)
-                            put("text", snippet.code)
-                            (snippet as? InstallSnippet.RawContent)?.filename?.let {
-                                put("name", it)
+                            put("position", ref.site.lowercaseName)
+                            put("text", ref.code)
+                            when(ref) {
+                                is CodeRef.InjectedKotlin -> {}
+                                is CodeRef.SourceFile -> {
+                                    if (ref.file != null) put("name", ref.file)
+                                    if (ref.module != null) put("module", ref.module)
+                                    if (ref.test) put("test", true)
+                                }
                             }
                         })
                 }
             }
         }
     }
-
-    private fun Map<String, InstallSnippet>.allExcept(site: String) =
-        entries.filter { (key) -> key != site }
 
     context(ReleasePluginResolution)
     private fun JsonObjectBuilder.putDependencies(release: KtorRelease) {
@@ -174,7 +176,7 @@ data class YamlManifest(
                 addJsonObject {
                     put("group", dependency.group)
                     put("artifact", dependency.name)
-                    put("version", when (val version = dependency.version) {
+                    put("version", when(val version = dependency.version) {
                         is VersionNumber -> version.toString()
                         is VersionRange -> version.toString()
                         is VersionVariable -> version.normalizedName
@@ -183,6 +185,9 @@ data class YamlManifest(
                     })
                     if (dependency.version is VersionVariable)
                         put("version_value", dependency.version.toString())
+                    dependency.version.asRange()?.let { range ->
+                        put("version_range", range.toString())
+                    }
                 }
             }
         }
@@ -261,6 +266,8 @@ data class YamlManifest(
         val options: List<ImportOption>? = null,
         val installation: Map<String, CodeSnippetSource> =
             mapOf(CodeInjectionSite.DEFAULT.lowercaseName to CodeSnippetSource.File("install.kt")),
+        val sources: List<CustomSourceFileTemplate> = emptyList(),
+        val resources: List<CustomSourceFileTemplate> = emptyList(),
         val gradle: GradleInstallRecipe? = null,
         val maven: MavenInstallRecipe? = null,
     )
@@ -307,6 +314,13 @@ data class YamlManifest(
         val artifact: String,
         val version: String? = null,
         val extra: String? = null
+    )
+
+    @Serializable
+    data class CustomSourceFileTemplate(
+        val file: String,
+        val module: String? = null,
+        val test: Boolean = false,
     )
 
     @Serializable(with = CodeBlockSerializer::class)

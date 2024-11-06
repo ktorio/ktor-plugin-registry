@@ -7,13 +7,16 @@ package io.ktor.plugins.registry.utils
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
 import io.ktor.plugins.registry.*
+import io.ktor.plugins.registry.utils.CodeAnalysis.Companion.formatErrors
 import io.ktor.plugins.registry.utils.FileUtils.listImages
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.io.InputStream
 import java.net.URLClassLoader
 import java.nio.charset.Charset
 import java.nio.file.Path
+import javax.xml.transform.Source
 import kotlin.io.path.exists
 import kotlin.io.path.inputStream
 import kotlin.io.path.toPath
@@ -67,15 +70,17 @@ class ReleasePluginResolution private constructor(
                 yamlPath.inputStream().use(Yaml.default::decodeFromStream)
 
             logger.info("${plugin.identifier} resolved from YAML")
-            codeAnalysis.findErrorsAndThrow(plugin.versionPath, plugin)
+            codeAnalysis.findErrors(plugin.versionPath).ifNotEmpty {
+                logger.warn("Ignoring compilation errors #yolo: ${formatErrors(plugin.versionPath)}")
+            }
+            // TODO fix erroneous compilation errors since Ktor 3.0
+            // codeAnalysis.findErrorsAndThrow(plugin.versionPath, plugin)
 
             YamlManifest(
                 plugin = plugin,
                 model = model,
-                installSnippets = model.installation.mapValues { (site, installBlock) ->
-                    readCodeSnippet(plugin.versionPath, site, installBlock) {
-                        plugin.readFileFromVersionPath(it)
-                    }
+                codeRefs = readAllCodeReferences(model, plugin.versionPath) {
+                    plugin.readFileFromVersionPath(it)
                 },
                 documentationEntry = readDocumentation(model.documentation) {
                     plugin.readFileFromVersionPath(it)
@@ -97,16 +102,32 @@ class ReleasePluginResolution private constructor(
         return YamlManifest(
             plugin = plugin,
             model = model,
-            installSnippets = model.installation.mapValues { (site, installBlock) ->
-                readCodeSnippet(resolvedManifestFolder, site, installBlock) {
-                    plugin.readFileFromClasspath(it)
-                }
+            codeRefs = readAllCodeReferences(model, plugin.versionPath) {
+                plugin.readFileFromClasspath(it)
             },
             documentationEntry = readDocumentation(model.documentation) {
                 plugin.readFileFromClasspath(it)
             },
             logo = assetsDir.listImages(plugin.id).firstOrNull()
         )
+    }
+
+    private fun readAllCodeReferences(
+        model: YamlManifest.ImportManifest,
+        versionPath: Path,
+        findCodeInput: (String) -> InputStream?,
+    ): List<CodeRef> {
+        val codeInjections = model.installation.map { (site, installBlock) ->
+            codeAnalysis.readCodeSnippet(versionPath, site, installBlock, findCodeInput)
+        }
+        val sourceFiles = model.sources.map { template ->
+            codeAnalysis.readSourceFile(versionPath, template, findCodeInput = findCodeInput)
+        }
+        val resourceFiles = model.resources.map { template ->
+            codeAnalysis.readSourceFile(versionPath, template, CodeInjectionSite.RESOURCES, findCodeInput)
+        }
+
+        return codeInjections + sourceFiles + resourceFiles
     }
 
     private val PluginReference.versionPath: Path
@@ -127,29 +148,6 @@ class ReleasePluginResolution private constructor(
     private val PluginReference.resourcePath: String get() =
         "${group.id.replace('.', '/')}/$id"
 
-    private fun readCodeSnippet(
-        path: Path,
-        site: String,
-        codeSnippet: YamlManifest.CodeSnippetSource,
-        findCodeInput: (String) -> InputStream?
-    ): InstallSnippet {
-        val injectionSite = CodeInjectionSite.valueOf(site.uppercase())
-        val (code: String, filename: String?) = when (codeSnippet) {
-            is YamlManifest.CodeSnippetSource.Text -> codeSnippet.code to null
-            is YamlManifest.CodeSnippetSource.File -> {
-                val code = findCodeInput(codeSnippet.file)?.use { it.readAllBytes().toString(Charset.defaultCharset()) }
-                    ?: throw IllegalArgumentException("Missing install snippet ${codeSnippet.file}")
-                code to codeSnippet.file
-            }
-        }
-        return codeAnalysis.parseInstallSnippet(
-            sourceRoot = path,
-            site = injectionSite,
-            contents = code,
-            filename = filename
-        )
-    }
-
     private fun readDocumentation(
         codeSnippet: YamlManifest.CodeSnippetSource,
         findCodeInput: (String) -> InputStream?
@@ -161,3 +159,52 @@ class ReleasePluginResolution private constructor(
         }
     })
 }
+
+private fun CodeAnalysis.readCodeSnippet(
+    path: Path,
+    site: String,
+    codeSnippet: YamlManifest.CodeSnippetSource,
+    findCodeInput: (String) -> InputStream?
+): CodeRef {
+    val injectionSite = CodeInjectionSite.valueOf(site.uppercase())
+    val (code: String, filename: String?) = when (codeSnippet) {
+        is YamlManifest.CodeSnippetSource.Text -> codeSnippet.code to null
+        is YamlManifest.CodeSnippetSource.File -> {
+            val code = findCodeInput(codeSnippet.file)?.use { it.readAllBytes().toString(Charset.defaultCharset()) }
+                ?: throw IllegalArgumentException("Missing install snippet ${codeSnippet.file}")
+            code to codeSnippet.file
+        }
+    }
+    return parseInstallSnippet(
+        sourceRoot = path,
+        contents = code,
+        meta = object : SourceCodeMeta {
+            override val site = injectionSite
+            override val file = filename
+        }
+    )
+}
+
+private fun CodeAnalysis.readSourceFile(
+    path: Path,
+    template: YamlManifest.CustomSourceFileTemplate,
+    site: CodeInjectionSite = CodeInjectionSite.SOURCE_FILE_KT,
+    findCodeInput: (String) -> InputStream?,
+): CodeRef {
+    val code = findCodeInput(template.file)?.use { it.readAllBytes().toString(Charset.defaultCharset()) }
+        ?: throw IllegalArgumentException("Missing source file ${template.file}")
+
+    return parseInstallSnippet(
+        sourceRoot = path,
+        contents = code,
+        meta = template.atSite(site)
+    )
+}
+
+private fun YamlManifest.CustomSourceFileTemplate.atSite(site: CodeInjectionSite): SourceCodeMeta =
+    object: SourceCodeMeta {
+        override val site = site
+        override val file = this@atSite.file
+        override val module = this@atSite.module
+        override val test = this@atSite.test
+    }

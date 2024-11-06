@@ -10,4 +10,5 @@ documentation: documentation.md
 installation:
   default: install.kt
   outside_app: outside_app.kt
-  source_file_kt: CarsSchema.kt
+sources:
+  - file: CarsSchema.kt
