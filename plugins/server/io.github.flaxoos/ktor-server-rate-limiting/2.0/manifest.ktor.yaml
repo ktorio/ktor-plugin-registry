@@ -1,4 +1,4 @@
-name: Rate Limiting
+name: Ktor-server-rate-limiting
 description: Manage request rate limiting as you see fit
 vcsLink: https://github.com/Flaxoos/extra-ktor-plugins
 license: Apache 2.0
