@@ -4,4 +4,4 @@
   - io.github.flaxoos:ktor-server-task-scheduling-mongodb-jvm:$flaxoosExtraPlugins
   - io.github.flaxoos:ktor-server-task-scheduling-jdbc-jvm:$flaxoosExtraPlugins
 
-flaxoosExtraPlugins: 1.+
+flaxoosExtraPlugins: 2.+
