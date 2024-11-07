@@ -1,4 +1,4 @@
-# Ktor Server Rate Limiter
+# Ktor Rate Limiting
 
 Manage request rate limiting as you see fit with RateLimiting in your Ktor server, ensuring you protect your application from potential abuse or resource overload.
 
