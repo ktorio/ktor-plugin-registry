@@ -1,4 +1,4 @@
-# Ktor Server Task Scheduling
+# Ktor Task Scheduling
 
 Manage scheduled tasks across instances of your distributed ktor server, using various strategies and a kotlin flavoured cron tab
 Use Redis, JDBC or MongoDb for managing locks, or implement your own strategy 
