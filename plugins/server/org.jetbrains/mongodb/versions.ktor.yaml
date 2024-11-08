@@ -6,5 +6,3 @@
   - org.mongodb:mongodb-driver-core:$mongo
   - org.mongodb:mongodb-driver-sync:$mongo
   - org.mongodb:bson:$mongo
-
-mongo: 4.9.0

@@ -11,4 +11,4 @@ installation:
   inside_app: inside_app.kt
   in_routing: routing.kt
 sources:
-  - file: UsersSchema.kt
+  - UsersSchema.kt

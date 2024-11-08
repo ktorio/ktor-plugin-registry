@@ -19,7 +19,7 @@ class CLIUtilsTest {
                  │   └── manifest.ktor.yaml
                  └── versions.ktor.yaml
             """.trimIndent().trim(),
-            CLIUtils.tree("src/test/resources/server/io.ktor/csrf").trim()
+            Terminal.tree("src/test/resources/plugins/server/io.ktor/csrf").trim()
         )
     }
 
@@ -38,12 +38,12 @@ class CLIUtilsTest {
         assertEquals("""
             [ LEFT ]  [ RIGHT ]
             [ SIDE ]  [ SIDE  ]
-        """.trimIndent(), CLIUtils.appendHorizontal(left, right, 10))
+        """.trimIndent(), Terminal.appendHorizontal(left, right, 10))
     }
 
     @Test
     fun printHeader() {
-        println(CLIUtils.ktorScriptHeader())
+        println(Terminal.ktorScriptHeader())
     }
 
 }

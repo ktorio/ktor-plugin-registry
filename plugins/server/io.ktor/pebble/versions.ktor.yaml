@@ -1,2 +1,1 @@
-"[1.4,2.0)": ktor-pebble:==
 "[2.3,)": ktor-server-pebble-jvm:==

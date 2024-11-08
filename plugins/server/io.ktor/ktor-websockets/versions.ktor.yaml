@@ -1,3 +1,2 @@
-"[1.4,2.0)": ktor-websockets:==
 "[2.0,3.0)": ktor-server-websockets-jvm:==
 "[3.0,)": ktor-server-websockets-jvm:==

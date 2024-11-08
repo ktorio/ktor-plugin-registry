@@ -4,9 +4,17 @@
 
 package io.ktor.plugins.registry
 
+import com.charleskorn.kaml.Yaml
+import com.charleskorn.kaml.YamlMap
+import com.charleskorn.kaml.parseToYamlNode
+import com.charleskorn.kaml.yamlMap
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createDirectory
+import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
+import kotlin.io.path.inputStream
 import kotlin.io.path.isDirectory
 import kotlin.io.path.listDirectoryEntries
 
@@ -31,3 +39,19 @@ fun folders(pattern: String): List<Path> {
     }
     return folders.filter { it.isDirectory() }
 }
+
+@OptIn(ExperimentalPathApi::class)
+fun Path.clear(): Path {
+    deleteRecursively()
+    return createDirectory()
+}
+
+fun Path.readYamlMap(): YamlMap? =
+    try {
+        takeIf { it.exists() }
+            ?.inputStream()
+            ?.use(Yaml.default::parseToYamlNode)
+            ?.yamlMap
+    } catch (_: Exception) {
+        null
+    }

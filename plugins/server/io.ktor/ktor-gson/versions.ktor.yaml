@@ -1,2 +1,1 @@
-"[1.4,2.0)": ktor-gson:==
 "[2.0,)": ktor-serialization-gson-jvm:==

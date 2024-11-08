@@ -46,6 +46,9 @@ maven:
   repositories:
     - id: example_repo
       url: https://maven.repository.org/p/example
+amper:
+  # You can disable maven, gradle, or amper
+  disabled: true
 # (location, kotlin) pairs, where "location" is a pre-defined injection point, and "kotlin" is either a path or inline code
 #   options for "location" include:
 #   - default: placed in the *category*'s install file

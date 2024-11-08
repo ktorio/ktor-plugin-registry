@@ -6,4 +6,4 @@ category: Frameworks
 installation:
   default: install.kt
 sources:
-  - file: HelloService.kt
+  - HelloService.kt

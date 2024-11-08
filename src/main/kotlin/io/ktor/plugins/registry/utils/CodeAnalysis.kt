@@ -6,7 +6,6 @@ package io.ktor.plugins.registry.utils
 
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFileFactory
-import io.ktor.plugins.registry.*
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -34,50 +32,14 @@ import kotlin.io.path.absolutePathString
 
 class CodeAnalysis(private val classpathJars: List<Path> = emptyList()) {
 
-    companion object {
-        val logger: Logger = LoggerFactory.getLogger(CodeAnalysis::class.simpleName!!)
-
-        fun List<CompilationError>.formatErrors(sourceRoot: Path) =
-            joinToString("\n", "\n") {
-                with(it) {
-                    "${sourceRoot.absolutePathString()}/$file:$lineNumber:$column: $message"
-                }
-            }
-    }
-
-    /**
-     * Caches common compiler types when compiling files within a plugin directory.
-     */
-    private val pluginAnalyzers = mutableMapOf<Path, PluginCodeAnalyzer>()
-
-    fun findErrorsAndThrow(sourceRoot: Path, plugin: PluginReference) {
-        findErrors(sourceRoot).ifNotEmpty {
-            logger.error("Compilation error(s) found in plugin ${plugin.id}: ${formatErrors(sourceRoot)}")
-            throw IllegalArgumentException("Failed to compile sources for plugin: ${plugin.id}")
-        }
-    }
-
-    fun findErrors(sourceRoot: Path) =
-        pluginAnalyzer(sourceRoot)
-            .findErrors()
-            .filter {
-                !it.message.startsWith("Conflicting overloads")
-            }
-
     fun parseInstallSnippet(
-        sourceRoot: Path,
         contents: String,
         meta: SourceCodeMeta,
     ): CodeRef =
-        pluginAnalyzer(sourceRoot)
+        pluginAnalyzer()
             .parseInstallSnippet(contents, meta)
 
-    private fun pluginAnalyzer(sourceRoot: Path) = pluginAnalyzers.computeIfAbsent(sourceRoot) { path ->
-        PluginCodeAnalyzer(
-            classpathJars,
-            path
-        )
-    }
+    private fun pluginAnalyzer() = PluginCodeAnalyzer(classpathJars)
 }
 
 class PluginCodeAnalyzer(

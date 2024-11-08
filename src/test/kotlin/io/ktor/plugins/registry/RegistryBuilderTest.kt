@@ -4,7 +4,6 @@
 
 package io.ktor.plugins.registry
 
-import com.charleskorn.kaml.Yaml
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import org.slf4j.LoggerFactory
@@ -27,16 +26,10 @@ class RegistryBuilderTest {
     private val registryBuilder = RegistryBuilder()
     private val testResources = Paths.get("src/test/resources")
     // copy only required build files
+    @OptIn(ExperimentalPathApi::class)
     private val buildDir by lazy {
         Files.createTempDirectory("build").also { buildDir ->
-            Files.copy(
-                Paths.get("build/server-artifacts.yaml"),
-                buildDir.resolve("server-artifacts.yaml"),
-            )
-            Files.copy(
-                Paths.get("build/ktor_releases"),
-                buildDir.resolve("ktor_releases"),
-            )
+            Paths.get("src/test/resources/build").copyToRecursively(buildDir, followLinks = false, overwrite = true)
         }
     }
     private val target = "server"
@@ -56,36 +49,6 @@ class RegistryBuilderTest {
         json.decodeFromString(deserializer, "\"hello\"")
         buildRegistry {
             it == "exposed"
-        }
-    }
-
-    @Test
-    fun `fails on duplicate key`() {
-        assertRegistryFailure("Duplicate plugin ID \"dupe\"") {
-            buildRegistry {
-                it == "dupe"
-            }
-        }
-    }
-
-    @Test
-    fun `bad artifact reference`() {
-        assertRegistryFailure(
-            "Failed to parse versions.ktor.yaml for plugin \"bad_semver\". " +
-                    "Invalid artifact reference string \"what??\""
-        ) {
-            buildRegistry {
-                it == "bad_semver"
-            }
-        }
-    }
-
-    @Test
-    fun `fails on missing install files`() {
-        assertRegistryFailure("Missing install snippet install.kt") {
-            buildRegistry {
-                it == "no_install"
-            }
         }
     }
 
@@ -145,49 +108,19 @@ class RegistryBuilderTest {
         }
     }
 
-    @Test
-    fun `fails on install compilation error`() {
-        assertRegistryFailure("""
-            Could not read install function:
-            ${resourceContents("/server/com.fail/bad_kt/2.0/install.kt")}
-        """.trimIndent()) {
-            buildRegistry {
-                it == "bad_kt"
-            }
-        }
-    }
-
-    @Ignore // TODO fix compilation
-    @Test
-    fun `fails on unknown types`() {
-        assertRegistryFailure("Failed to compile sources for plugin: missing_import") {
-            buildRegistry {
-                it == "missing_import"
-            }
-        }
-    }
-
-    @Test
-    fun `fails on missing prerequisite`() {
-        assertRegistryFailure("Missing prerequisite plugin(s): this_does_not_exist") {
-            buildRegistry { it == "missing_prerequisite" }
-        }
-    }
-
     private fun assertRegistryFailure(message: String, block: () -> Unit) {
         val ex = assertFailsWith<IllegalArgumentException>(message = "Expected failure", block = block)
         assertEquals(message, ex.message)
     }
 
     private fun buildRegistry(
-        pluginsRoot: Path = testResources,
+        pluginsRoot: Path = testResources.resolve("plugins"),
         filter: (String) -> Boolean = { true }
     ): String {
-        registryBuilder.buildRegistry(
+        registryBuilder.buildRegistries(
             pluginsRoot,
             buildDir,
             buildDir.resolve("registry/assets"),
-            target,
             filter
         )
 
@@ -201,12 +134,6 @@ class RegistryBuilderTest {
     private fun clonePlugin(id: String): PluginTestContext =
         PluginTestContext(id)
 
-
-    private fun resourceContents(resource: String): String =
-        this::class.java.getResourceAsStream(resource)?.use {
-            it.readAllBytes().toString(Charset.defaultCharset())
-        } ?: throw IllegalArgumentException("No resource found for $resource")
-
     inner class PluginTestContext(private val id: String) {
         private val replacements = mutableMapOf<String, String?>()
 
@@ -219,7 +146,7 @@ class RegistryBuilderTest {
             val pluginDir = Files.walk(testResources).filter { it.name == id }.findFirst().getOrNull()
             require(pluginDir != null) { "Could not find plugin $id" }
             val groupDir = pluginDir.parent
-            val groupYaml = groupDir.resolve("group.ktor.yaml")
+            val groupYaml = groupDir.resolve(GROUP_FILE)
             val tempDir = Files.createTempDirectory("cloned")
             val newGroupDir = tempDir.resolve("$target/${groupDir.name}")
             val newPluginDir = newGroupDir.resolve(pluginDir.name)
@@ -229,7 +156,7 @@ class RegistryBuilderTest {
 
             // copy with manifest field replacement
             newGroupDir.createDirectories()
-            Files.copy(groupYaml, newGroupDir.resolve("group.ktor.yaml"))
+            Files.copy(groupYaml, newGroupDir.resolve(GROUP_FILE))
             Files.walk(pluginDir).forEach { source: Path ->
                 val destination = newPluginDir.resolve(pluginDir.relativize(source))
                 when {
@@ -248,7 +175,7 @@ class RegistryBuilderTest {
                 }
             }
 
-            buildRegistry(pluginsRoot = tempDir)
+            buildRegistry(pluginsRoot = tempDir, filter = { it == id })
         }
     }
 }

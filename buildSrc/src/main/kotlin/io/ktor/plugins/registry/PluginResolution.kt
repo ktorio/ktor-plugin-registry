@@ -5,80 +5,48 @@
 package io.ktor.plugins.registry
 
 import com.charleskorn.kaml.Yaml
+import com.charleskorn.kaml.decodeFromStream
 import com.charleskorn.kaml.encodeToStream
-import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedConfiguration
-import org.gradle.api.artifacts.ResolvedDependency
-import java.io.BufferedWriter
-import java.nio.file.Path
-import kotlin.io.path.*
+import java.nio.file.Paths
+import java.nio.file.StandardOpenOption
+import kotlin.io.path.createDirectory
+import kotlin.io.path.exists
+import kotlin.io.path.outputStream
+import kotlin.io.path.inputStream
 
-/**
- * Get all artifact dependency strings for the given Ktor version. Used in gradle classpath resolution.
- */
-fun Sequence<PluginReference>.allArtifactsForVersion(ktorRelease: String): Sequence<String> =
-    flatMap { plugin ->
-        plugin.allArtifactsForVersion(ktorRelease).map { artifact ->
-            with(artifact) {
-                "$group:$name:" + when(version) {
-                    is MatchKtor -> ktorRelease
-                    else -> version.toString()
-                }
-            }
-        }
+fun writeResolvedPluginConfigurations(
+    pluginConfigs: List<PluginConfiguration>,
+    configurations: (String) -> ResolvedConfiguration,
+) {
+    val pluginsDir = Paths.get("build/plugins").clear()
+    val classpathsDir = pluginsDir.resolve("classpaths").createDirectory()
+
+    pluginsDir.resolve("configurations.yaml").outputStream().use { output ->
+        Yaml.default.encodeToStream(pluginConfigs, output)
     }
-
-/**
- * Prints out artifacts required for each Ktor release for the registry builder.
- */
-fun outputReleaseArtifacts(outputFile: Path, configurations: Map<String, Set<ResolvedArtifact>>) {
-    val artifactsByRelease =
-        configurations.mapValues { (_, artifacts) ->
-            artifacts.associate { resolvedArtifact ->
-                Pair(
-                    resolvedArtifact.referenceString(),
-                    resolvedArtifact.file.path
-                )
+    for (pluginConfig in pluginConfigs) {
+        val classPathFile = classpathsDir.resolve("${pluginConfig.id}.${pluginConfig.release}.yaml")
+        val alreadyResolved: Set<String> = if (classPathFile.exists()) {
+            classPathFile.inputStream().use { input ->
+                Yaml.default.decodeFromStream<Map<String, ResolvedArtifact>>(input).keys
             }
-        }
+        } else emptySet()
 
-    outputFile.outputStream().use { output ->
-        Yaml.default.encodeToStream(artifactsByRelease, output)
-    }
-}
+        val artifactsMap = configurations(pluginConfig.name).resolvedArtifacts.associate { artifact ->
+            "${artifact.moduleVersion.id.group}:${artifact.moduleVersion.id.name}" to ResolvedArtifact(
+                version = artifact.moduleVersion.id.version,
+                path = artifact.file.absolutePath
+            )
+        } - alreadyResolved
 
-@OptIn(ExperimentalPathApi::class)
-fun prepareDirectory(directory: Path) {
-    directory.deleteRecursively()
-    directory.createDirectories()
-}
-
-/**
- * Outputs the dependency trace for all configurations to the specified output file.
- */
-fun outputDependencyTrees(directory: Path, configurations: Map<String, ResolvedConfiguration>) {
-    directory.createDirectory()
-    configurations.forEach { (name, configuration) ->
-        val releaseDir = directory.resolve(name).createDirectory()
-        val firstLevelDependencies = configuration.firstLevelModuleDependencies
-        for (dependency in firstLevelDependencies) {
-            releaseDir.resolve("${dependency.moduleName}.yaml").bufferedWriter().use { writer ->
-                writer.outputDependencyTree(dependency, 0)
+        if (artifactsMap.isNotEmpty()) {
+            classPathFile.outputStream(
+                StandardOpenOption.CREATE,
+                StandardOpenOption.APPEND
+            ).use { output ->
+                Yaml.default.encodeToStream(artifactsMap, output)
             }
         }
     }
 }
-
-fun BufferedWriter.outputDependencyTree(dependency: ResolvedDependency, level: Int) {
-    if (dependency.children.isEmpty()) {
-        appendLine("${"  ".repeat(level)}\"${dependency.moduleGroup}:${dependency.moduleName}:${dependency.moduleVersion}\": []")
-    } else {
-        appendLine("${"  ".repeat(level)}\"${dependency.moduleGroup}:${dependency.moduleName}:${dependency.moduleVersion}\":")
-        for (child in dependency.children) {
-            outputDependencyTree(child, level + 1)
-        }
-    }
-}
-
-fun ResolvedArtifact.referenceString() =
-    "${moduleVersion.id.group}:$name:${moduleVersion.id.version}"

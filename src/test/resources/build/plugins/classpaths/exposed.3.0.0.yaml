@@ -1,0 +1,171 @@
+"org.jetbrains.kotlin:kotlin-test-junit":
+  version: "2.0.21"
+  path: "org.jetbrains.kotlin/kotlin-test-junit/2.0.21/977fd8384b1557420643e28be93a0faf30d99f7a/kotlin-test-junit-2.0.21.jar"
+"io.ktor:ktor-server-test-host-jvm":
+  version: "3.0.0"
+  path: "io.ktor/ktor-server-test-host-jvm/3.0.0/4fb1d5052845b2206a8754417375ec2950aff71b/ktor-server-test-host-jvm-3.0.0.jar"
+"org.jetbrains.kotlin:kotlin-test":
+  version: "2.0.21"
+  path: "org.jetbrains.kotlin/kotlin-test/2.0.21/c6ea143e356327ddfda57e53e829c553e3b45b64/kotlin-test-2.0.21.jar"
+"org.jetbrains.exposed:exposed-jdbc":
+  version: "0.56.0"
+  path: "org.jetbrains.exposed/exposed-jdbc/0.56.0/e52725158fd5b6d0f5b4a9c00f76614ffadadab2/exposed-jdbc-0.56.0.jar"
+"org.jetbrains.exposed:exposed-core":
+  version: "0.56.0"
+  path: "org.jetbrains.exposed/exposed-core/0.56.0/4008bdcad77b873eb9bad159dcf90d94c7a5ffb0/exposed-core-0.56.0.jar"
+"io.ktor:ktor-server-call-logging-jvm":
+  version: "3.0.0"
+  path: "io.ktor/ktor-server-call-logging-jvm/3.0.0/5da935e116c215e56ead538d1a887263792ca54d/ktor-server-call-logging-jvm-3.0.0.jar"
+"io.ktor:ktor-server-websockets-jvm":
+  version: "3.0.0"
+  path: "io.ktor/ktor-server-websockets-jvm/3.0.0/2fc1e336f3556ea45bb880633d11364d3e4c03d8/ktor-server-websockets-jvm-3.0.0.jar"
+"io.ktor:ktor-server-core-jvm":
+  version: "3.0.0"
+  path: "io.ktor/ktor-server-core-jvm/3.0.0/f32f92b9b25d10f5ac916b9b92b32475dae02bd8/ktor-server-core-jvm-3.0.0.jar"
+"org.jetbrains.kotlin:kotlin-reflect":
+  version: "2.0.20"
+  path: "org.jetbrains.kotlin/kotlin-reflect/2.0.20/580c610641d75b6448825cbe455a1ded220e148b/kotlin-reflect-2.0.20.jar"
+"io.ktor:ktor-client-apache-jvm":
+  version: "3.0.0"
+  path: "io.ktor/ktor-client-apache-jvm/3.0.0/36c839979da6df826d2e06bbed8e79101d045d63/ktor-client-apache-jvm-3.0.0.jar"
+"io.ktor:ktor-client-cio-jvm":
+  version: "3.0.0"
+  path: "io.ktor/ktor-client-cio-jvm/3.0.0/54f4a2906fc9aad991889eded4c0b178c1326b92/ktor-client-cio-jvm-3.0.0.jar"
+"io.ktor:ktor-client-core-jvm":
+  version: "3.0.0"
+  path: "io.ktor/ktor-client-core-jvm/3.0.0/cd59d98760bb6dc85786c0c2202a48a9e1e7746/ktor-client-core-jvm-3.0.0.jar"
+"io.ktor:ktor-websocket-serialization-jvm":
+  version: "3.0.0"
+  path: "io.ktor/ktor-websocket-serialization-jvm/3.0.0/9820fc595351b80651419615f4c9998bbbacb71a/ktor-websocket-serialization-jvm-3.0.0.jar"
+"io.ktor:ktor-serialization-jvm":
+  version: "3.0.0"
+  path: "io.ktor/ktor-serialization-jvm/3.0.0/cb0a4390b8b892c0373752f908eda5c5a9769004/ktor-serialization-jvm-3.0.0.jar"
+"io.ktor:ktor-events-jvm":
+  version: "3.0.0"
+  path: "io.ktor/ktor-events-jvm/3.0.0/db8a404c50f76936bba8b550c2225b2498ed8ffc/ktor-events-jvm-3.0.0.jar"
+"io.ktor:ktor-http-cio-jvm":
+  version: "3.0.0"
+  path: "io.ktor/ktor-http-cio-jvm/3.0.0/c2250f5f7f176f6b329167c78f8affc8c6b8e3a9/ktor-http-cio-jvm-3.0.0.jar"
+"io.ktor:ktor-websockets-jvm":
+  version: "3.0.0"
+  path: "io.ktor/ktor-websockets-jvm/3.0.0/bade110c2a1187f8d5f11041f535d65209dfbd2/ktor-websockets-jvm-3.0.0.jar"
+"io.ktor:ktor-network-tls-certificates-jvm":
+  version: "3.0.0"
+  path: "io.ktor/ktor-network-tls-certificates-jvm/3.0.0/22e2abb1ab3ae96ea369b7ebc0c9507e2c18af7d/ktor-network-tls-certificates-jvm-3.0.0.jar"
+"io.ktor:ktor-network-tls-jvm":
+  version: "3.0.0"
+  path: "io.ktor/ktor-network-tls-jvm/3.0.0/b771dcb9eff17aa31e2189525e9ce4bc4555566b/ktor-network-tls-jvm-3.0.0.jar"
+"io.ktor:ktor-sse-jvm":
+  version: "3.0.0"
+  path: "io.ktor/ktor-sse-jvm/3.0.0/fc8ef0cfdea8a22f604a0ae7b6308e20bfca466e/ktor-sse-jvm-3.0.0.jar"
+"io.ktor:ktor-http-jvm":
+  version: "3.0.0"
+  path: "io.ktor/ktor-http-jvm/3.0.0/1e2de6cad6a9cf772ac376079fb502dc128e6665/ktor-http-jvm-3.0.0.jar"
+"io.ktor:ktor-network-jvm":
+  version: "3.0.0"
+  path: "io.ktor/ktor-network-jvm/3.0.0/c44d2cb36e74940d7abd9d2c738cfa3bdf2cadbe/ktor-network-jvm-3.0.0.jar"
+"io.ktor:ktor-utils-jvm":
+  version: "3.0.0"
+  path: "io.ktor/ktor-utils-jvm/3.0.0/3bc434db6eea43499f330eb49fd8d562147cd820/ktor-utils-jvm-3.0.0.jar"
+"io.ktor:ktor-test-dispatcher-jvm":
+  version: "3.0.0"
+  path: "io.ktor/ktor-test-dispatcher-jvm/3.0.0/9374ebe6292e30db6877595e9ebe36cdd41ba65d/ktor-test-dispatcher-jvm-3.0.0.jar"
+"org.jetbrains.kotlinx:kotlinx-coroutines-slf4j":
+  version: "1.9.0"
+  path: "org.jetbrains.kotlinx/kotlinx-coroutines-slf4j/1.9.0/17b86b2f6eb84441a53621ca7c593161e1696c4e/kotlinx-coroutines-slf4j-1.9.0.jar"
+"io.ktor:ktor-io-jvm":
+  version: "3.0.0"
+  path: "io.ktor/ktor-io-jvm/3.0.0/62c4e08f3d905d06fd4ed32028950fecae7c0ba3/ktor-io-jvm-3.0.0.jar"
+"org.jetbrains.kotlinx:kotlinx-coroutines-test-jvm":
+  version: "1.9.0"
+  path: "org.jetbrains.kotlinx/kotlinx-coroutines-test-jvm/1.9.0/7227c0691a604e2b32f525b628014dda862d0eed/kotlinx-coroutines-test-jvm-1.9.0.jar"
+"org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm":
+  version: "1.9.0"
+  path: "org.jetbrains.kotlinx/kotlinx-coroutines-core-jvm/1.9.0/9beade4c1c1569e4f36cbd2c37e02e3e41502601/kotlinx-coroutines-core-jvm-1.9.0.jar"
+"org.jetbrains.kotlinx:kotlinx-coroutines-debug":
+  version: "1.9.0"
+  path: "org.jetbrains.kotlinx/kotlinx-coroutines-debug/1.9.0/87ba44ab265cb6421d8b26f2d117c3649d577f81/kotlinx-coroutines-debug-1.9.0.jar"
+"org.jetbrains.kotlinx:kotlinx-serialization-core-jvm":
+  version: "1.7.3"
+  path: "org.jetbrains.kotlinx/kotlinx-serialization-core-jvm/1.7.3/1f226780b845ff9206474c05159245d861556249/kotlinx-serialization-core-jvm-1.7.3.jar"
+"org.jetbrains.kotlinx:kotlinx-io-core-jvm":
+  version: "0.5.4"
+  path: "org.jetbrains.kotlinx/kotlinx-io-core-jvm/0.5.4/16566a36d64d88af421fbee163eeeb6aa6406a43/kotlinx-io-core-jvm-0.5.4.jar"
+"org.jetbrains.kotlinx:kotlinx-io-bytestring-jvm":
+  version: "0.5.4"
+  path: "org.jetbrains.kotlinx/kotlinx-io-bytestring-jvm/0.5.4/d02e90094c25c6c4689a9f4359c3dc3543f66958/kotlinx-io-bytestring-jvm-0.5.4.jar"
+"org.jetbrains.kotlin:kotlin-stdlib":
+  version: "2.0.21"
+  path: "org.jetbrains.kotlin/kotlin-stdlib/2.0.21/618b539767b4899b4660a83006e052b63f1db551/kotlin-stdlib-2.0.21.jar"
+"com.h2database:h2":
+  version: "2.3.232"
+  path: "com.h2database/h2/2.3.232/4fcc05d966ccdb2812ae8b9a718f69226c0cf4e2/h2-2.3.232.jar"
+"org.jetbrains:annotations":
+  version: "23.0.0"
+  path: "org.jetbrains/annotations/23.0.0/8cc20c07506ec18e0834947b84a864bfc094484e/annotations-23.0.0.jar"
+"junit:junit":
+  version: "4.13.2"
+  path: "junit/junit/4.13.2/8ac9e16d933b6fb43bc7f576336b8f4d7eb5ba12/junit-4.13.2.jar"
+"org.slf4j:slf4j-api":
+  version: "2.0.16"
+  path: "org.slf4j/slf4j-api/2.0.16/172931663a09a1fa515567af5fbef00897d3c04/slf4j-api-2.0.16.jar"
+"org.hamcrest:hamcrest-core":
+  version: "1.3"
+  path: "org.hamcrest/hamcrest-core/1.3/42a25dc3219429f0e5d060061f71acb49bf010a0/hamcrest-core-1.3.jar"
+"com.typesafe:config":
+  version: "1.4.3"
+  path: "com.typesafe/config/1.4.3/b57e0fbdc7270d8ea59c1ba367457a5cc7ba0e98/config-1.4.3.jar"
+"org.fusesource.jansi:jansi":
+  version: "2.4.1"
+  path: "org.fusesource.jansi/jansi/2.4.1/d5774f204d990c9f5da2809b88f928515577beb4/jansi-2.4.1.jar"
+"org.junit.jupiter:junit-jupiter-params":
+  version: "5.11.2"
+  path: "org.junit.jupiter/junit-jupiter-params/5.11.2/f77edaf3c9c2717e0a6518cffd5c324d790ce76/junit-jupiter-params-5.11.2.jar"
+"org.junit.jupiter:junit-jupiter-engine":
+  version: "5.11.2"
+  path: "org.junit.jupiter/junit-jupiter-engine/5.11.2/c81c96d7db26197a3fa1012fa3d26dd07de0efb1/junit-jupiter-engine-5.11.2.jar"
+"org.junit.jupiter:junit-jupiter-api":
+  version: "5.11.2"
+  path: "org.junit.jupiter/junit-jupiter-api/5.11.2/914037e4618c6532d5733bad9e22da57af1c854f/junit-jupiter-api-5.11.2.jar"
+"org.junit.platform:junit-platform-engine":
+  version: "1.11.2"
+  path: "org.junit.platform/junit-platform-engine/1.11.2/846aa12289332e3bc7bc2d3d32a931d17c0086c4/junit-platform-engine-1.11.2.jar"
+"org.junit.platform:junit-platform-commons":
+  version: "1.11.2"
+  path: "org.junit.platform/junit-platform-commons/1.11.2/5ebabe980aa4e445414a37ce728b99cba40ec0ff/junit-platform-commons-1.11.2.jar"
+"org.junit.jupiter:junit-jupiter":
+  version: "5.11.2"
+  path: "org.junit.jupiter/junit-jupiter/5.11.2/9ff1c3ebc95d9eba3fc056a532b2c54b8f590ef1/junit-jupiter-5.11.2.jar"
+"net.java.dev.jna:jna-platform":
+  version: "5.9.0"
+  path: "net.java.dev.jna/jna-platform/5.9.0/c535a5bda553d7d7690356c825010da74b2671b5/jna-platform-5.9.0.jar"
+"net.java.dev.jna:jna":
+  version: "5.9.0"
+  path: "net.java.dev.jna/jna/5.9.0/8f503e6d9b500ceff299052d6be75b38c7257758/jna-5.9.0.jar"
+"net.bytebuddy:byte-buddy":
+  version: "1.10.9"
+  path: "net.bytebuddy/byte-buddy/1.10.9/2c03f15cd1131692feca93f190ed81412a3de961/byte-buddy-1.10.9.jar"
+"net.bytebuddy:byte-buddy-agent":
+  version: "1.10.9"
+  path: "net.bytebuddy/byte-buddy-agent/1.10.9/cbbeffa557e6b1b4cbb181b0782436921c523699/byte-buddy-agent-1.10.9.jar"
+"org.apache.httpcomponents:httpasyncclient":
+  version: "4.1.5"
+  path: "org.apache.httpcomponents/httpasyncclient/4.1.5/cd18227f1eb8e9a263286c1d7362ceb24f6f9b32/httpasyncclient-4.1.5.jar"
+"org.opentest4j:opentest4j":
+  version: "1.3.0"
+  path: "org.opentest4j/opentest4j/1.3.0/152ea56b3a72f655d4fd677fc0ef2596c3dd5e6e/opentest4j-1.3.0.jar"
+"org.apache.httpcomponents:httpcore-nio":
+  version: "4.4.15"
+  path: "org.apache.httpcomponents/httpcore-nio/4.4.15/85d2b6825d42db909a1474f0ffbd6328429b7a32/httpcore-nio-4.4.15.jar"
+"org.apache.httpcomponents:httpclient":
+  version: "4.5.13"
+  path: "org.apache.httpcomponents/httpclient/4.5.13/e5f6cae5ca7ecaac1ec2827a9e2d65ae2869cada/httpclient-4.5.13.jar"
+"org.apache.httpcomponents:httpcore":
+  version: "4.4.15"
+  path: "org.apache.httpcomponents/httpcore/4.4.15/7f2e0c573eaa7a74bac2e89b359e1f73d92a0a1d/httpcore-4.4.15.jar"
+"commons-logging:commons-logging":
+  version: "1.2"
+  path: "commons-logging/commons-logging/1.2/4bfc12adfe4842bf07b657f0369c4cb522955686/commons-logging-1.2.jar"
+"commons-codec:commons-codec":
+  version: "1.11"
+  path: "commons-codec/commons-codec/1.11/3acb4705652e16236558f0f4f2192cc33c3bd189/commons-codec-1.11.jar"

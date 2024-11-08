@@ -1,0 +1,4 @@
+"[2.2,)":
+  - org.jetbrains.exposed:exposed-core:$exposed
+  - org.jetbrains.exposed:exposed-jdbc:$exposed
+  - com.h2database:h2:$h2

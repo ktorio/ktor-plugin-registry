@@ -1,11 +1,13 @@
-import kotlinx.rpc.RPC
+import kotlinx.rpc.RemoteService
+import kotlinx.rpc.annotations.Rpc
 import kotlinx.serialization.Serializable
 import kotlin.coroutines.CoroutineContext
 
 @Serializable
 data class Data(val value: String)
 
-interface SampleService : RPC {
+@Rpc
+interface SampleService : RemoteService {
     suspend fun hello(data: Data): String
 }
 

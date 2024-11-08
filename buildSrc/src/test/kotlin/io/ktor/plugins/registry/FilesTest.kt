@@ -7,7 +7,6 @@ package io.ktor.plugins.registry
 import com.charleskorn.kaml.yamlScalar
 import org.gradle.internal.impldep.junit.framework.TestCase.assertTrue
 import kotlin.io.path.exists
-import kotlin.io.path.readText
 import kotlin.test.Test
 
 class FilesTest {

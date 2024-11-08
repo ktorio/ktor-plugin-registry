@@ -1,2 +1,1 @@
-"[1.4,2.0)": ktor-thymeleaf:==
 "[2.0,)": ktor-server-thymeleaf-jvm:==
