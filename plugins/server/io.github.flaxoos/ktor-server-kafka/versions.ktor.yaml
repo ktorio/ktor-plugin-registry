@@ -1,0 +1,2 @@
+"[2.0,3.0)": io.github.flaxoos:ktor-server-kafka:1.2.10
+"[3.0,)": io.github.flaxoos:ktor-server-kafka:2.+

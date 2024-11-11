@@ -1,0 +1,16 @@
+name: Rate Limiting
+description: Manage request rate limiting as you see fit
+vcsLink: https://github.com/Flaxoos/extra-ktor-plugins
+license: Apache 2.0
+category: Administration
+
+gradle:
+  repositories:
+    - url: https://packages.confluent.io/maven/
+maven:
+  repositories:
+    - id: confluence
+      url: https://packages.confluent.io/maven/
+
+installation:
+  default: install.kt

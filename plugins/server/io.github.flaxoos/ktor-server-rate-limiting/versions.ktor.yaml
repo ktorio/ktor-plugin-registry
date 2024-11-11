@@ -1,4 +1,2 @@
-"[2.0,)":
-  - io.github.flaxoos:ktor-server-rate-limiting:$flaxoosExtraPlugins
-
-flaxoosExtraPlugins: 2.+
+"[2.0,3.0)": io.github.flaxoos:ktor-server-rate-limiting:1.2.10
+"[3.0,)": io.github.flaxoos:ktor-server-rate-limiting:2.+
