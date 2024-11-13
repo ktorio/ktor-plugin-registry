@@ -2,6 +2,7 @@
  * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
  */
 
+import io.ktor.client.plugins.websocket.*
 import io.ktor.server.testing.*
 import kotlinx.rpc.krpc.ktor.client.RPC
 import kotlinx.rpc.krpc.ktor.client.rpc
@@ -15,10 +16,11 @@ class ApplicationRpcTest {
     @Test
     fun testRpc() = testApplication {
         application {
-            configureRouting()
+            configureFrameworks()
         }
 
         val ktorClient = createClient {
+            install(WebSockets)
             install(RPC)
         }
 
