@@ -1,5 +1,5 @@
 name: Rate Limiting
-description: Manage request rate limiting as you see fit
+description: Enhances system resilience by halting requests to failing services once a defined error threshold is reached.
 vcsLink: https://github.com/Flaxoos/extra-ktor-plugins
 license: Apache 2.0
 category: Administration
