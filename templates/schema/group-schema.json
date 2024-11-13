@@ -17,9 +17,15 @@
       "description": "An email for contacting the plugin maintainers",
       "type": "string",
       "maxLength": 80
+    },
+    "logo": {
+      "description": "An icon which is displayed along all plugin items in the generator",
+      "type": "string",
+      "maxLength": 80
     }
   },
   "required": ["name"],
+  "additionalProperties": false,
   "title": "YAML schema for Ktor plugin groups",
   "type": "object"
 }

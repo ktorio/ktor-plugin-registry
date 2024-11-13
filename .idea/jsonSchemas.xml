@@ -12,7 +12,9 @@
               <option name="patterns">
                 <list>
                   <Item>
-                    <option name="path" value="plugins/*/*/group.ktor.yaml" />
+                    <option name="pattern" value="true" />
+                    <option name="mappingKind" value="Pattern" />
+                    <option name="path" value="**/group.ktor.yaml" />
                   </Item>
                 </list>
               </option>
@@ -28,7 +30,9 @@
               <option name="patterns">
                 <list>
                   <Item>
-                    <option name="path" value="plugins/*/*/*/*/manifest.ktor.yaml" />
+                    <option name="pattern" value="true" />
+                    <option name="mappingKind" value="Pattern" />
+                    <option name="path" value="**/manifest.ktor.yaml" />
                   </Item>
                 </list>
               </option>
@@ -44,7 +48,9 @@
               <option name="patterns">
                 <list>
                   <Item>
-                    <option name="path" value="plugins/*/*/*/versions.ktor.yaml" />
+                    <option name="pattern" value="true" />
+                    <option name="mappingKind" value="Pattern" />
+                    <option name="path" value="**/versions.ktor.yaml" />
                   </Item>
                 </list>
               </option>
