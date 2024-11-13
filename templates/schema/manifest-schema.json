@@ -16,7 +16,7 @@
       "description": "A URL pointing to the plugin repository",
       "type": "string"
     },
-    "licence": {
+    "license": {
       "description": "A reference to software license used by the plugin",
       "type": "string",
       "maxLength": 50
@@ -122,21 +122,7 @@
       "description": "List of custom source file paths with multi-module support",
       "type": "array",
       "items": {
-        "type": "object",
-        "properties": {
-          "file": {
-            "type": "string",
-            "description": "Path to the file"
-          },
-          "module": {
-            "type": "string",
-            "description": "The target module where the file should be created"
-          },
-          "test": {
-            "type": "boolean",
-            "description": "Whether this should be created under the test sources"
-          }
-        }
+        "type": "string"
       }
     },
     "resources": {
@@ -168,6 +154,10 @@
       "description": "Define custom gradle script injections required for your plugin.",
       "type": "object",
       "properties": {
+        "disabled": {
+          "description": "Indicates this plugin cannot be used with Gradle",
+          "type": "boolean"
+        },
         "repositories": {
           "description": "A list of repositories that will be included in the generated build script.",
           "type": "array",
@@ -197,10 +187,23 @@
         }
       }
     },
+    "amper": {
+      "description": "Settings for amper builds.",
+      "properties": {
+        "disabled": {
+          "description": "Indicates this plugin cannot be used with Amper",
+          "type": "boolean"
+        }
+      }
+    },
     "maven": {
       "description": "Define custom maven script injections required for your plugin.",
       "type": "object",
       "properties": {
+        "disabled": {
+          "description": "Indicates this plugin cannot be used with Maven",
+          "type": "boolean"
+        },
         "repositories": {
           "description": "A list of repositories that will be included in the generated build script.",
           "type": "array",
@@ -241,6 +244,7 @@
     }
   },
   "required": ["name", "description", "vcsLink", "license", "category"],
+  "additionalProperties": false,
   "title": "YAML schema for Ktor plugin manifests",
   "type": "object"
 }

@@ -2,9 +2,9 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "id": "https://ktor.io/versions.yaml.json",
   "patternProperties": {
-    "^[\\[(0-9]": {
+    "^[\\[\\](),0-9]": {
       "description": "Maven version range specification",
-      "type": ["string", "array"]
+      "type": ["string", "array", "object"]
     }
   },
   "title": "YAML schema for Ktor version mappings",
