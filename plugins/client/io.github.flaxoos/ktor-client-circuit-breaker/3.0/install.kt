@@ -15,7 +15,7 @@ import io.ktor.http.HttpStatusCode.Companion.InternalServerError
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-HttpClient {
+fun HttpClientConfig<*>.configure() {
     install(CircuitBreaking) {
         global {
             failureThreshold = 10
