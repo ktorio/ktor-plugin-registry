@@ -32,6 +32,14 @@ configurations {
     }
 }
 
+repositories {
+    mavenCentral()
+
+    for (repositoryUrl in pluginConfigs.flatMap { it.repositories }.distinct()) {
+        maven(repositoryUrl)
+    }
+}
+
 sourceSets {
     // include all the plugins as source paths, using the latest valid ktor release for each
     for (pluginConfig in pluginConfigs.latestByPath()) {

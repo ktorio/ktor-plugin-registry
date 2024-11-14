@@ -104,6 +104,9 @@ private fun readPluginConfigs(
     val prerequisites = manifest?.get<YamlList>("prerequisites")?.items?.map {
         it.yamlScalar.content
     }.orEmpty()
+    val repositories = manifest?.get<YamlMap>("gradle")?.get<YamlList>("repositories")?.items?.mapNotNull {
+        it.yamlMap.get<YamlScalar>("url")?.content
+    }.orEmpty()
 
     // recursively find all prerequisite artifacts
     val prerequisiteArtifactsByModule = prerequisites.flatMap { prerequisiteId ->
@@ -151,6 +154,7 @@ private fun readPluginConfigs(
             module,
             versionRange.safeName,
             requiredArtifacts,
+            repositories,
             parent,
         )
     }

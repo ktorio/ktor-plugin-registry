@@ -29,6 +29,7 @@ data class PluginConfiguration(
     val module: String,
     val range: String,
     val artifacts: Artifacts,
+    val repositories: List<String>,
     val parent: String?
 ) {
     val name: String get() = "$id.$module.$release"
