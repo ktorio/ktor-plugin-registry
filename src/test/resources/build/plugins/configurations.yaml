@@ -8,6 +8,7 @@
     - "org.jetbrains.exposed:exposed-core:[0.53,0.54)"
     - "org.jetbrains.exposed:exposed-jdbc:[0.53,0.54)"
     - "com.h2database:h2:2.2.224"
+  repositories: []
   parent: null
 - path: "server/org.jetbrains/exposed/2.2/server"
   id: "exposed"
@@ -19,6 +20,7 @@
     - "org.jetbrains.exposed:exposed-core:[0.53,0.54)"
     - "org.jetbrains.exposed:exposed-jdbc:[0.53,0.54)"
     - "com.h2database:h2:2.2.224"
+  repositories: []
   parent: null
 - path: "server/org.jetbrains/exposed/2.2/common"
   id: "exposed"
@@ -30,6 +32,7 @@
     - "org.jetbrains.exposed:exposed-core:[0.53,0.54)"
     - "org.jetbrains.exposed:exposed-jdbc:[0.53,0.54)"
     - "com.h2database:h2:2.2.224"
+  repositories: []
   parent: null
 - path: "server/org.jetbrains/exposed/2.2/server"
   id: "exposed"
@@ -41,6 +44,7 @@
     - "org.jetbrains.exposed:exposed-core:[0.53,0.54)"
     - "org.jetbrains.exposed:exposed-jdbc:[0.53,0.54)"
     - "com.h2database:h2:2.2.224"
+  repositories: []
   parent: null
 - path: "server/com.fail/no_doc/2.0"
   id: "no_doc"
@@ -49,6 +53,7 @@
   module: "server"
   range: "2.0"
   artifacts: []
+  repositories: []
   parent: null
 - path: "server/com.fail/no_doc/2.0"
   id: "no_doc"
@@ -57,6 +62,7 @@
   module: "server"
   range: "2.0"
   artifacts: []
+  repositories: []
   parent: null
 - path: "server/com.fail/dupe/2.0"
   id: "dupe"
@@ -65,6 +71,7 @@
   module: "server"
   range: "2.0"
   artifacts: []
+  repositories: []
   parent: null
 - path: "server/com.fail/dupe/2.0"
   id: "dupe"
@@ -73,6 +80,7 @@
   module: "server"
   range: "2.0"
   artifacts: []
+  repositories: []
   parent: null
 - path: "server/com.fail/missing_prerequisite/2.0"
   id: "missing_prerequisite"
@@ -81,6 +89,7 @@
   module: "server"
   range: "2.0"
   artifacts: []
+  repositories: []
   parent: null
 - path: "server/com.fail/missing_prerequisite/2.0"
   id: "missing_prerequisite"
@@ -89,6 +98,7 @@
   module: "server"
   range: "2.0"
   artifacts: []
+  repositories: []
   parent: null
 - path: "server/com.fail/no_install/2.0"
   id: "no_install"
@@ -97,6 +107,7 @@
   module: "server"
   range: "2.0"
   artifacts: []
+  repositories: []
   parent: null
 - path: "server/com.fail/no_install/2.0"
   id: "no_install"
@@ -105,6 +116,7 @@
   module: "server"
   range: "2.0"
   artifacts: []
+  repositories: []
   parent: null
 - path: "server/com.fail/bad_kt/2.0"
   id: "bad_kt"
@@ -113,6 +125,7 @@
   module: "server"
   range: "2.0"
   artifacts: []
+  repositories: []
   parent: null
 - path: "server/com.fail/bad_kt/2.0"
   id: "bad_kt"
@@ -121,6 +134,7 @@
   module: "server"
   range: "2.0"
   artifacts: []
+  repositories: []
   parent: null
 - path: "server/com.fail/missing_import/2.0"
   id: "missing_import"
@@ -129,6 +143,7 @@
   module: "server"
   range: "2.0"
   artifacts: []
+  repositories: []
   parent: null
 - path: "server/com.fail/missing_import/2.0"
   id: "missing_import"
@@ -137,6 +152,7 @@
   module: "server"
   range: "2.0"
   artifacts: []
+  repositories: []
   parent: null
 - path: "server/io.ktor/csrf/2.0"
   id: "csrf"
@@ -145,6 +161,7 @@
   module: "server"
   range: "2.0"
   artifacts: []
+  repositories: []
   parent: null
 - path: "server/io.ktor/csrf/2.0"
   id: "csrf"
@@ -153,6 +170,7 @@
   module: "server"
   range: "2.0"
   artifacts: []
+  repositories: []
   parent: null
 - path: "server/io.ktor/dupe/2.0"
   id: "dupe"
@@ -161,6 +179,7 @@
   module: "server"
   range: "2.0"
   artifacts: []
+  repositories: []
   parent: null
 - path: "server/io.ktor/dupe/2.0"
   id: "dupe"
@@ -169,6 +188,7 @@
   module: "server"
   range: "2.0"
   artifacts: []
+  repositories: []
   parent: null
 - path: "server/org.missing/test/2.0"
   id: "test"
@@ -177,6 +197,7 @@
   module: "server"
   range: "2.0"
   artifacts: []
+  repositories: []
   parent: null
 - path: "server/org.missing/test/2.0"
   id: "test"
@@ -185,4 +206,5 @@
   module: "server"
   range: "2.0"
   artifacts: []
+  repositories: []
   parent: null
