@@ -66,7 +66,10 @@ dependencies {
         config(kotlin("test"))
         config(kotlin("test-junit"))
         config("io.ktor:ktor-$type-core:$release")
-        config("io.ktor:ktor-server-test-host:$release")
+        when(type) {
+            "client" -> config("io.ktor:ktor-client-mock:$release")
+            "server" -> config("io.ktor:ktor-server-test-host:$release")
+        }
 
         // artifacts for the specific plugin version
         for ((group, name, version) in pluginConfig.artifacts)
