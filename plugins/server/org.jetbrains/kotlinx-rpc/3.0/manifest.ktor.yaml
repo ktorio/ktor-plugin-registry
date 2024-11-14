@@ -5,7 +5,7 @@ license: Apache 2.0
 category: Frameworks
 maven:
   disabled: true
-# TODO waiting for fixes to enable amper support
+# TODO KRPC-131 waiting for fixes to enable amper support
 amper:
   disabled: true
 # TODO provide better means for serialization plugins in client / core

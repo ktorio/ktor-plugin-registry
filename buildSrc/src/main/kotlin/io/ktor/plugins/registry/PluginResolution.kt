@@ -8,6 +8,7 @@ import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
 import com.charleskorn.kaml.encodeToStream
 import org.gradle.api.artifacts.ResolvedConfiguration
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import kotlin.io.path.createDirectory
@@ -15,9 +16,15 @@ import kotlin.io.path.exists
 import kotlin.io.path.outputStream
 import kotlin.io.path.inputStream
 
+/**
+ * Writes the resolved plugin configuration classpaths to the expected paths for use during export.
+ *
+ * @param pluginConfigs List of plugin configurations to be processed.
+ * @param gradleConfigLookup Function for finding gradle ResolvedConfiguration for actual artifact paths
+ */
 fun writeResolvedPluginConfigurations(
     pluginConfigs: List<PluginConfiguration>,
-    configurations: (String) -> ResolvedConfiguration,
+    gradleConfigLookup: (String) -> ResolvedConfiguration,
 ) {
     val pluginsDir = Paths.get("build/plugins").clear()
     val classpathsDir = pluginsDir.resolve("classpaths").createDirectory()
@@ -27,18 +34,8 @@ fun writeResolvedPluginConfigurations(
     }
     for (pluginConfig in pluginConfigs) {
         val classPathFile = classpathsDir.resolve("${pluginConfig.id}.${pluginConfig.release}.yaml")
-        val alreadyResolved: Set<String> = if (classPathFile.exists()) {
-            classPathFile.inputStream().use { input ->
-                Yaml.default.decodeFromStream<Map<String, ResolvedArtifact>>(input).keys
-            }
-        } else emptySet()
-
-        val artifactsMap = configurations(pluginConfig.name).resolvedArtifacts.associate { artifact ->
-            "${artifact.moduleVersion.id.group}:${artifact.moduleVersion.id.name}" to ResolvedArtifact(
-                version = artifact.moduleVersion.id.version,
-                path = artifact.file.absolutePath
-            )
-        } - alreadyResolved
+        val alreadyResolved = readAlreadyResolved(classPathFile)
+        val artifactsMap = pluginConfig.getResolvedArtifacts(gradleConfigLookup) - alreadyResolved
 
         if (artifactsMap.isNotEmpty()) {
             classPathFile.outputStream(
@@ -48,5 +45,21 @@ fun writeResolvedPluginConfigurations(
                 Yaml.default.encodeToStream(artifactsMap, output)
             }
         }
+    }
+}
+
+private fun PluginConfiguration.getResolvedArtifacts(gradleConfigLookup: (String) -> ResolvedConfiguration): Map<String, ResolvedArtifact> =
+    gradleConfigLookup(name).resolvedArtifacts.associate { artifact ->
+        "${artifact.moduleVersion.id.group}:${artifact.moduleVersion.id.name}" to ResolvedArtifact(
+            version = artifact.moduleVersion.id.version,
+            path = artifact.file.absolutePath
+        )
+    }
+
+private fun readAlreadyResolved(classPathFile: Path): Set<String> {
+    if (!classPathFile.exists())
+        return emptySet()
+    return classPathFile.inputStream().use { input ->
+        Yaml.default.decodeFromStream<Map<String, ResolvedArtifact>>(input).keys
     }
 }

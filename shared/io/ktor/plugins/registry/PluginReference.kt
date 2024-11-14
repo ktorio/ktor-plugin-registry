@@ -4,8 +4,13 @@
 
 package io.ktor.plugins.registry
 
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlin.text.Regex
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 /**
  * Represents a reference to a plugin, including its ID, group, versions, and client flag.
@@ -44,15 +49,6 @@ data class PluginGroup(
 typealias Artifacts = List<ArtifactReference>
 
 val PluginReference.artifacts: Artifacts get() = versions.values.flatten()
-
-fun PluginReference.allArtifactsForVersion(ktorVersion: String): Artifacts =
-    ArtifactVersion.parse(ktorVersion).let { releaseVersion ->
-        versions.entries.firstNotNullOfOrNull { (versionRange, artifact) ->
-            artifact.takeIf {
-                ArtifactVersion.parse(versionRange).contains(releaseVersion)
-            }
-        }.orEmpty()
-    }
 
 @Serializable(ArtifactReferenceSerializer::class)
 data class ArtifactReference(
@@ -194,33 +190,32 @@ fun prefixVersionToMavenRange(text: String): String {
     return "[$prefix,$nextPrefix)"
 }
 
-class ArtifactReferenceSerializer: kotlinx.serialization.KSerializer<ArtifactReference> {
-    override val descriptor: kotlinx.serialization.descriptors.SerialDescriptor =
-        kotlinx.serialization.descriptors.PrimitiveSerialDescriptor(
+class ArtifactReferenceSerializer: KSerializer<ArtifactReference> {
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor(
             "ArtifactReference",
-            kotlinx.serialization.descriptors.PrimitiveKind.STRING
+            PrimitiveKind.STRING
         )
 
-    override fun serialize(encoder: kotlinx.serialization.encoding.Encoder, value: ArtifactReference) {
+    override fun serialize(encoder: Encoder, value: ArtifactReference) {
         encoder.encodeString(value.toString())
     }
 
-    override fun deserialize(decoder: kotlinx.serialization.encoding.Decoder): ArtifactReference =
+    override fun deserialize(decoder: Decoder): ArtifactReference =
         ArtifactReference.parse(decoder.decodeString())
 }
 
-// TODO maintain variables
-class ArtifactVersionSerializer: kotlinx.serialization.KSerializer<ArtifactVersion> {
-    override val descriptor: kotlinx.serialization.descriptors.SerialDescriptor =
-        kotlinx.serialization.descriptors.PrimitiveSerialDescriptor(
+class ArtifactVersionSerializer: KSerializer<ArtifactVersion> {
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor(
             "ArtifactVersion",
-            kotlinx.serialization.descriptors.PrimitiveKind.STRING
+            PrimitiveKind.STRING
         )
 
-    override fun serialize(encoder: kotlinx.serialization.encoding.Encoder, value: ArtifactVersion) {
+    override fun serialize(encoder: Encoder, value: ArtifactVersion) {
         encoder.encodeString(value.toString())
     }
 
-    override fun deserialize(decoder: kotlinx.serialization.encoding.Decoder): ArtifactVersion =
+    override fun deserialize(decoder: Decoder): ArtifactVersion =
         ArtifactVersion.parse(decoder.decodeString())
 }
