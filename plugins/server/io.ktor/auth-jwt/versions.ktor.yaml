@@ -1,2 +1,1 @@
-"[1.4,2.0)": ktor-auth-jwt:==
 "[2.0,)": ktor-server-auth-jwt-jvm:==

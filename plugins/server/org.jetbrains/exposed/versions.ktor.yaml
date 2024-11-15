@@ -2,6 +2,3 @@
   - org.jetbrains.exposed:exposed-core:$exposed
   - org.jetbrains.exposed:exposed-jdbc:$exposed
   - com.h2database:h2:$h2
-
-exposed: 0.53.+
-h2: 2.2.224

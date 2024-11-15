@@ -5,6 +5,7 @@
 package io.ktor.plugins.registry.utils
 
 import io.ktor.client.*
+import io.ktor.client.call.body
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -68,9 +69,9 @@ class ProjectGeneratorClient(
                 }))
             }
 
-            check(response.status.isSuccess()) {
+            require(response.status.isSuccess()) {
                 "Request to project generator failed with status ${response.status}" +
-                        "\n    Body: ${response.readBytes().decodeToString()}"
+                        "\n    Body: ${response.bodyAsText()}"
             }
 
             val outputDir = Paths.get(outputDir)
@@ -78,7 +79,7 @@ class ProjectGeneratorClient(
                 outputDir.deleteRecursively()
 
             Files.createDirectories(outputDir)
-            ZipInputStream(ByteArrayInputStream(response.readBytes())).use { zis ->
+            ZipInputStream(ByteArrayInputStream(response.body())).use { zis ->
                 for (entry in generateSequence { zis.nextEntry }) {
                     val outputFile = outputDir.resolve(entry.name)
                     when {

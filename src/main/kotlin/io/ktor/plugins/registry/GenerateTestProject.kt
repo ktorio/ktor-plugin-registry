@@ -6,9 +6,9 @@ package io.ktor.plugins.registry
 
 import io.ktor.client.*
 import io.ktor.plugins.registry.utils.*
-import io.ktor.plugins.registry.utils.CLIUtils.argsToMap
-import io.ktor.plugins.registry.utils.CLIUtils.ktorScriptHeader
-import io.ktor.plugins.registry.utils.CLIUtils.tree
+import io.ktor.plugins.registry.utils.Terminal.argsToMap
+import io.ktor.plugins.registry.utils.Terminal.ktorScriptHeader
+import io.ktor.plugins.registry.utils.Terminal.tree
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.contentOrNull

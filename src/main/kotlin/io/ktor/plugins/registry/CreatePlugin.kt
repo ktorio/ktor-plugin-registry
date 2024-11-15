@@ -4,8 +4,8 @@
 
 package io.ktor.plugins.registry
 
-import io.ktor.plugins.registry.utils.CLIUtils.colored
-import io.ktor.plugins.registry.utils.CLIUtils.ktorScriptHeader
+import io.ktor.plugins.registry.utils.Terminal.colored
+import io.ktor.plugins.registry.utils.Terminal.ktorScriptHeader
 import org.slf4j.LoggerFactory
 import java.nio.file.Files
 import java.nio.file.Path
@@ -32,7 +32,7 @@ fun main() {
     val mavenArtifact = askQuestion(
         "What is your latest maven artifact?    (${colored("io.ktor:ktor-server-core:2.3.10", CYAN)})"
     )
-    check(mavenArtifact.count { it == ':' } == 2) {
+    require(mavenArtifact.count { it == ':' } == 2) {
         "Artifact should appear as `group:name:version` with two colons"
     }
     val vcsUrl = askQuestion(
@@ -61,7 +61,7 @@ fun main() {
     val groupDomain = group.split('.').reversed().joinToString(".")
     val versionPath = groupDir.resolve("$pluginId/$DEFAULT_KTOR_VERSION")
 
-    writeFromText(groupDir.resolve("group.ktor.yaml"), """
+    writeFromText(groupDir.resolve(GROUP_FILE), """
         name: ${group.substringAfterLast('.').titleCase()}
         url: https://$groupDomain
         email: contact@$groupDomain

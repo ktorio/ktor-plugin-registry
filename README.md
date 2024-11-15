@@ -33,15 +33,28 @@ To add a new plugin, follow these easy steps:
    - You can include any number of install files for populating new projects.  More information under 
      [templates/manifest.ktor.yaml](templates/manifest.ktor.yaml).  The existing plugin files under the 
      [plugins](plugins) folder can also be useful reference for introducing new plugins.
-   - If your plugin artifacts aren't published on Maven Central you may need to add an entry to the `allRepositories()`
-     function in the [Repositories.kt](buildSrc/src/main/kotlin/io/ktor/plugins/registry/Repositories.kt) file.
    <br /><br />
    
 4. **Run `./gradlew buildRegistry`** to test the new files.<br /><br />
 
 5. **Run `./gradlew buildTestProject`** to generate a sample project.
    - You can now experiment with a project generated with your plugin.
-   - Iterate on updating the new files, building the registry, and generating the test project until you're happy with the results.
+   - Iterate on updating the new files, building the registry, and generating the test project until you're happy with the results.<br /><br />
 
 6. **Create a pull request** with the new changes.
     - Once merged, your plugin will be available in the ktor project generator.
+
+
+### Examples
+
+To supplement the [reference templates](templates), we have many plugin examples that can be of some aid when 
+adding your own.
+
+Here are a few examples to illustrate different techniques that you can apply for your extensions:
+
+| plugin                                                                      | features                                             |
+|-----------------------------------------------------------------------------|------------------------------------------------------|
+| [koin](plugins/server/io.insert-koin)                                       | Basic layout with an extra source file               |
+| [exposed](plugins/server/org.jetbrains/exposed)                             | Several injections and dependencies                  |
+| [ktor-server-kafka](plugins/server/io.github.flaxoos/ktor-server-kafka-jvm) | Includes configuration files and a custom repository |
+| [kotlinx-rpc](plugins/server/org.jetbrains/kotlinx-rpc)                     | Multi-module layout with core, client, and server    |                                              

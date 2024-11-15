@@ -1,0 +1,39 @@
+name: kotlinx.rpc
+description: Adds remote procedure call (RPC) routing
+vcsLink: https://github.com/Kotlin/kotlinx-rpc
+license: Apache 2.0
+category: Frameworks
+maven:
+  disabled: true
+# TODO KRPC-131 waiting for fixes to enable amper support
+amper:
+  disabled: true
+# TODO provide better means for serialization plugins in client / core
+gradle:
+  plugins:
+    - id: org.jetbrains.kotlin.plugin.serialization
+      version: LAST_KOTLIN_VERSION
+      module: core
+    - id: org.jetbrains.kotlinx.rpc.plugin
+      version: $kotlinx-rpc
+      module: core
+    - id: org.jetbrains.kotlin.plugin.serialization
+      version: LAST_KOTLIN_VERSION
+      module: client
+    - id: org.jetbrains.kotlinx.rpc.plugin
+      version: $kotlinx-rpc
+      module: client
+    - id: org.jetbrains.kotlinx.rpc.plugin
+      version: $kotlinx-rpc
+      module: server
+prerequisites:
+  - routing
+  - kotlinx-serialization
+installation:
+  default: install.kt
+  in_routing: routing.kt
+  test_function: test.kt
+  client: client.kt
+sources:
+  - SampleService.kt (core)
+  - Rpc.kt (client)

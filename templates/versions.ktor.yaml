@@ -10,5 +10,10 @@
   - org.sample:sample-artifact:1.+
   - io.ktor:ktor-serialization-kotlinx-json:$serialization
 
+# For multi-module dependencies, use a map.
+(3.0,]:
+  server: com.company:library-server:1.0.2
+  client: com.company:library-client:1.0.2
+
 # You can declare version variables here, they will appear in the version catalog or properties
 serialization: 1.6.+

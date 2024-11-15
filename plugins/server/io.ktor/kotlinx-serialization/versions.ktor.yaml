@@ -1,2 +1,1 @@
-"[1.4,2.0)": ktor-serialization:==
 "[2.0,)": ktor-serialization-kotlinx-json-jvm:==

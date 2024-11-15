@@ -15,9 +15,9 @@ import kotlin.io.path.inputStream
 import kotlin.io.path.readLines
 
 @OptIn(ExperimentalSerializationApi::class)
-class RegistryOutputFiles(private val buildDir: Path, val target: String) {
+class RegistryOutputFiles(private val buildDir: Path) {
 
-    constructor(buildDir: String, target: String = "server"): this(Paths.get(buildDir), target)
+    constructor(buildDir: String): this(Paths.get(buildDir))
 
     private val registryDir: Path = buildDir.resolve("registry/server")
     private val manifestsDir: Path = registryDir.resolve("manifests")
@@ -31,8 +31,8 @@ class RegistryOutputFiles(private val buildDir: Path, val target: String) {
     }
 
     init {
-        check(buildDir.exists()) { "Build directory does not exist: $buildDir; try running buildRegistry" }
-        check(registryDir.exists()) { "Registry directory does not exist: $registryDir; try running buildRegistry" }
+        require(buildDir.exists()) { "Build directory does not exist: $buildDir; try running buildRegistry" }
+        require(registryDir.exists()) { "Registry directory does not exist: $registryDir; try running buildRegistry" }
     }
 
     fun featuresForVersion(ktorRelease: String) =

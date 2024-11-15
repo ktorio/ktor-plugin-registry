@@ -1,2 +1,1 @@
-"[1.4,2.0)": ktor-auth-ldap:==
 "[2.0,)": ktor-server-auth-ldap-jvm:==

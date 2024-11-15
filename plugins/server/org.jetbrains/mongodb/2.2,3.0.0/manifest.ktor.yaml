@@ -11,4 +11,4 @@ installation:
   default: install.kt
   outside_app: outside_app.kt
 sources:
-  - file: CarsSchema.kt
+  - CarsSchema.kt

@@ -1,0 +1,8 @@
+"[3.0,)":
+  core:
+    - org.jetbrains.kotlinx:kotlinx-rpc-krpc-serialization-json:$kotlinx-rpc
+    - org.jetbrains.kotlinx:kotlinx-rpc-core:$kotlinx-rpc
+  server:
+    - org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-server:$kotlinx-rpc
+    - org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-client:$kotlinx-rpc # TODO test config
+  client: org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-client:$kotlinx-rpc

@@ -1,0 +1,11 @@
+name: Missing Group
+description: The group yaml is missing.
+vcsLink: https://github.com/no/group
+license: Apache 2.0
+category: Templating
+documentation: |
+  Here are the docs
+  #Usage
+  doThing()
+installation:
+  default: "fun bun(){}"

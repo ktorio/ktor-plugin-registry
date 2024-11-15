@@ -5,9 +5,11 @@
 @file:Suppress("UnstableApiUsage")
 
 import io.ktor.plugins.registry.*
-import java.nio.file.Paths
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val targets by lazy { fetchKtorTargets(logger) }
+val ktorReleases = getKtorReleases(logger)
+val latestKtor = ktorReleases.last()
+val pluginConfigs by lazy { collectPluginConfigs(logger, ktorReleases) }
 
 plugins {
     alias(libs.plugins.serialization)
@@ -18,30 +20,64 @@ plugins {
 group = "io.ktor"
 version = "1.0-SNAPSHOT"
 
+// create build config for each valid release-plugin-target triple
 configurations {
-    for (target in targets)
-        target.releaseConfigs.forEach(::create)
+    // create plugin build configs
+    for (pluginConfig in pluginConfigs) {
+        create(pluginConfig.name) {
+            pluginConfig.parent?.let { parent ->
+                extendsFrom(get(parent))
+            }
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+
+    for (repositoryUrl in pluginConfigs.flatMap { it.repositories }.distinct()) {
+        maven(repositoryUrl)
+    }
+}
+
+sourceSets {
+    // include all the plugins as source paths, using the latest valid ktor release for each
+    for (pluginConfig in pluginConfigs.latestByPath()) {
+        create(pluginConfig.name) {
+            kotlin.srcDir("plugins/${pluginConfig.path}")
+            compileClasspath += configurations[pluginConfig.name]
+            pluginConfig.parent?.let { parent ->
+                compileClasspath += configurations[parent]
+                compileClasspath += sourceSets[parent].output
+            }
+        }
+    }
 }
 
 dependencies {
-    // each ktor version has its own classpath
-    for (target in targets) {
-        for ((config, version) in target.releases) {
-            config("io.ktor:ktor-${target.name}-core:$version")
-            config(kotlin("stdlib"))
+    // create a build config for every plugin-release-module combination
+    for (pluginConfig in pluginConfigs) {
+        val type = pluginConfig.type
+        val release = pluginConfig.release
+        val config = pluginConfig.name
 
-            // test imports for test_function template
-            if (target.name == "server") {
-                config(kotlin("test"))
-                config(kotlin("test-junit"))
-                config("io.ktor:ktor-server-test-host:$version")
-            }
-
-            for (dependency in target.allArtifactsForVersion(version))
-                config(dependency)
+        // common dependencies
+        config(kotlin("stdlib"))
+        config(kotlin("test"))
+        config(kotlin("test-junit"))
+        config("io.ktor:ktor-$type-core:$release")
+        when(type) {
+            "client" -> config("io.ktor:ktor-client-mock:$release")
+            "server" -> config("io.ktor:ktor-server-test-host:$release")
         }
+
+        // artifacts for the specific plugin version
+        for ((group, name, version) in pluginConfig.artifacts)
+            config("$group:$name:${version.resolvedString}")
     }
-    val latestKtor = targets.first().releases.last().version
+
+    // shared sources used in buildSrc
+    implementation(files("buildSrc/build/libs/shared.jar"))
 
     // current ktor dependencies for handling manifests
     implementation("io.ktor:ktor-server-core:$latestKtor")
@@ -67,15 +103,6 @@ dependencies {
     testImplementation(kotlin("test"))
 }
 
-// include relevant copied classes from buildSrc module
-sourceSets {
-    main {
-        kotlin {
-            srcDir("build/copied")
-        }
-    }
-}
-
 detekt {
     toolVersion = libs.versions.detekt.version.get()
     config.setFrom(file("detekt.yml"))
@@ -88,19 +115,6 @@ tasks {
         useJUnitPlatform()
     }
 
-    /**
-     *  We copy this shared source file with the parent project because there is otherwise
-     *  a chicken/egg problem with building the project which confuses the IDEA.
-     */
-    val copyPluginTypes by registering(Copy::class) {
-        group = "build"
-        from(
-            "buildSrc/src/main/kotlin/io/ktor/plugins/registry/PluginReference.kt",
-            "buildSrc/src/main/kotlin/io/ktor/plugins/registry/PluginCollector.kt",
-        )
-        into("build/copied")
-    }
-
     // download all sources
     compileKotlin {
         compilerOptions {
@@ -109,7 +123,6 @@ tasks {
                 "-XdownloadSources=true"
             )
         }
-        dependsOn(copyPluginTypes)
     }
 
     // resolving plugin jars from custom classpaths
@@ -117,32 +130,8 @@ tasks {
         group = "plugins"
         description = "Locate plugin resources from version definitions"
         doLast {
-            for (target in targets) {
-                val resolvedArtifacts = target.releases.associate { release ->
-                    release.version to configurations[release.config].resolvedConfiguration.resolvedArtifacts
-                }
-                outputReleaseArtifacts(
-                    outputFile = Paths.get("build/${target.name}-artifacts.yaml"),
-                    configurations = resolvedArtifacts
-                )
-            }
-        }
-    }
-
-    // print jar origins for finding problematic classpath imports
-    val outputDependencies by registering {
-        group = "plugins"
-        description = "Print all artifacts and their origins to deps-server.txt and deps-client.txt"
-        dependsOn(resolvePlugins)
-        doLast {
-            val reportDir = Paths.get("${project.rootDir.absolutePath}/dependencies")
-            prepareDirectory(reportDir)
-
-            for (target in targets) {
-                val resolvedArtifacts = target.releases.associate { release ->
-                    release.version to configurations[release.config].resolvedConfiguration
-                }
-                outputDependencyTrees(reportDir.resolve(target.name), resolvedArtifacts)
+            writeResolvedPluginConfigurations(pluginConfigs) { configName ->
+                configurations[configName].resolvedConfiguration
             }
         }
     }
@@ -156,13 +145,20 @@ tasks {
         standardInput = System.`in`
     }
 
+    // compiles ALL build targets before building the registry
+    val compileAll by registering {
+        group = "build"
+        description = "Compile all source sets"
+        dependsOn(withType<KotlinCompile>())
+    }
+
     // builds the registry for distributing to the project generator
     val buildRegistry by registering(JavaExec::class) {
         group = "plugins"
         description = "Build the registry from plugin resources"
         mainClass = "io.ktor.plugins.registry.BuildRegistryKt"
         classpath = sourceSets["main"].runtimeClasspath
-        dependsOn(resolvePlugins)
+        dependsOn(resolvePlugins, compileAll)
     }
 
     // generates a test project using the modified plugins in the repository

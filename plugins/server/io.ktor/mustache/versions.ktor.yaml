@@ -1,2 +1,1 @@
-"[1.4,2.0)": ktor-mustache:==
 "[2.0,)": ktor-server-mustache-jvm:==
