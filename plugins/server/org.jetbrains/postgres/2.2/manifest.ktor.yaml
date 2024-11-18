@@ -9,5 +9,7 @@ prerequisites:
 installation:
   default: install.kt
   outside_app: outside_app.kt
+  application_conf: application.conf
+  application_yaml: application.yaml
 sources:
   - CitySchema.kt
