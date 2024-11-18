@@ -8,3 +8,4 @@ prerequisites:
 installation:
   default: install.kt
   in_routing: routing.kt
+  outside_app: MySession.kt
