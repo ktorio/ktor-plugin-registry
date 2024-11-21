@@ -1,0 +1,21 @@
+name: HTMX
+description: Includes HTMX for front-end scripting
+vcsLink: https://github.com/bigskysoftware/htmx
+license: Zero-Clause BSD
+category: Templating
+prerequisites:
+  - html-dsl
+documentation: documentation.md
+amper:
+  # TODO test amper
+  disabled: true
+maven:
+  disabled: true
+installation:
+  in_routing: endpoints.kt
+  web: web.kt
+  outside_web: import.kt
+sources:
+  - LeaderboardPage.kt (server)
+resources:
+  - leaderboard.css (web)

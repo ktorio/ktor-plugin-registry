@@ -3,6 +3,9 @@
  */
 @file:Suppress("UnstableApiUsage")
 
+import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
+
+
 plugins {
     `kotlin-dsl`
     alias(libs.plugins.serialization)

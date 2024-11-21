@@ -13,12 +13,6 @@ prerequisites:
 # Documentation can either be a file reference or string
 # Optional, defaults to documentation.md
 documentation: documentation.md
-# Formatted options shown at the bottom of documentation.
-# Optional, defaults to empty
-options:
-  - name: option1
-    default: some_value
-    description: defines the first option
 # Additional instructions for gradle.
 # Optional
 gradle:
@@ -62,6 +56,8 @@ amper:
 #   - test_function: adds a function to the test suite
 #   - resources: adds a file to the project's resources
 #   - client: in the installation of the HttpClient, in the client module
+#   - web: in the main function of the web module, executed in the browser
+#   - outside_web: outside the main function of the web module
 # Optional, defaults to "default: install.kt"
 installation:
   default: install.kt

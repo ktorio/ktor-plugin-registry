@@ -1,5 +1,3 @@
-  - io.ktor:ktor-webjars:==
-  - org.webjars:jquery:3.2.1
 "[2.0,)":
   - io.ktor:ktor-server-webjars-jvm:==
   - org.webjars:jquery:3.2.1

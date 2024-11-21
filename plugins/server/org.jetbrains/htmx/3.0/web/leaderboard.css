@@ -1,0 +1,35 @@
+body {
+    font-family: sans-serif;
+}
+
+#leaderboard {
+    max-width: 400px;
+    width: 100%;
+
+    th {
+        text-align: left;
+        border-bottom: 2px solid;
+    }
+
+    tbody {
+        tr.htmx-added {
+            opacity: 0;
+        }
+        tr {
+            opacity: 1;
+            transition: opacity 0.5s ease-in;
+        }
+        tr:nth-child(odd):not(:last-child) {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        td {
+            padding: 4px;
+        }
+    }
+}
+
+#total-count {
+    position: fixed;
+    right: 10px;
+    top: 10px;
+}

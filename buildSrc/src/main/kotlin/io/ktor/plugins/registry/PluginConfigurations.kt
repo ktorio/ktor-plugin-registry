@@ -8,6 +8,7 @@ import com.charleskorn.kaml.*
 import org.slf4j.Logger
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.exists
 import kotlin.io.path.relativeTo
 
 const val KTOR_MAVEN_REPO = "https://repo1.maven.org/maven2/io/ktor/ktor-server/maven-metadata.xml"
@@ -16,6 +17,7 @@ val DEPRECATED_VERSIONS = setOf(1)
 val moduleParents: Map<String, String> = mapOf(
     "client" to "core",
     "server" to "core",
+    "web" to "client",
 )
 
 /**
@@ -62,6 +64,8 @@ private fun pluginConfigCombinations(pluginsRoot: Path, releases: List<ArtifactV
     return sequence {
         for (type in listOf("server", "client")) {
             for (pluginDir in folders("$pluginsRoot/$type/*/*")) {
+                if (pluginDir.resolve("ignore").exists())
+                    continue
                 pluginIds.put(pluginDir.fileName.toString(), pluginDir)?.let { previouslyFound ->
                     throw IllegalArgumentException("Duplicate plugins found: $previouslyFound, $pluginDir")
                 }

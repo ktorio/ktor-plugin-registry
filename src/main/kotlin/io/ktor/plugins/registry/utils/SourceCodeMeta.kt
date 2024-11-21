@@ -52,7 +52,13 @@ enum class CodeInjectionSite(
     APPLICATION_YAML(CodeExtractionMethod.VERBATIM, "application.yaml"),
 
     // In client module, when specified from a server plugin
-    CLIENT(CodeExtractionMethod.FUNCTION_BODY, module = "client");
+    CLIENT(CodeExtractionMethod.FUNCTION_BODY, module = "client"),
+
+    // In the main function of the web module, executed in the browser
+    WEB(CodeExtractionMethod.FUNCTION_BODY, module = "web"),
+
+    // Outside the main function of the web module
+    OUTSIDE_WEB(CodeExtractionMethod.CODE_CONTENTS, module = "web");
 
     val lowercaseName: String get() = name.lowercase()
 }
