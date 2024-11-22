@@ -4,6 +4,8 @@
 
 package io.ktor.plugins.registry.utils
 
+import io.ktor.plugins.registry.utils.GitSupport.Remote.Main
+import io.ktor.plugins.registry.utils.GitSupport.Remote.Fork
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.diff.DiffFormatter
 import org.eclipse.jgit.lib.Repository
@@ -27,19 +29,16 @@ object GitSupport {
      */
     fun getChangedPluginIds(
         mainBranchName: String = "main",
+        expectedRemoteGroup: String = "ktorio",
         target: String = "server",
-        defaultOrigin: String = "origin"
     ): List<String> {
-        val repository = Git.open(File("")).repository
+        val git = Git.open(File(""))
+        val repository = git.repository
         val currentIndex = FileTreeIterator(repository)
-        val remoteName = repository.config.getSubsections("remote").takeIf { it.size > 1 }?.last { it != defaultOrigin }
-        val mainBranch = when(remoteName) {
-            null -> getTreeIteratorForBranch(repository, mainBranchName)
-            else -> getTreeIteratorForRemoteBranch(repository, mainBranchName, remoteName)
-        }
+        val mainTree = git.getMainTree(repository, mainBranchName, expectedRemoteGroup)
         val diffEntries = DiffFormatter(DisabledOutputStream.INSTANCE).run {
             setRepository(repository)
-            scan(currentIndex, mainBranch)
+            scan(currentIndex, mainTree)
         }
 
         val extractPluginId = Regex("plugins/$target/[^/]+/([^/]+).*")
@@ -50,6 +49,59 @@ object GitSupport {
         }.distinct()
 
         return changedPluginIds.toList()
+    }
+
+    private fun Git.getMainTree(
+        repository: Repository,
+        mainBranchName: String,
+        expectedRemoteGroup: String,
+    ): AbstractTreeIterator {
+        val remotes = getRemotes(repository, expectedRemoteGroup)
+
+        return when(remotes) {
+            // when there is no upstream, we must add it
+            is Fork -> {
+                addRemoteUrl("upstream", remotes.url.replaceGitName(expectedRemoteGroup))
+                getTreeIteratorForRemoteBranch(repository, mainBranchName, "upstream")
+            }
+            // when only main repository, we only need to compare branches
+            is Main -> getTreeIteratorForBranch(repository, mainBranchName)
+            // compare with upstream normally
+            is Remotes.MainAndFork -> getTreeIteratorForRemoteBranch(repository, mainBranchName, remotes.main)
+            is Remotes.Multiple -> throw IllegalArgumentException("Multiple remotes found, can't infer changes")
+            is Remotes.None -> throw IllegalArgumentException("Couldn't find remotes, can't infer changes")
+        }
+    }
+
+    private fun getRemotes(repo: Repository, expectedRemoteGroup: String): Remotes {
+        val config = repo.config
+        return config.getSubsections("remote").map { remoteName ->
+            val remoteUrl = config.getString("remote", remoteName, "url")
+            when(remoteUrl.gitUsername) {
+                expectedRemoteGroup -> Main(remoteName, remoteUrl)
+                else -> Fork(remoteName, remoteUrl)
+            }
+        }.run {
+            if (isEmpty())
+                Remotes.None
+            when(size) {
+                1 -> get(0)
+                2 -> firstOrNull { it is Main }?.let { main ->
+                    Remotes.MainAndFork(
+                        main.name,
+                        minus(main).first().name
+                    )
+                } ?: Remotes.Multiple
+                else -> Remotes.Multiple
+            }
+        }
+    }
+
+    private fun Git.addRemoteUrl(remoteName: String, remoteUrl: String) {
+        remoteAdd()
+            .setName(remoteName)
+            .setUri(org.eclipse.jgit.transport.URIish(remoteUrl))
+            .call()
     }
 
     private fun getTreeIteratorForBranch(repo: Repository, name: String): AbstractTreeIterator {
@@ -75,5 +127,37 @@ object GitSupport {
 
         return treeParser
     }
+
+    sealed interface Remotes {
+        data class MainAndFork(val main: String, val upstream: String): Remotes
+        data object Multiple: Remotes
+        data object None: Remotes
+    }
+
+    sealed class Remote(
+        val name: String,
+        val url: String
+    ): Remotes {
+
+        class Main(name: String, url: String): Remote(name, url)
+        class Fork(name: String, url: String): Remote(name, url)
+    }
+
+    private val sshRegex = Regex("""git@github\.com:([^/]+)/.+?\.git""")
+    private val httpsRegex = Regex("""https://github\.com/([^/]+)/.+?\.git""")
+
+    private fun String.replaceGitName(newValue: String): String {
+        val currentName = (sshRegex.matchEntire(this) ?: httpsRegex.matchEntire(this))?.let { match ->
+            match.groups[1]
+        } ?: throw IllegalArgumentException("Cannot infer username from $this")
+
+        return replace(currentName.value, newValue)
+    }
+    private val String.gitUsername: String
+        get() {
+            return (sshRegex.matchEntire(this) ?: httpsRegex.matchEntire(this))?.let { match ->
+                match.groups[1]?.value
+            } ?: throw IllegalArgumentException("Cannot infer username from $this")
+        }
 
 }
