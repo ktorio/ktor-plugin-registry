@@ -1,0 +1,7 @@
+name: Request Validation
+description: Adds validation for incoming requests
+vcsLink: https://github.com/ktorio/ktor/tree/main/ktor-server/ktor-server-plugins/ktor-server-request-validation
+license: Apache 2.0
+category: Routing
+installation:
+  default: install.kt
