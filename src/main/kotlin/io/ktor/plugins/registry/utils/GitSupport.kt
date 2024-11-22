@@ -24,8 +24,8 @@ object GitSupport {
      * Forks are also supported here - when there are multiple remotes, we'll compare to the non-"origin" remote.
      *
      * @param mainBranchName branch to compare your local copy with
+     * @param expectedRemoteGroup the org name for the upstream project "ktorio"
      * @param target target directory to look for plugin changes
-     * @param defaultOrigin the remote for my fork
      */
     fun getChangedPluginIds(
         mainBranchName: String = "main",
@@ -61,8 +61,10 @@ object GitSupport {
         return when(remotes) {
             // when there is no upstream, we must add it
             is Fork -> {
-                addRemoteUrl("upstream", remotes.url.replaceGitName(expectedRemoteGroup))
-                getTreeIteratorForRemoteBranch(repository, mainBranchName, "upstream")
+                val upstream = "upstream"
+                val remoteUrl = remotes.url.replaceGitName(expectedRemoteGroup)
+                addRemoteAndFetch(upstream, remoteUrl, mainBranchName)
+                getTreeIteratorForRemoteBranch(repository, mainBranchName, upstream)
             }
             // when only main repository, we only need to compare branches
             is Main -> getTreeIteratorForBranch(repository, mainBranchName)
@@ -97,10 +99,14 @@ object GitSupport {
         }
     }
 
-    private fun Git.addRemoteUrl(remoteName: String, remoteUrl: String) {
+    private fun Git.addRemoteAndFetch(remoteName: String, remoteUrl: String, branch: String) {
         remoteAdd()
             .setName(remoteName)
             .setUri(org.eclipse.jgit.transport.URIish(remoteUrl))
+            .call()
+        fetch()
+            .setRemote(remoteName)
+            .setRefSpecs("+refs/heads/$branch:refs/remotes/$remoteName/$branch")
             .call()
     }
 
