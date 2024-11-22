@@ -9,6 +9,8 @@ import io.ktor.plugins.registry.utils.GitSupport.Remote.Fork
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.diff.DiffFormatter
 import org.eclipse.jgit.lib.Repository
+import org.eclipse.jgit.transport.SshSessionFactory
+import org.eclipse.jgit.transport.sshd.SshdSessionFactory
 import org.eclipse.jgit.treewalk.AbstractTreeIterator
 import org.eclipse.jgit.treewalk.CanonicalTreeParser
 import org.eclipse.jgit.treewalk.FileTreeIterator
@@ -32,6 +34,9 @@ object GitSupport {
         expectedRemoteGroup: String = "ktorio",
         target: String = "server",
     ): List<String> {
+        // initialize the ssh factory for remote fetching
+        SshSessionFactory.setInstance(SshdSessionFactory())
+
         val git = Git.open(File(""))
         val repository = git.repository
         val currentIndex = FileTreeIterator(repository)
@@ -63,13 +68,17 @@ object GitSupport {
             is Fork -> {
                 val upstream = "upstream"
                 val remoteUrl = remotes.url.replaceGitName(expectedRemoteGroup)
-                addRemoteAndFetch(upstream, remoteUrl, mainBranchName)
+                addRemote(upstream, remoteUrl)
+                fetchRemoteBranch(upstream, mainBranchName)
                 getTreeIteratorForRemoteBranch(repository, mainBranchName, upstream)
             }
             // when only main repository, we only need to compare branches
             is Main -> getTreeIteratorForBranch(repository, mainBranchName)
             // compare with upstream normally
-            is Remotes.MainAndFork -> getTreeIteratorForRemoteBranch(repository, mainBranchName, remotes.main)
+            is Remotes.MainAndFork -> {
+                fetchRemoteBranch(remotes.main, mainBranchName)
+                getTreeIteratorForRemoteBranch(repository, mainBranchName, remotes.main)
+            }
             is Remotes.Multiple -> throw IllegalArgumentException("Multiple remotes found, can't infer changes")
             is Remotes.None -> throw IllegalArgumentException("Couldn't find remotes, can't infer changes")
         }
@@ -99,11 +108,14 @@ object GitSupport {
         }
     }
 
-    private fun Git.addRemoteAndFetch(remoteName: String, remoteUrl: String, branch: String) {
+    private fun Git.addRemote(remoteName: String, remoteUrl: String) {
         remoteAdd()
             .setName(remoteName)
             .setUri(org.eclipse.jgit.transport.URIish(remoteUrl))
             .call()
+    }
+
+    private fun Git.fetchRemoteBranch(remoteName: String, branch: String) {
         fetch()
             .setRemote(remoteName)
             .setRefSpecs("+refs/heads/$branch:refs/remotes/$remoteName/$branch")
@@ -135,7 +147,7 @@ object GitSupport {
     }
 
     sealed interface Remotes {
-        data class MainAndFork(val main: String, val upstream: String): Remotes
+        data class MainAndFork(val main: String, val fork: String): Remotes
         data object Multiple: Remotes
         data object None: Remotes
     }

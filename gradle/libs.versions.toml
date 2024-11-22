@@ -16,6 +16,7 @@ kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml-version" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback-version" }
 maven-artifact = { module = "org.apache.maven:maven-artifact", version.ref = "maven-artifact-version" }
 jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit-version" }
+jgit-ssh-apache = { module = "org.eclipse.jgit:org.eclipse.jgit.ssh.apache", version.ref = "jgit-version" }
 apache-compress = { module = "org.apache.commons:commons-compress", version.ref = "compress-version" }
 
 [plugins]
