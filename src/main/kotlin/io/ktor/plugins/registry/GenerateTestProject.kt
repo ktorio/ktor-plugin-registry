@@ -36,7 +36,7 @@ fun main(args: Array<String>) {
     ), args)
 
     val pluginIds = argsMap["plugins"]?.split(",")
-        ?: GitSupport.getChangedPluginIds(compareBranch = argsMap["branch"]!!)
+        ?: GitSupport.getChangedPluginIds(mainBranchName = argsMap["branch"]!!)
 
     if (pluginIds.isEmpty()) {
         logger.info("No plugins changed or provided for test project generation")
