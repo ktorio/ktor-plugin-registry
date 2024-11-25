@@ -99,6 +99,7 @@ dependencies {
 
     // finding changed files
     implementation(libs.jgit)
+    implementation(libs.jgit.ssh.apache)
 
     testImplementation(kotlin("test"))
 }
