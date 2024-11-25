@@ -29,8 +29,8 @@ To validate a request body, use the validate function. This function returns a `
 ```kotlin
 install(RequestValidation) {
     validate<String> { bodyText ->
-        if (!bodyText.startsWith("Hello"))
-            ValidationResult.Invalid("Body text should start with 'Hello'")
+        if (bodyText.isEmpty())
+            ValidationResult.Invalid("Body text should not be empty")
         else ValidationResult.Valid
     }
 }
