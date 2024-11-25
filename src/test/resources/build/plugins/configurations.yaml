@@ -2,7 +2,7 @@
   id: "exposed"
   type: "server"
   release: "2.3.12"
-  module: "common"
+  module: "core"
   range: "2.2"
   artifacts:
     - "org.jetbrains.exposed:exposed-core:[0.53,0.54)"
@@ -26,7 +26,7 @@
   id: "exposed"
   type: "server"
   release: "3.0.0"
-  module: "common"
+  module: "core"
   range: "2.2"
   artifacts:
     - "org.jetbrains.exposed:exposed-core:[0.53,0.54)"
