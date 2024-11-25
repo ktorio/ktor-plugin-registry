@@ -93,9 +93,8 @@ object GitSupport {
                 else -> Fork(remoteName, remoteUrl)
             }
         }.run {
-            if (isEmpty())
-                Remotes.None
             when(size) {
+                0 -> Remotes.None
                 1 -> get(0)
                 2 -> firstOrNull { it is Main }?.let { main ->
                     Remotes.MainAndFork(
