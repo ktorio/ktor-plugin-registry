@@ -15,7 +15,7 @@ import java.nio.file.Paths
  * @property id         The plugin ID (i.e., auth-basic)
  * @property type       Either "server" or "client"
  * @property release    Ktor version string
- * @property module     Either "server", "client", "shared", etc.
+ * @property module     Either "server", "client", "core", etc.
  * @property range      The version range matched for this release
  * @property artifacts  The required artifacts for building this plugin
  * @property parent     The parent module (i.e., server -> core)
@@ -26,7 +26,7 @@ data class PluginConfiguration(
     val id: String,
     val type: String,
     val release: String,
-    val module: String,
+    val module: ProjectModule,
     val range: String,
     val artifacts: Artifacts,
     val repositories: List<String>,
@@ -56,9 +56,9 @@ interface PluginConfigurationPaths {
     val moduleSources: Path
 
     companion object {
-        fun get(path: String, module: String) : PluginConfigurationPaths =
+        fun get(path: String, module: ProjectModule) : PluginConfigurationPaths =
             when(path.substringAfterLast('/')) {
-                module -> MultiModulePluginConfigurationPaths(Paths.get(path))
+                module.name -> MultiModulePluginConfigurationPaths(Paths.get(path))
                 else -> SingleModulePluginConfigurationPaths(Paths.get(path))
             }
     }
@@ -73,3 +73,17 @@ private open class MultiModulePluginConfigurationPaths(override val moduleSource
 private class SingleModulePluginConfigurationPaths(moduleSources: Path): MultiModulePluginConfigurationPaths(moduleSources) {
     override val resolved: Path get() = moduleSources
 }
+
+enum class ProjectModule {
+    server,
+    client,
+    core,
+    web;
+}
+
+fun String.asProjectModule(): ProjectModule =
+    try {
+        ProjectModule.valueOf(this)
+    } catch (_: Exception) {
+        throw IllegalArgumentException("Invalid module $this, must be one of ${ProjectModule.values().joinToString()}")
+    }

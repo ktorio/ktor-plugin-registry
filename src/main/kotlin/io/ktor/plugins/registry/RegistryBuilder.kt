@@ -95,7 +95,7 @@ class RegistryBuilder(
                 logger.info("Exporting $pluginAndRelease...")
 
                 // merge module config artifacts
-                val plugin = pluginConfigs.firstOrNull { type == it.module }
+                val plugin = pluginConfigs.firstOrNull { type == it.module.name }
                     ?.copy(
                         artifacts = pluginConfigs.flatMap { moduleConfig ->
                             moduleConfig.artifacts.map { artifact ->
@@ -163,7 +163,7 @@ private fun processAssets(pluginsDir: Path, assetsDir: Path) {
 
 private fun PluginConfiguration.resolveManifest(
     group: PluginGroup,
-    modules: Collection<String>,
+    modules: Collection<ProjectModule>,
     resolvedArtifacts: Map<String, ResolvedArtifact>,
     assetsDir: Path,
     versionProperties: Map<String, String>,

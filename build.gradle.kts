@@ -14,9 +14,10 @@ val pluginConfigs by lazy {
         emptyList()
     else collectPluginConfigs(logger, ktorReleases)
 }
-// TODO need to introduce multi-platform compilation to get wasm-js modules to work properly
+// TODO KTOR-7849 need to introduce multi-platform compilation to get wasm-js modules to work properly
 //      but this will require a lot of changes here
-fun List<PluginConfiguration>.skipWebModules() = filter { it.module != "web" }
+fun List<PluginConfiguration>.skipWebModules() =
+    filter { it.module == ProjectModule.web }
 
 plugins {
     alias(libs.plugins.serialization)
@@ -67,14 +68,14 @@ dependencies {
         val release = pluginConfig.release
         val config = pluginConfig.name
         when(pluginConfig.module) {
-            "web" -> {
+            ProjectModule.web -> {
                 config(kotlin("stdlib-wasm-js"))
             }
-            "client" -> {
+            ProjectModule.client -> {
                 config("io.ktor:ktor-client-mock:$release")
                 config("io.ktor:ktor-client-core:$release")
             }
-            "server" -> {
+            ProjectModule.server -> {
                 config(kotlin("stdlib-jdk8"))
                 config(kotlin("test-junit"))
                 config("io.ktor:ktor-server-core:$release")

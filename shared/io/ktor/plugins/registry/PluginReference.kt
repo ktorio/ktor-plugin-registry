@@ -56,7 +56,7 @@ data class ArtifactReference(
     val group: String? = null,
     val name: String,
     val version: ArtifactVersion,
-    val module: String? = null,
+    val module: ProjectModule? = null,
     val function: String? = null,
 ) {
     companion object {
@@ -68,7 +68,7 @@ data class ArtifactReference(
             text: String,
             defaultGroup: String? = null,
             versionVariables: Map<String, String> = emptyMap(),
-            module: String? = null,
+            module: ProjectModule? = null,
         ): ArtifactReference =
             referenceRegex.matchEntire(text)?.let { match ->
                 when(val function = match.groups["function"]?.value) {
@@ -81,7 +81,7 @@ data class ArtifactReference(
 
         private fun MatchResult.asReference(
             versionVariables: Map<String, String>,
-            module: String?,
+            module: ProjectModule?,
             defaultGroup: String? = null,
             function: String? = null,
         ): ArtifactReference? =
