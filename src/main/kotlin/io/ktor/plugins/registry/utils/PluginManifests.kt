@@ -148,27 +148,24 @@ data class PluginManifestData(
                 addJsonObject {
                     put("group", dependency.group)
                     put("artifact", dependency.name)
-                    put(
-                        "version", when (val version = dependency.version) {
-                            is VersionNumber -> version.toString()
-                            is VersionRange -> version.asNumber()?.toString()
-                            is VersionVariable -> version.normalizedName
-                            is MatchKtor -> "\$ktor_version"
-                        }
-                    )
-                    if (dependency.version is VersionVariable) {
-                        dependency.version.asNumber()?.let { versionValue ->
-                            put("version_value", versionValue.toString())
-                        }
-                    }
-                    dependency.version.asRange()?.let { range ->
-                        put("version_range", range.toString())
-                    }
+                    putVersion(dependency.version)
                     if (dependency.module != null) {
                         put("module", dependency.module)
                     }
                 }
             }
+        }
+    }
+
+    private fun JsonObjectBuilder.putVersion(version: ArtifactVersion) {
+        put("version", version.toExportString())
+        if (version is VersionVariable) {
+            version.asNumber()?.let { versionValue ->
+                put("version_value", versionValue.toString())
+            }
+        }
+        version.asRange()?.let { range ->
+            put("version_range", range.toString())
         }
     }
 
@@ -182,14 +179,7 @@ data class PluginManifestData(
                         for (plugin in gradle.plugins) {
                             addJsonObject {
                                 put("id", plugin.id)
-                                put(
-                                    "version", when {
-                                        plugin.version.startsWith('$') ->
-                                            versionProperties[plugin.version.substring(1)]
-
-                                        else -> plugin.version
-                                    }
-                                )
+                                putVersion(plugin.version)
                                 put("module", plugin.module)
                             }
                         }
@@ -294,7 +284,7 @@ data class PluginManifestData(
     @Serializable
     data class GradlePlugin(
         val id: String,
-        val version: String,
+        val version: ArtifactVersion,
         val module: String? = null,
     )
 
@@ -323,13 +313,6 @@ data class PluginManifestData(
         val version: String? = null,
         val extra: String? = null,
         val module: String? = null,
-    )
-
-    @Serializable
-    data class CustomSourceFileTemplate(
-        val file: String,
-        val module: String? = null,
-        val test: Boolean = false,
     )
 
     @Serializable(with = CodeBlockSerializer::class)
@@ -395,9 +378,3 @@ enum class PluginCategory(val acronym: Boolean = false) {
 }
 
 fun String.wordTitleCase() = get(0) + substring(1).lowercase()
-
-val VersionVariable.normalizedName: String
-    get() {
-        val variableName = name.replace(Regex("(?<=[a-z])[A-Z]"), "_$0").replace('-', '_').lowercase()
-        return '$' + if (variableName.endsWith("_version")) variableName else variableName + "_version"
-    }

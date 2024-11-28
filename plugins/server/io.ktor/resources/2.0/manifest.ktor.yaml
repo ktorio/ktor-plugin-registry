@@ -12,12 +12,12 @@ installation:
 gradle:
   plugins:
     - id: org.jetbrains.kotlin.plugin.serialization
-      version: LAST_KOTLIN_VERSION
+      version: $kotlin_version
 maven:
   plugins:
     - group: org.jetbrains.kotlin
       artifact: kotlin-maven-plugin
-      version: LAST_KOTLIN_VERSION
+      version: $kotlin_version
       extra: |-
         <executions>
             <execution>

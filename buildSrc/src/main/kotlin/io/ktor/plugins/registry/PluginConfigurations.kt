@@ -132,7 +132,7 @@ private fun readPluginConfigs(
             it.module == module || (it.module == null && module == type)
         }.map {
             when (it.version) {
-                is MatchKtor -> it.resolve(release)
+                is KtorVersion -> it.resolve(release)
                 else -> it
             }
         }.toList()

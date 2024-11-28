@@ -11,6 +11,7 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import java.nio.file.Paths
 
 /**
  * Represents a reference to a plugin, including its ID, group, versions, and client flag.
@@ -97,7 +98,8 @@ sealed interface ArtifactVersion {
         private val variableRegex = Regex("\\$(?<name>[\\w-_]+)(?:@(?<version>.+))?")
 
         fun parse(text: String, versionVariableScope: Map<String, String> = emptyMap()): ArtifactVersion = when {
-            text == "==" -> MatchKtor()
+            text == KtorVersion.KEY -> KtorVersion()
+            text == KotlinVersion.KEY -> KotlinVersion()
             text.startsWith('$') -> readVersionVariable(text, versionVariableScope)
             text.endsWith(".+") -> VersionRange(prefixVersionToMavenRange(text))
             text.contains(Regex("[,\\[\\]()]")) -> VersionRange(text)
@@ -121,6 +123,7 @@ sealed interface ArtifactVersion {
     }
     fun asRange(): VersionRange? = null
     fun asNumber(): VersionNumber? = null
+    fun toExportString(): String?
     fun resolve(version: VersionNumber): ArtifactVersion
     fun contains(other: ArtifactVersion): Boolean
 
@@ -133,11 +136,29 @@ sealed interface ArtifactVersion {
 /**
  * Special version string that ensures a plugin is the same as the ktor version.
  */
-data class MatchKtor(val resolved: VersionNumber? = null) : ArtifactVersion {
+data class KtorVersion(val resolved: VersionNumber? = null) : ArtifactVersion {
+    companion object {
+        const val KEY = "=="
+    }
     override fun contains(other: ArtifactVersion) = true
     override fun asNumber(): VersionNumber? = resolved
-    override fun resolve(version: VersionNumber): ArtifactVersion = MatchKtor(version)
-    override fun toString() = "=="
+    override fun resolve(version: VersionNumber): ArtifactVersion = KtorVersion(version)
+    override fun toExportString(): String = "\$ktor_version"
+    override fun toString() = KEY
+}
+
+/**
+ * Special version that is assigned from project creation from the selected Kotlin version.
+ */
+data class KotlinVersion(val resolved: VersionNumber? = null) : ArtifactVersion {
+    companion object {
+        const val KEY = "\$kotlin_version"
+    }
+    override fun contains(other: ArtifactVersion) = true
+    override fun asNumber(): VersionNumber? = resolved
+    override fun resolve(version: VersionNumber): ArtifactVersion = KotlinVersion(version)
+    override fun toExportString(): String = "\$kotlin_version"
+    override fun toString() = KEY
 }
 
 /**
@@ -153,6 +174,7 @@ data class VersionNumber(
     override fun asNumber(): VersionNumber = this
     override fun resolve(version: VersionNumber): ArtifactVersion = version
     override fun toString(): String = number
+    override fun toExportString(): String = number
 }
 
 data class VersionRange(
@@ -165,6 +187,7 @@ data class VersionRange(
     override fun asRange(): VersionRange = this
     override fun asNumber(): VersionNumber? = resolved
     override fun toString(): String = range.toString()
+    override fun toExportString(): String? = asNumber()?.toString()
 }
 
 /**
@@ -175,7 +198,14 @@ data class VersionVariable(val name: String, val version: ArtifactVersion): Arti
         VersionVariable(name, version)
 
     override fun toString() = "\$$name@$version"
+    override fun toExportString(): String? = normalizedName
 }
+
+val VersionVariable.normalizedName: String
+    get() {
+        val variableName = name.replace(Regex("(?<=[a-z])[A-Z]"), "_$0").replace('-', '_').lowercase()
+        return '$' + if (variableName.endsWith("_version")) variableName else variableName + "_version"
+    }
 
 /**
  * This will replace prefix versions ending with .+ with the corresponding Maven version range.
@@ -211,11 +241,14 @@ class ArtifactVersionSerializer: KSerializer<ArtifactVersion> {
             "ArtifactVersion",
             PrimitiveKind.STRING
         )
+    private val versionProperties: Map<String, String> by lazy {
+        Paths.get("plugins").readVersionProperties()
+    }
 
     override fun serialize(encoder: Encoder, value: ArtifactVersion) {
         encoder.encodeString(value.toString())
     }
 
     override fun deserialize(decoder: Decoder): ArtifactVersion =
-        ArtifactVersion.parse(decoder.decodeString())
+        ArtifactVersion.parse(decoder.decodeString(), versionProperties)
 }

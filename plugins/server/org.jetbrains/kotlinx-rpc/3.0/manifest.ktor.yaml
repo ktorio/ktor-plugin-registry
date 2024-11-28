@@ -12,13 +12,13 @@ amper:
 gradle:
   plugins:
     - id: org.jetbrains.kotlin.plugin.serialization
-      version: LAST_KOTLIN_VERSION
+      version: $kotlin_version
       module: core
     - id: org.jetbrains.kotlinx.rpc.plugin
       version: $kotlinx-rpc
       module: core
     - id: org.jetbrains.kotlin.plugin.serialization
-      version: LAST_KOTLIN_VERSION
+      version: $kotlin_version
       module: client
     - id: org.jetbrains.kotlinx.rpc.plugin
       version: $kotlinx-rpc
