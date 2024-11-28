@@ -17,7 +17,7 @@ val pluginConfigs by lazy {
 // TODO KTOR-7849 need to introduce multi-platform compilation to get wasm-js modules to work properly
 //      but this will require a lot of changes here
 fun List<PluginConfiguration>.skipWebModules() =
-    filter { it.module == ProjectModule.web }
+    filterNot { it.module == ProjectModule.web }
 
 plugins {
     alias(libs.plugins.serialization)
@@ -153,7 +153,7 @@ tasks {
         group = "plugins"
         description = "Locate plugin resources from version definitions"
         doLast {
-            writeResolvedPluginConfigurations(pluginConfigs) { configName ->
+            writeResolvedPluginConfigurations(pluginConfigs, logger) { configName ->
                 configurations[configName].resolvedConfiguration
             }
         }

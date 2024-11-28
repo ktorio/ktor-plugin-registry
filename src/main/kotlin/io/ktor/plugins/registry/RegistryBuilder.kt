@@ -92,7 +92,7 @@ class RegistryBuilder(
             }
 
             for ((pluginAndRelease, pluginConfigs) in pluginsForType.groupBy { it.pluginAndRelease }) {
-                logger.info("Exporting $pluginAndRelease...")
+                logger.debug("Exporting $pluginAndRelease...")
 
                 // merge module config artifacts
                 val plugin = pluginConfigs.firstOrNull { type == it.module.name }

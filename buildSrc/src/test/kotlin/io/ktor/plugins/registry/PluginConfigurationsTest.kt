@@ -60,7 +60,12 @@ class PluginConfigurationsTest {
     @Test
     fun collectsAllConfigs() {
         collectPluginConfigs(logger, listOf("3.0.0"), rootPath = "..").forEachIndexed { i, config ->
-            println("$i ${config.name}: ${config.artifacts}")
+            println(listOf(
+                (i + 1).toString().padEnd(4),
+                config.name.padEnd(40),
+                config.module.name.padEnd(8),
+                config.artifacts.joinToString(),
+            ).joinToString(" "))
         }
     }
 

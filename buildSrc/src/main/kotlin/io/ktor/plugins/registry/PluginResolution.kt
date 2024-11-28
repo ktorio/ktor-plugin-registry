@@ -8,10 +8,12 @@ import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
 import com.charleskorn.kaml.encodeToStream
 import org.gradle.api.artifacts.ResolvedConfiguration
+import org.slf4j.Logger
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import kotlin.io.path.createDirectory
+import kotlin.io.path.createFile
 import kotlin.io.path.exists
 import kotlin.io.path.outputStream
 import kotlin.io.path.inputStream
@@ -24,6 +26,7 @@ import kotlin.io.path.inputStream
  */
 fun writeResolvedPluginConfigurations(
     pluginConfigs: List<PluginConfiguration>,
+    log: Logger,
     gradleConfigLookup: (String) -> ResolvedConfiguration,
 ) {
     val pluginsDir = Paths.get("build/plugins").clear()
@@ -32,16 +35,17 @@ fun writeResolvedPluginConfigurations(
     pluginsDir.resolve("configurations.yaml").outputStream().use { output ->
         Yaml.default.encodeToStream(pluginConfigs, output)
     }
+    log.info("Writing classpaths for ${pluginConfigs.size} configurations...")
     for (pluginConfig in pluginConfigs) {
         val classPathFile = classpathsDir.resolve("${pluginConfig.id}.${pluginConfig.release}.yaml")
         val alreadyResolved = readAlreadyResolved(classPathFile)
         val artifactsMap = pluginConfig.getResolvedArtifacts(gradleConfigLookup) - alreadyResolved
+        log.debug("{}: {}", pluginConfig.name, artifactsMap.values)
 
         if (artifactsMap.isNotEmpty()) {
-            classPathFile.outputStream(
-                StandardOpenOption.CREATE,
-                StandardOpenOption.APPEND
-            ).use { output ->
+            if (!classPathFile.exists())
+                classPathFile.createFile()
+            classPathFile.outputStream(StandardOpenOption.APPEND).use { output ->
                 Yaml.default.encodeToStream(artifactsMap, output)
             }
         }

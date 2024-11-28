@@ -32,7 +32,7 @@ data class PluginConfiguration(
     val repositories: List<String>,
     val parent: String?
 ) {
-    val name: String get() = "$id.$module.$release"
+    val name: String get() = "$id.${module.name}.$release"
     val paths: PluginConfigurationPaths get() =
         PluginConfigurationPaths.get(path, module)
     val groupId: String get() = paths.group.fileName.toString()
