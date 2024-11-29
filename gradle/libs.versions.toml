@@ -10,6 +10,7 @@ compress-version="1.27.1"
 
 [libraries]
 kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-version" }
+kotlin-stdlib-wasm = { module = "org.jetbrains.kotlin:kotlin-stdlib-wasm-js", version.ref = "kotlin-version" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "serialization-version" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization-version" }
 kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml-version" }
@@ -23,3 +24,4 @@ apache-compress = { module = "org.apache.commons:commons-compress", version.ref 
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt-version" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin-version" }
 jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-version" }
+multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin-version" }

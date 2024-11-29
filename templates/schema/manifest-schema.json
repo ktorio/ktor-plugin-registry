@@ -45,29 +45,6 @@
         "type": "string"
       }
     },
-    "options": {
-      "description": "Mapping of options available to this plugin",
-      "type": "object",
-      "patternProperties": {
-        ".*": {
-          "type": "object",
-          "properties": {
-            "name": {
-              "description": "Variable name of the property",
-              "type": "string"
-            },
-            "defaultValue": {
-              "description": "Default value of the property",
-              "type": "string"
-            },
-            "description": {
-              "description": "Description of the property's role",
-              "type": "string"
-            }
-          }
-        }
-      }
-    },
     "installation": {
       "description": "Mapping of installation snippets to be included in the generated project",
       "type": "object",
@@ -100,14 +77,6 @@
           "description": "In ApplicationTest.kt as a separate function",
           "type": "string"
         },
-        "resources": {
-          "description": "In application resources folder as a separate resource file",
-          "type": "string"
-        },
-        "source_file_kt": {
-          "description": "In separate file near the code",
-          "type": "string"
-        },
         "application_conf": {
           "description": "In application.conf file",
           "type": "string"
@@ -115,35 +84,35 @@
         "application_yaml": {
           "description": "In application.yaml file",
           "type": "string"
+        },
+        "client": {
+          "description": "In the installation of the HttpClient, in the client module",
+          "type": "string"
+        },
+        "web": {
+          "description": "In the main function of the web module, executed in the browser",
+          "type": "string"
+        },
+        "outside_web": {
+          "description": "Outside the main function of the web module",
+          "type": "string"
         }
       }
     },
     "sources": {
-      "description": "List of custom source file paths with multi-module support",
+      "description": "List of custom source file paths, with keywords in parentheses",
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "string",
+        "pattern": "([^ ]+\\.[a-z0-9]{1,5}) *(\\(([^)]+)\\))?"
       }
     },
     "resources": {
-      "description": "List of custom source file paths with multi-module support",
+      "description": "List of custom source file paths, with keywords in parentheses",
       "type": "array",
       "items": {
-        "type": "object",
-        "properties": {
-          "file": {
-            "type": "string",
-            "description": "Path to the file"
-          },
-          "module": {
-            "type": "string",
-            "description": "The target module where the file should be created"
-          },
-          "test": {
-            "type": "boolean",
-            "description": "Whether this should be created under the test sources"
-          }
-        }
+        "type": "string",
+        "pattern": "([^ ]+\\.[a-z0-9]{1,5}) *(\\(([^)]+)\\))?"
       }
     },
     "documentation": {

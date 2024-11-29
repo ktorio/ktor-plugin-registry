@@ -34,7 +34,7 @@ data class PluginManifestData(
     private val plugin: PluginConfiguration,
     private val group: PluginGroup,
     private val model: ImportManifest,
-    private val modules: Collection<String>,
+    private val modules: Collection<ProjectModule>,
     private val codeRefs: List<CodeRef>,
     private val documentationEntry: DocumentationEntry,
     private val logo: Path?,
@@ -81,7 +81,7 @@ data class PluginManifestData(
             }
         }
         putJsonArray("modules") {
-            addAll(modules)
+            addAll(modules.map { it.name})
         }
         putInstallRecipe()
         putGradleInstall()
@@ -146,11 +146,16 @@ data class PluginManifestData(
         putJsonArray("dependencies") {
             for (dependency in plugin.artifacts) {
                 addJsonObject {
-                    put("group", dependency.group)
                     put("artifact", dependency.name)
                     putVersion(dependency.version)
                     if (dependency.module != null) {
-                        put("module", dependency.module)
+                        put("module", dependency.module?.name)
+                    }
+                    if (dependency.group != null) {
+                        put("group", dependency.group)
+                    }
+                    if (dependency.function != null) {
+                        put("function", dependency.function)
                     }
                 }
             }
@@ -326,7 +331,7 @@ data class PluginManifestData(
     }
 
     object CodeBlockSerializer : KSerializer<CodeSnippetSource> {
-        private val fileReferenceRegex = Regex("(\\S+\\.\\S{1,5})\\s*(?:\\(([^\\)]+)\\))?")
+        private val fileReferenceRegex = Regex("(\\S+\\.\\S{1,5})\\s*(?:\\(([^)]+)\\))?")
 
         override val descriptor: SerialDescriptor =
             PrimitiveSerialDescriptor("CodeBlock", PrimitiveKind.STRING)

@@ -1,5 +1,3 @@
-  - io.ktor:ktor-metrics-micrometer:==
-  - io.micrometer:micrometer-registry-prometheus:$prometheus
 "[2.0,)":
   - io.ktor:ktor-server-metrics-micrometer-jvm:==
   - io.micrometer:micrometer-registry-prometheus:$prometheus

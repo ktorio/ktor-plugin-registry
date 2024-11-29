@@ -5,11 +5,21 @@
 @file:Suppress("UnstableApiUsage")
 
 import io.ktor.plugins.registry.*
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val skipPlugins: String by project
 val ktorReleases = getKtorReleases(logger)
 val latestKtor = ktorReleases.last()
-val pluginConfigs by lazy { collectPluginConfigs(logger, ktorReleases) }
+val pluginConfigs by lazy {
+    if (skipPlugins.toBoolean())
+        emptyList()
+    else collectPluginConfigs(logger, ktorReleases)
+}
+val mock = "mock"
+
+// TODO KTOR-7849 need to introduce multi-platform compilation to get wasm-js modules to work properly
+//      but this will require a lot of changes here
+fun List<PluginConfiguration>.skipWebModules() =
+    filterNot { it.module == ProjectModule.web }
 
 plugins {
     alias(libs.plugins.serialization)
@@ -22,6 +32,8 @@ version = "1.0-SNAPSHOT"
 
 // create build config for each valid release-plugin-target triple
 configurations {
+    // create mock configuration
+    create(mock) {}
     // create plugin build configs
     for (pluginConfig in pluginConfigs) {
         create(pluginConfig.name) {
@@ -41,11 +53,17 @@ repositories {
 }
 
 sourceSets {
+    // mock for the expected generated project sources, so plugins can reference these
+    val mockSourceSet = sourceSets.create(mock) {
+        kotlin.srcDir("src/mock/kotlin")
+        compileClasspath += configurations[mock]
+    }
     // include all the plugins as source paths, using the latest valid ktor release for each
-    for (pluginConfig in pluginConfigs.latestByPath()) {
+    for (pluginConfig in pluginConfigs.latestByPath().skipWebModules()) {
         create(pluginConfig.name) {
             kotlin.srcDir("plugins/${pluginConfig.path}")
             compileClasspath += configurations[pluginConfig.name]
+            compileClasspath += mockSourceSet.output
             pluginConfig.parent?.let { parent ->
                 compileClasspath += configurations[parent]
                 compileClasspath += sourceSets[parent].output
@@ -55,25 +73,43 @@ sourceSets {
 }
 
 dependencies {
+    // mock configuration for referencing expected generated code
+    mock(kotlin("stdlib"))
+    mock("io.ktor:ktor-server-core:$latestKtor")
+
     // create a build config for every plugin-release-module combination
-    for (pluginConfig in pluginConfigs) {
-        val type = pluginConfig.type
+    for (pluginConfig in pluginConfigs.skipWebModules()) {
         val release = pluginConfig.release
         val config = pluginConfig.name
-
-        // common dependencies
-        config(kotlin("stdlib"))
-        config(kotlin("test"))
-        config(kotlin("test-junit"))
-        config("io.ktor:ktor-$type-core:$release")
-        when(type) {
-            "client" -> config("io.ktor:ktor-client-mock:$release")
-            "server" -> config("io.ktor:ktor-server-test-host:$release")
+        when(pluginConfig.module) {
+            ProjectModule.web -> {
+                config(kotlin("stdlib-wasm-js"))
+            }
+            ProjectModule.client -> {
+                config("io.ktor:ktor-client-mock:$release")
+                config("io.ktor:ktor-client-core:$release")
+            }
+            ProjectModule.server -> {
+                config(kotlin("stdlib-jdk8"))
+                config(kotlin("test-junit"))
+                config("io.ktor:ktor-server-core:$release")
+                config("io.ktor:ktor-server-test-host:$release")
+            }
+            else -> config(kotlin("stdlib"))
         }
+        config(kotlin("test"))
 
         // artifacts for the specific plugin version
-        for ((group, name, version) in pluginConfig.artifacts)
-            config("$group:$name:${version.resolvedString}")
+        for (artifact in pluginConfig.artifacts) {
+            when(artifact.function) {
+                null -> artifact.let { (group, name, version) ->
+                    config("$group:$name:${version.resolvedString}")
+                }
+                "npm" -> {
+                    config(npm(artifact.name, artifact.version.resolvedString))
+                }
+            }
+        }
     }
 
     // shared sources used in buildSrc
@@ -131,7 +167,7 @@ tasks {
         group = "plugins"
         description = "Locate plugin resources from version definitions"
         doLast {
-            writeResolvedPluginConfigurations(pluginConfigs) { configName ->
+            writeResolvedPluginConfigurations(pluginConfigs, logger) { configName ->
                 configurations[configName].resolvedConfiguration
             }
         }
@@ -150,7 +186,7 @@ tasks {
     val compileAll by registering {
         group = "build"
         description = "Compile all source sets"
-        dependsOn(withType<KotlinCompile>())
+        dependsOn(withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>())
     }
 
     // builds the registry for distributing to the project generator

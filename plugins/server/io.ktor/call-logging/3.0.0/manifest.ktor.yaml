@@ -4,5 +4,4 @@ vcsLink: https://github.com/ktorio/ktor/blob/f028b0ca428335b6545b81afef803e23624
 license: Apache 2.0
 category: Monitoring
 installation:
-  default: install.kt
   call_logging_config: call_logging.kt

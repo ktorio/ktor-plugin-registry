@@ -56,33 +56,59 @@ data class ArtifactReference(
     val group: String? = null,
     val name: String,
     val version: ArtifactVersion,
-    val module: String? = null,
+    val module: ProjectModule? = null,
+    val function: String? = null,
 ) {
     companion object {
-        private val referenceStringRegex = Regex("""(?:(.+?):)?(.+?):(.+)""")
+        private val artifactRegex = Regex("""(?:(?<group>[\w.-]+?):)?(?<artifact>[\w.-]+?):(?<version>.+)""")
+        private val functionRegex = Regex("""(?<function>\w+)\((?<arg>.+?)\)""")
+        private val referenceRegex = Regex("${artifactRegex.pattern}|${functionRegex.pattern}")
 
         fun parse(
             text: String,
             defaultGroup: String? = null,
             versionVariables: Map<String, String> = emptyMap(),
-            module: String? = null,
+            module: ProjectModule? = null,
         ): ArtifactReference =
-            referenceStringRegex.matchEntire(text)?.destructured?.let { (group, name, version) ->
+            referenceRegex.matchEntire(text)?.let { match ->
+                when(val function = match.groups["function"]?.value) {
+                    null -> match.asReference(versionVariables, module, defaultGroup)
+                    "npm" -> artifactRegex.matchEntire(match.groups["arg"]!!.value)
+                                ?.asReference(versionVariables, module, function = function)
+                    else -> throw IllegalArgumentException("Unexpected function for dependency: $function")
+                }
+            } ?: throw IllegalArgumentException("Invalid artifact reference string \"$text\"")
+
+        private fun MatchResult.asReference(
+            versionVariables: Map<String, String>,
+            module: ProjectModule?,
+            defaultGroup: String? = null,
+            function: String? = null,
+        ): ArtifactReference? =
+            destructured.let { (group, name, version) ->
                 ArtifactReference(
                     group = group.takeIf(String::isNotEmpty) ?: defaultGroup,
                     name = name,
                     version = ArtifactVersion.parse(version, versionVariables),
                     module = module,
+                    function = function,
                 )
-            } ?: throw IllegalArgumentException("Invalid artifact reference string \"$text\"")
+            }
     }
 
     override fun toString() =
         buildString {
+            if (function != null) {
+                append(function).append('(')
+            }
             if (group != null) {
                 append(group).append(':')
             }
             append(name).append(':').append(version)
+
+            if (function != null) {
+                append(')')
+            }
         }
 
     fun groupAndName(defaultGroup: PluginGroup) =

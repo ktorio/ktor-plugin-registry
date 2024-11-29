@@ -8,14 +8,16 @@ import com.charleskorn.kaml.*
 import org.slf4j.Logger
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.exists
 import kotlin.io.path.relativeTo
 
 const val KTOR_MAVEN_REPO = "https://repo1.maven.org/maven2/io/ktor/ktor-server/maven-metadata.xml"
 val DEPRECATED_VERSIONS = setOf(1)
 // presets for inter-module dependencies
-val moduleParents: Map<String, String> = mapOf(
-    "client" to "core",
-    "server" to "core",
+val moduleParents: Map<ProjectModule, ProjectModule> = mapOf(
+    ProjectModule.client to ProjectModule.core,
+    ProjectModule.server to ProjectModule.core,
+    ProjectModule.web to ProjectModule.client,
 )
 
 /**
@@ -62,11 +64,13 @@ private fun pluginConfigCombinations(pluginsRoot: Path, releases: List<ArtifactV
     return sequence {
         for (type in listOf("server", "client")) {
             for (pluginDir in folders("$pluginsRoot/$type/*/*")) {
+                if (pluginDir.resolve("ignore").exists())
+                    continue
                 pluginIds.put(pluginDir.fileName.toString(), pluginDir)?.let { previouslyFound ->
                     throw IllegalArgumentException("Duplicate plugins found: $previouslyFound, $pluginDir")
                 }
                 for (release in releases) {
-                    val modules = (pluginDir.moduleReferences() + type).distinct()
+                    val modules = (pluginDir.moduleReferences() + type).distinct().map { it.asProjectModule() }
                     yield(PluginConfigurationStub(type, release, pluginDir, modules))
                 }
             }
@@ -78,13 +82,13 @@ private data class PluginConfigurationStub(
     val type: String,
     val release: ArtifactVersion,
     val pluginDir: Path,
-    val modules: List<String>,
+    val modules: List<ProjectModule>,
 )
 
 private fun readPluginConfigs(
     pluginsRoot: Path,
     type: String,
-    modules: List<String>,
+    modules: List<ProjectModule>,
     release: ArtifactVersion,
     pluginDir: Path,
     versionProperties: Map<String, String>,
@@ -129,7 +133,7 @@ private fun readPluginConfigs(
     return modules.asSequence().map { module ->
         val prerequisiteArtifacts = prerequisiteArtifactsByModule[module] ?: emptyList()
         val requiredArtifacts = (artifacts + prerequisiteArtifacts).asSequence().filter {
-            it.module == module || (it.module == null && module == type)
+            it.module == module || (it.module == null && module.name == type)
         }.map {
             when (it.version) {
                 is KtorVersion -> it.resolve(release)
@@ -139,7 +143,7 @@ private fun readPluginConfigs(
 
         val kotlinSourcePath =
             if (modules.size > 1)
-                pluginSourceDir.resolve(module)
+                pluginSourceDir.resolve(module.name)
             else pluginSourceDir
 
         val parent = moduleParents[module]?.takeIf { it in modules }?.let { parent ->
@@ -168,7 +172,7 @@ private fun readArtifacts(
     when (artifacts) {
         is YamlMap -> artifacts.entries.flatMap { (moduleName, moduleArtifacts) ->
             readArtifacts(moduleArtifacts, groupId, versionVariables).map {
-                it.copy(module = moduleName.content)
+                it.copy(module = moduleName.content.asProjectModule())
             }
         }
         is YamlList -> artifacts.items.map {
