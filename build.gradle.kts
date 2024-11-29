@@ -14,6 +14,8 @@ val pluginConfigs by lazy {
         emptyList()
     else collectPluginConfigs(logger, ktorReleases)
 }
+val mock = "mock"
+
 // TODO KTOR-7849 need to introduce multi-platform compilation to get wasm-js modules to work properly
 //      but this will require a lot of changes here
 fun List<PluginConfiguration>.skipWebModules() =
@@ -30,6 +32,8 @@ version = "1.0-SNAPSHOT"
 
 // create build config for each valid release-plugin-target triple
 configurations {
+    // create mock configuration
+    create(mock) {}
     // create plugin build configs
     for (pluginConfig in pluginConfigs) {
         create(pluginConfig.name) {
@@ -49,11 +53,17 @@ repositories {
 }
 
 sourceSets {
+    // mock for the expected generated project sources, so plugins can reference these
+    val mockSourceSet = sourceSets.create(mock) {
+        kotlin.srcDir("src/mock/kotlin")
+        compileClasspath += configurations[mock]
+    }
     // include all the plugins as source paths, using the latest valid ktor release for each
     for (pluginConfig in pluginConfigs.latestByPath().skipWebModules()) {
         create(pluginConfig.name) {
             kotlin.srcDir("plugins/${pluginConfig.path}")
             compileClasspath += configurations[pluginConfig.name]
+            compileClasspath += mockSourceSet.output
             pluginConfig.parent?.let { parent ->
                 compileClasspath += configurations[parent]
                 compileClasspath += sourceSets[parent].output
@@ -63,6 +73,10 @@ sourceSets {
 }
 
 dependencies {
+    // mock configuration for referencing expected generated code
+    mock(kotlin("stdlib"))
+    mock("io.ktor:ktor-server-core:$latestKtor")
+
     // create a build config for every plugin-release-module combination
     for (pluginConfig in pluginConfigs.skipWebModules()) {
         val release = pluginConfig.release
