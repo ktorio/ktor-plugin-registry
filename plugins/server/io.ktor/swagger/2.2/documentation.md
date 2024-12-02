@@ -23,7 +23,7 @@ swaggerUI(path = "swagger", swaggerFile = "openapi/documentation.yaml") {
 ```
 You can learn more from [Swagger UI](https://ktor.io/docs/swagger-ui.html).
 
-###Configure CORS
+### Configure CORS
 
 To make sure your API works nicely with Swagger UI, you need to set up a policy for [Cross-Origin Resource Sharing (CORS)](https://ktor.io/docs/cors.html). The example below applies the following CORS configuration:
 * `anyHost` enables cross-origin requests from any host;
