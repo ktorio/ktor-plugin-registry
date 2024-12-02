@@ -1,4 +1,4 @@
-name: CallId
+name: Call ID
 description: Allows to identify a request/call.
 vcsLink: https://github.com/ktorio/ktor/blob/f028b0ca428335b6545b81afef803e236242b3a5/ktor-server/ktor-server-core/jvm/src/io/ktor/features/CallId.kt
 license: Apache 2.0
