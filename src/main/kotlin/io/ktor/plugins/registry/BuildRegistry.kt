@@ -5,7 +5,6 @@
 package io.ktor.plugins.registry
 
 import io.ktor.plugins.registry.utils.Files.resolveAndClear
-import io.ktor.plugins.registry.RegistryBuilder
 import java.nio.file.Paths
 
 /**

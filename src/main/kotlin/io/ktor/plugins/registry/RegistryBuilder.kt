@@ -159,6 +159,12 @@ private fun processAssets(pluginsDir: Path, assetsDir: Path) {
         val logoFile = groupFolder.resolve(logo).takeIf { it.exists() } ?: continue
         logoFile.copyTo(assetsDir.resolve(group.outputLogo!!), overwrite = true)
     }
+
+    // Copy default icon
+    val iconInput = RegistryBuilder::class.java.getResourceAsStream("/default-icon.svg")
+    iconInput?.bufferedReader()?.use { reader ->
+        reader.copyTo(assetsDir.resolve("default-icon.svg").writer())
+    }
 }
 
 private fun PluginConfiguration.resolveManifest(
