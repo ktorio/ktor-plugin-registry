@@ -15,6 +15,7 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
 import org.slf4j.LoggerFactory
+import kotlin.io.path.Path
 
 private const val GENERATE_URL = "https://start-ktor-io.labs.jb.gg/project/generate"
 private const val COMPARE_BRANCH = "main"
@@ -46,6 +47,7 @@ fun main(args: Array<String>) {
     logger.info("Creating project from plugins:\n${pluginIds.joinToString("\n") { " - $it" }}")
     val registryFiles = RegistryOutputFiles(argsMap["build-dir"]!!)
     val latestRelease = registryFiles.ktorReleases.last()
+    val versionProperties = Path("plugins").readVersionProperties()
 
     val generatorBackendUrl = argsMap["url"]!!
     val projectPath = argsMap["path"] ?: OUTPUT_DIR
@@ -57,6 +59,8 @@ fun main(args: Array<String>) {
             features = registryFiles.getAllRequiredPluginIds(latestRelease, pluginIds)
             featureOverrides = pluginIds.map { registryFiles.readManifest(latestRelease, it) }
             outputDir = projectPath
+            ktorVersion = versionProperties["ktor_version"]
+            kotlinVersion = versionProperties["kotlin_version"]
         }
     }
 
