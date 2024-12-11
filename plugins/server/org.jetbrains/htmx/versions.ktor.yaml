@@ -1,2 +1,4 @@
 "[3.0,)":
-  web: npm(htmx.org:2.0.3)
+  web:
+    - npm(htmx.org:2.0.3)
+    - org.jetbrains.kotlinx:kotlinx-browser:$kotlinx-browser
