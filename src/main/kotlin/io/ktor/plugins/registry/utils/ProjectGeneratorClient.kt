@@ -26,7 +26,6 @@ private const val DEFAULT_PROJECT_WEBSITE = "ktor.io"
 private const val DEFAULT_BUILD_SYSTEM = "GRADLE_KTS"
 private const val DEFAULT_ENGINE = "NETTY"
 private const val DEFAULT_OUTPUT_DIR = "test-project"
-private const val DEFAULT_KOTLIN_VERSION = "1.9.23" // TODO get from gradle
 private const val DEFAULT_CONFIGURATION_OPTION = "HOCON"
 
 /**
@@ -40,8 +39,12 @@ class ProjectGeneratorClient(
 
     @OptIn(ExperimentalSerializationApi::class, ExperimentalPathApi::class)
     suspend fun generate(params: ProjectGeneratorRequestBuilder.() -> Unit) {
+
         ProjectGeneratorRequestBuilder().run {
             params()
+
+            require(kotlinVersion != null) { "Kotlin version must be specified" }
+            require(ktorVersion != null) { "Ktor version must be specified" }
 
             val response = httpClient.post(url) {
                 contentType(ContentType.Application.Json)
@@ -55,6 +58,9 @@ class ProjectGeneratorClient(
                         put("ktor_version", ktorVersion)
                         put("kotlin_version", kotlinVersion)
                         put("build_system", buildSystem)
+                        putJsonObject("build_system_args") {
+                            put("version_catalog", true)
+                        }
                         put("engine", engine)
                     }
                     put("configurationOption", configurationOption)
@@ -106,7 +112,7 @@ class ProjectGeneratorRequestBuilder {
     var engine: String = DEFAULT_ENGINE
     var outputDir: String = DEFAULT_OUTPUT_DIR
     var ktorVersion: String? = null
-    var kotlinVersion: String = DEFAULT_KOTLIN_VERSION
+    var kotlinVersion: String? = null
     var features: List<String> = emptyList()
     var featureOverrides: List<JsonObject> = emptyList()
     var configurationOption: String = DEFAULT_CONFIGURATION_OPTION
