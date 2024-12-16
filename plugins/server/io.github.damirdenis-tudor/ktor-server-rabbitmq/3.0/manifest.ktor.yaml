@@ -1,5 +1,5 @@
-name: ktor-server-rabbitmq
-description: Adds Kafka support to your application
+name: KabbitMQ
+description: Adds RabbitMQ support to your application
 vcsLink: https://github.com/DamirDenis-Tudor/ktor-server-rabbitmq
 license: Apache 2.0
 

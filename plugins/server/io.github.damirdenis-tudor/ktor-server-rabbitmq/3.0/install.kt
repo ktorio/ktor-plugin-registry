@@ -8,10 +8,7 @@ import io.ktor.server.application.*
 
 fun Application.install() {
     install(KabbitMQ) {
-        uri = "amqp://<user>:<password>@<address>:<port>"
-        defaultConnectionName = "<default_connection>"
-        connectionAttempts = 20
-        attemptDelay = 10
+        uri = "amqp://guest:guest@localhost:5672"
     }
 
     queueBind {
@@ -31,7 +28,7 @@ fun Application.install() {
     queueBind {
         queue = "test-queue"
         exchange = "test-exchange"
-        exchange = "test-routing-key"
+        routingKey = "test-routing-key"
         queueDeclare {
             queue = "test-queue"
             arguments = mapOf(
