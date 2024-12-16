@@ -12,12 +12,6 @@ fun Application.install() {
         defaultConnectionName = "<default_connection>"
         connectionAttempts = 20
         attemptDelay = 10
-
-        tlsEnabled = true
-        tlsKeystorePath = "<path>"
-        tlsKeystorePassword = "<password>"
-        tlsTruststorePath = "<path>"
-        tlsTruststorePassword = "<password>"
     }
 
     queueBind {
