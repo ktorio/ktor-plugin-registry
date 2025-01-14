@@ -1,2 +1,2 @@
-"[2.0,3.0.0)": ktor-server-call-logging-jvm:==
-"[3.0.0,)": ktor-server-call-logging-jvm:==
+"[2.0,3.0.0)": ktor-server-call-logging:==
+"[3.0.0,)": ktor-server-call-logging:==

@@ -1,1 +1,1 @@
-"[2.0,)": com.ucasoft.ktor:ktor-simple-redis-cache-jvm:0.+
+"[2.0,)": com.ucasoft.ktor:ktor-simple-redis-cache:0.+
