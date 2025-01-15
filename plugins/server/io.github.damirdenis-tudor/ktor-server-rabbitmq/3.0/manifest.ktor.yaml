@@ -1,4 +1,4 @@
-name: KabbitMQ
+name: RabbitMQ
 description: Adds RabbitMQ support to your application
 vcsLink: https://github.com/DamirDenis-Tudor/ktor-server-rabbitmq
 license: Apache 2.0
@@ -8,4 +8,3 @@ category: Frameworks
 installation:
   default: install.kt
   application_conf: application.conf
-  application_yaml: application.yaml
