@@ -1,22 +1,25 @@
 
-#### This plugin provides access to all the core functionalities of the `com.rabbitmq:amqp-client` library.
+#### This plugin provides access to major core functionalities of the `com.rabbitmq:amqp-client` library.
 
 ### Features
 
-- Seamlessly integrates with `Kotlin DSL`, making it readable, maintainable, and easy to use.
+- Integrated with coroutines and has a separate dispatcher.
+- Seamlessly integrates with the Kotlin DSL, making it readable, maintainable, and easy to use.
 - Includes a built-in connection/channel management system.
 - Provides a built-in mechanism for validating property combinations.
+- Gives the possibility to interact directly with the java library.
 
 
 ## Usage
 
-### Instalation
+### Installation
 ```kotlin
 install(KabbitMQ) {
     uri = "amqp://<user>:<password>@<address>:<port>"
     defaultConnectionName = "<default_connection>"
     connectionAttempts = 20
     attemptDelay = 10
+    dispatcherThreadPollSize = 2
 
     tlsEnabled = true
     tlsKeystorePath = "<path>"
@@ -28,31 +31,31 @@ install(KabbitMQ) {
 
 ### Queue binding example
 ```kotlin
-queueBind {
-    queue = "test-queue"
-    exchange = "test-exchange"
-    routingKey = "test-routing-key"
-    queueDeclare {
-        queue = "test-queue"
-        durable = true
-    }
-    exchangeDeclare {
-        exchange = "test-exchange"
-        type = BuiltinExchangeType.DIRECT
+rabbitmq {
+    queueBind {
+        queue = "demo-queue"
+        exchange = "demo-exchange"
+        routingKey = "demo-routing-key"
+        queueDeclare {
+            queue = "demo-queue"
+            durable = true
+        }
+        exchangeDeclare {
+            exchange = "demo-exchange"
+            type = "direct"
+        }
     }
 }
 ```
 
 ### Producer example
 ```kotlin
-channel(id = 2, autoClose = true) {
+rabbitmq {
     repeat(10) {
         basicPublish {
-            exchange = "test-exchange"
-            routingKey = "test-routing-key"
-            message {
-                Message(content = "Hello world!")
-            }
+            exchange = "demo-exchange"
+            routingKey = "demo-routing-key"
+            message { "Hello World!" }
         }
     }
 }
@@ -60,12 +63,12 @@ channel(id = 2, autoClose = true) {
 
 ### Consumer Example
 ```kotlin
-basicConsume {
-    queue = "test-queue"
-    autoAck = false
-    deliverCallback<Message> { tag, message ->
-        basicAck {
-            deliveryTag = tag
+rabbitmq {
+    basicConsume {
+        autoAck = true
+        queue = "demo-queue"
+        deliverCallback<String> { tag, message ->
+            logger.info("Received message: $message")
         }
     }
 }
@@ -73,20 +76,25 @@ basicConsume {
 
 ### Library Calls Example
 ```kotlin
-channel("direct-calls"){
-    basicPublish("test", "test-routing-key", null, "Hello!".toByteArray())
-    
-    val consumer = object : DefaultConsumer(channel) {
-        override fun handleDelivery(
-            consumerTag: String?,
-            envelope: Envelope?,
-            properties: AMQP.BasicProperties?,
-            body: ByteArray?
-        ) {
-            
+rabbitmq {
+    libConnection("lib_connection") {
+        with(createChannel()) {
+            basicPublish("demo-queue", "demo-routing-key", null, "Hello!".toByteArray())
+
+            val consumer = object : DefaultConsumer(channel) {
+                override fun handleDelivery(
+                    consumerTag: String?,
+                    envelope: Envelope?,
+                    properties: AMQP.BasicProperties?,
+                    body: ByteArray?
+                ) {
+
+                }
+            }
+
+            basicConsume("demo-queue", true, consumer)
         }
     }
-    basicConsume(queueName, true, consumer)
 }
 ```
 
