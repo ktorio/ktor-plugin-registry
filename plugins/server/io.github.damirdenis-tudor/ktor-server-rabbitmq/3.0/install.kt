@@ -1,19 +1,19 @@
-import io.github.damir.denis.tudor.ktor.server.rabbitmq.dsl.basicConsume
-import io.github.damir.denis.tudor.ktor.server.rabbitmq.dsl.basicPublish
-import io.github.damir.denis.tudor.ktor.server.rabbitmq.dsl.exchangeDeclare
-import io.github.damir.denis.tudor.ktor.server.rabbitmq.dsl.queueBind
-import io.github.damir.denis.tudor.ktor.server.rabbitmq.dsl.queueDeclare
-import io.github.damir.denis.tudor.ktor.server.rabbitmq.plugin.RabbitMQ
-import io.github.damir.denis.tudor.ktor.server.rabbitmq.plugin.rabbitmq
+import io.github.damir.denis.tudor.ktor.server.rabbitmq.RabbitMQ
+import io.github.damir.denis.tudor.ktor.server.rabbitmq.dsl.*
+import io.github.damir.denis.tudor.ktor.server.rabbitmq.rabbitMQ
 import io.ktor.server.application.*
-import io.ktor.server.request.receiveText
 import io.ktor.server.response.respondText
-import io.ktor.server.routing.application
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
+import kotlinx.coroutines.Dispatchers
 
 fun Application.install() {
-    install(RabbitMQ)
+    install(RabbitMQ) {
+        uri = "amqp://<user>:<password>@<address>:<port>"
+        defaultConnectionName = "default-connection"
+        dispatcherThreadPollSize = 2
+        tlsEnabled = false
+    }
 
     rabbitmq {
         queueBind {
@@ -29,6 +29,9 @@ fun Application.install() {
                 durable = true
             }
         }
+    }
+
+    rabbitmq {
         queueBind {
             queue = "test-queue"
             exchange = "test-exchange"
@@ -44,6 +47,10 @@ fun Application.install() {
                     "x-dead-letter-routing-key" to "dlq-dlx"
                 )
             }
+        }.onSuccess{ response->
+            log.info("Successfully bind queue: $response")
+        }.onFailure{ error ->
+            log.error("Failed to bind queue: $error")
         }
     }
 
@@ -51,8 +58,8 @@ fun Application.install() {
         get("/rabbitmq") {
             rabbitmq {
                 basicPublish {
-                    exchange = "demo-exchange"
-                    routingKey = "demo-routing-key"
+                    exchange = "test-exchange"
+                    routingKey = "test-routing-key"
                     message { "Hello Ktor!" }
                 }
             }
@@ -63,7 +70,8 @@ fun Application.install() {
         rabbitmq {
             basicConsume {
                 autoAck = true
-                queue = "demo-queue"
+                queue = "test-queue"
+                dispatcher = Dispatchers.rabbitMQ
                 deliverCallback<String> { tag, message ->
                     log.debug("Received message: $message")
                 }
