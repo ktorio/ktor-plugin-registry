@@ -14,7 +14,7 @@
 
 ### Installation
 ```kotlin
-install(KabbitMQ) {
+install(RabbitMQ) {
     uri = "amqp://<user>:<password>@<address>:<port>"
     defaultConnectionName = "<default_connection>"
     connectionAttempts = 20
@@ -74,6 +74,20 @@ rabbitmq {
 }
 ```
 
+### Consumer Example With Dispatchers.IO
+```kotlin
+rabbitmq {
+    basicConsume {
+        autoAck = true
+        queue = "demo-queue"
+        dispatcher = Dispatchers.IO
+        deliverCallback<String> { tag, message ->
+            logger.info("Received message: $message")
+        }
+    }
+}
+```
+
 ### Library Calls Example
 ```kotlin
 rabbitmq {
@@ -97,5 +111,3 @@ rabbitmq {
     }
 }
 ```
-
-### For additional details check [repo](https://github.com/DamirDenis-Tudor/ktor-server-rabbitmq).
