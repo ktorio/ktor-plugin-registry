@@ -1,17 +1,17 @@
+
 import io.github.damir.denis.tudor.ktor.server.rabbitmq.RabbitMQ
 import io.github.damir.denis.tudor.ktor.server.rabbitmq.dsl.*
 import io.github.damir.denis.tudor.ktor.server.rabbitmq.rabbitMQ
 import io.ktor.server.application.*
-import io.ktor.server.response.respondText
-import io.ktor.server.routing.get
-import io.ktor.server.routing.routing
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import kotlinx.coroutines.Dispatchers
 
 fun Application.install() {
     install(RabbitMQ) {
-        uri = "amqp://<user>:<password>@<address>:<port>"
+        uri = "amqp://guest:guest@localhost:5672"
         defaultConnectionName = "default-connection"
-        dispatcherThreadPollSize = 2
+        dispatcherThreadPollSize = 4
         tlsEnabled = false
     }
 
@@ -47,10 +47,6 @@ fun Application.install() {
                     "x-dead-letter-routing-key" to "dlq-dlx"
                 )
             }
-        }.onSuccess{ response->
-            log.info("Successfully bind queue: $response")
-        }.onFailure{ error ->
-            log.error("Failed to bind queue: $error")
         }
     }
 
@@ -72,8 +68,9 @@ fun Application.install() {
                 autoAck = true
                 queue = "test-queue"
                 dispatcher = Dispatchers.rabbitMQ
+                coroutinePollSize = 100
                 deliverCallback<String> { tag, message ->
-                    log.debug("Received message: $message")
+                    log.info("Received message: $message")
                 }
             }
         }

@@ -4,10 +4,9 @@
 ### Features
 
 - Integrated with coroutines and has a separate dispatcher.
-- Seamlessly integrates with the Kotlin DSL, making it readable, maintainable, and easy to use.
 - Includes a built-in connection/channel management system.
-- Provides a built-in mechanism for validating property combinations.
 - Gives the possibility to interact directly with the java library.
+- Seamlessly integrates with the Kotlin DSL, making it readable, maintainable, and easy to use.
 
 
 ## Usage
@@ -19,13 +18,8 @@ install(RabbitMQ) {
     defaultConnectionName = "<default_connection>"
     connectionAttempts = 20
     attemptDelay = 10
-    dispatcherThreadPollSize = 2
-
-    tlsEnabled = true
-    tlsKeystorePath = "<path>"
-    tlsKeystorePassword = "<password>"
-    tlsTruststorePath = "<path>"
-    tlsTruststorePassword = "<password>"
+    dispatcherThreadPollSize = 4
+    tlsEnabled = false
 }
 ```
 
@@ -74,15 +68,19 @@ rabbitmq {
 }
 ```
 
-### Consumer Example With Dispatchers.IO
+### Consumer Example with coroutinePollSize
 ```kotlin
 rabbitmq {
-    basicConsume {
-        autoAck = true
-        queue = "demo-queue"
-        dispatcher = Dispatchers.IO
-        deliverCallback<String> { tag, message ->
-            logger.info("Received message: $message")
+    connection(id = "consume") {
+        basicConsume {
+            autoAck = true
+            queue = "demo-queue"
+            dispacher = Dispacher.IO
+            coroutinePollSize = 1_000
+            deliverCallback<String> { tag, message ->
+                logger.info("Received message: $message")
+                delay(30)
+            }
         }
     }
 }
@@ -91,22 +89,44 @@ rabbitmq {
 ### Library Calls Example
 ```kotlin
 rabbitmq {
-    libConnection("lib_connection") {
-        with(createChannel()) {
-            basicPublish("demo-queue", "demo-routing-key", null, "Hello!".toByteArray())
+    libChannel(id = 2) {
+        basicPublish("demo-queue", "demo-routing-key", null, "Hello!".toByteArray())
 
-            val consumer = object : DefaultConsumer(channel) {
-                override fun handleDelivery(
-                    consumerTag: String?,
-                    envelope: Envelope?,
-                    properties: AMQP.BasicProperties?,
-                    body: ByteArray?
-                ) {
+        val consumer = object : DefaultConsumer(channel) {
+            override fun handleDelivery(
+                consumerTag: String?,
+                envelope: Envelope?,
+                properties: AMQP.BasicProperties?,
+                body: ByteArray?
+            ) {
 
-                }
             }
-
-            basicConsume("demo-queue", true, consumer)
         }
+
+        basicConsume("demo-queue", true, consumer)
     }
 }
+```
+
+```kotlin
+rabbitmq {
+    libConnection(id = "lib-connection") {
+        val channel = createChannel()
+
+        channel.basicPublish("demo-queue", "demo-routing-key", null, "Hello!".toByteArray())
+
+        val consumer = object : DefaultConsumer(channel) {
+            override fun handleDelivery(
+                consumerTag: String?,
+                envelope: Envelope?,
+                properties: AMQP.BasicProperties?,
+                body: ByteArray?
+            ) {
+
+            }
+        }
+
+        channel.basicConsume("demo-queue", true, consumer)
+    }
+}
+```
