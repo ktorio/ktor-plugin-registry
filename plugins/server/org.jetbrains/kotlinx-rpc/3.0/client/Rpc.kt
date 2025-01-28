@@ -1,13 +1,12 @@
 import io.ktor.client.HttpClient
 import io.ktor.client.request.url
-import kotlinx.rpc.RPCClient
-
+import kotlinx.rpc.RpcClient
 import kotlinx.rpc.krpc.ktor.client.rpc
 import kotlinx.rpc.krpc.ktor.client.rpcConfig
 import kotlinx.rpc.krpc.serialization.json.json
 import kotlinx.rpc.withService
 
-suspend fun HttpClient.rpcClient(url: String): RPCClient =
+suspend fun HttpClient.rpcClient(url: String): RpcClient =
     rpc {
         url(url)
 
@@ -18,5 +17,5 @@ suspend fun HttpClient.rpcClient(url: String): RPCClient =
         }
     }
 
-fun RPCClient.sampleService(): SampleService =
+fun RpcClient.sampleService(): SampleService =
     withService<SampleService>()
