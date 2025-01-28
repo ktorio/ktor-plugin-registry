@@ -4,7 +4,7 @@
 
 import io.ktor.client.plugins.websocket.*
 import io.ktor.server.testing.*
-import kotlinx.rpc.krpc.ktor.client.RPC
+import kotlinx.rpc.krpc.ktor.client.Krpc
 import kotlinx.rpc.krpc.ktor.client.rpc
 import kotlinx.rpc.krpc.ktor.client.rpcConfig
 import kotlinx.rpc.krpc.serialization.json.json
@@ -21,7 +21,7 @@ class ApplicationRpcTest {
 
         val ktorClient = createClient {
             install(WebSockets)
-            install(RPC)
+            install(Krpc)
         }
 
         val rpcClient = ktorClient.rpc("/api") {

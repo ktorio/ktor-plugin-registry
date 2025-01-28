@@ -1,6 +1,6 @@
 import io.ktor.server.application.*
-import kotlinx.rpc.krpc.ktor.server.RPC
+import kotlinx.rpc.krpc.ktor.server.Krpc
 
 fun Application.configureRPC() {
-    install(RPC)
+    install(Krpc)
 }
