@@ -1,8 +1,5 @@
-# This file contains all the information needed for including your plugin.
-# See templates/manifest.ktor.yaml for more details
 name: AsyncAPI
-description: Generates and serves OpenAPI documentation
+description: Generates and serves AsyncAPI documentation
 vcsLink: https://github.com/asyncapi/kotlin-asyncapi
 license: Apache 2.0
-# Pick one of: Administration, Databases, HTTP, Monitoring, Routing, Security, Serialization, Sockets, Templating
 category: HTTP

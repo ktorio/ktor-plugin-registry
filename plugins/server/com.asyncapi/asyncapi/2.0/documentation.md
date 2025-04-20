@@ -1,5 +1,5 @@
 
-The `AsyncAPI` plugin allows you to generate and server AsyncAPI documentation for your Ktor application.
+The `AsyncAPI` plugin allows you to generate and serve AsyncAPI documentation for your Ktor application.
 
 ## Usage
 To serve your AsyncAPI specification via Ktor:
