@@ -1,8 +1,8 @@
 # This file contains all the information needed for including your plugin.
 # See templates/manifest.ktor.yaml for more details
-name: Kotlin-asyncapi-ktor
-description: A one-liner of what this does
+name: AsyncAPI
+description: Generates and serves OpenAPI documentation
 vcsLink: https://github.com/asyncapi/kotlin-asyncapi
 license: Apache 2.0
 # Pick one of: Administration, Databases, HTTP, Monitoring, Routing, Security, Serialization, Sockets, Templating
-category: Routing
+category: HTTP
