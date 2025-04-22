@@ -1,0 +1,5 @@
+name: AsyncAPI
+description: Generates and serves AsyncAPI documentation
+vcsLink: https://github.com/asyncapi/kotlin-asyncapi
+license: Apache 2.0
+category: HTTP
