@@ -1,0 +1,7 @@
+# This file contains all the information needed for including your plugin.
+# See templates/manifest.ktor.yaml for more details
+name: Cohort
+description: Spring Actuator style implementation for Ktor
+vcsLink: https://github.com/sksamuel/cohort
+license: Apache 2.0
+category: Monitoring
