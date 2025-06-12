@@ -1,17 +1,17 @@
-import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.html.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.css.*
-import kotlinx.html.*
+import kotlinx.html.body
+import kotlinx.html.h1
+import kotlinx.html.head
+import kotlinx.html.link
 
 public fun Routing.configureRouting() {
     get("/styles.css") {
         call.respondCss {
             body {
                 backgroundColor = Color.darkBlue
-                margin(0.px)
+                margin = Margin(0.px)
             }
             rule("h1.page-title") {
                 color = Color.white
