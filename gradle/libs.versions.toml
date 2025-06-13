@@ -1,6 +1,6 @@
 [versions]
 kotlin-version = "2.1.21"
-kaml-version = "0.77.1"
+kaml-version = "0.81.0"
 logback-version = "1.5.18"
 serialization-version = "1.8.1"
 maven-artifact-version = "3.9.9"
