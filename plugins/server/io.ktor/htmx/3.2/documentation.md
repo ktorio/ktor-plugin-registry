@@ -7,11 +7,13 @@ Add [HTMX attributes](https://htmx.org/reference/#attributes) to your elements u
 
 ```kotlin
 button {
-    attributes["hx-get"]     = "/more-rows"
-    attributes["hx-target"]  = "#replaceMe"
-    attributes["hx-swap"]    = "outerHTML"
-    attributes["hx-trigger"] = "click"
-    attributes["hx-select"]  = "tr"
+    attributes.hx {
+        get = "/more-rows"
+        target = "#replaceMe"
+        swap = "outerHTML"
+        trigger = "click"
+        select = "tr"
+    }
 }
 ```
 
