@@ -1,4 +1,7 @@
-"[3.0,)":
+"[3.2,)":
+  server:
+    - ktor-server-htmx:==
+    - ktor-htmx-html:==
   web:
     - npm(htmx.org:2.0.3)
     - org.jetbrains.kotlinx:kotlinx-browser:$kotlinx-browser

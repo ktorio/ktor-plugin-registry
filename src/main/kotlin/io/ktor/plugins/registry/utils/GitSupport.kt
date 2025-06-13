@@ -46,9 +46,10 @@ object GitSupport {
             scan(currentIndex, mainTree)
         }
 
-        val extractPluginId = Regex("plugins/$target/[^/]+/([^/]+).*")
+        val extractPluginId = Regex("plugins/$target/[^/]+/([^/.]+)/.*$")
         val changedPluginIds = diffEntries.asSequence().mapNotNull {
-            extractPluginId.matchEntire(it.newPath)?.let { pluginMatch ->
+            extractPluginId.matchEntire(it.newPath)
+                ?.let { pluginMatch ->
                     pluginMatch.groups[1]?.value
                 }
         }.distinct()

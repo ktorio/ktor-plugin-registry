@@ -1,0 +1,7 @@
+name: Dependency Injection
+description: Enables dependency injection for your server
+vcsLink: https://github.com/ktorio/ktor
+license: Apache 2.0
+category: Frameworks
+sources:
+  - GreetingService.kt

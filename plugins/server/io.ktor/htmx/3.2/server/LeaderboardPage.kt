@@ -1,6 +1,8 @@
 package com.example
 
 import kotlinx.html.*
+import io.ktor.htmx.html.*
+import io.ktor.utils.io.ExperimentalKtorApi
 import java.nio.file.Paths
 import kotlin.io.path.*
 import kotlin.random.Random
@@ -44,6 +46,7 @@ fun TBODY.randomRows(random: Random) {
     loadMoreRows()
 }
 
+@OptIn(ExperimentalKtorApi::class)
 fun TBODY.loadMoreRows() {
     tr {
         id = "replaceMe"
@@ -52,11 +55,13 @@ fun TBODY.loadMoreRows() {
             style = "text-align: center;"
 
             button {
-                attributes["hx-get"]     = "/more-rows"
-                attributes["hx-target"]  = "#replaceMe"
-                attributes["hx-swap"]    = "outerHTML"
-                attributes["hx-trigger"] = "click"
-                attributes["hx-select"]  = "tr"
+                attributes.hx {
+                    get = "/more-rows"
+                    target = "#replaceMe"
+                    swap = "outerHTML"
+                    trigger = "click"
+                    select = "tr"
+                }
 
                 +"Load More..."
             }

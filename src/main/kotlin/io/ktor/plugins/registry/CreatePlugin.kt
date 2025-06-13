@@ -80,7 +80,7 @@ fun main() {
         description: A one-liner of what this does
         vcsLink: $vcsUrl
         license: Apache 2.0
-        # Pick one of: Administration, Databases, HTTP, Monitoring, Routing, Security, Serialization, Sockets, Templating
+        # Pick one of: Administration, Frameworks, Databases, HTTP, Monitoring, Routing, Security, Serialization, Sockets, Templating
         category: Routing
     """.trimIndent())
 
