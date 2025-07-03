@@ -6,7 +6,7 @@ import kotlinx.rpc.krpc.ktor.client.rpcConfig
 import kotlinx.rpc.krpc.serialization.json.json
 import kotlinx.rpc.withService
 
-suspend fun HttpClient.rpcClient(url: String): RpcClient =
+fun HttpClient.rpcClient(url: String): RpcClient =
     rpc {
         url(url)
 

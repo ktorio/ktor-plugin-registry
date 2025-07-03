@@ -5,18 +5,21 @@ kotlinx.rpc is a Kotlin library for adding asynchronous Remote Procedure Call (R
 First, create your RPC service and define some methods:
 
 ```kotlin
-import kotlinx.rpc.RemoteService
-import kotlinx.rpc.annotations.Rpc
-
 @Rpc
-interface AwesomeService : RemoteService {
-    suspend fun getNews(city: String): Flow<String>
+interface AwesomeService {
+    suspend fun greeting(name: String): String
+    
+    fun getNews(city: String): Flow<String>
 }
 ```
 In your server code define how to respond by simply implementing the service:
 ```kotlin
-class AwesomeServiceImpl(override val coroutineContext: CoroutineContext) : AwesomeService {
-    override suspend fun getNews(city: String): Flow<String> {
+class AwesomeServiceImpl : AwesomeService {
+    override suspend fun greeting(name: String): String {
+        return "Hello, $name!"
+    }
+    
+    override fun getNews(city: String): Flow<String> {
         return flow { 
             emit("Today is 23 degrees!")
             emit("Harry Potter is in $city!")
@@ -39,7 +42,7 @@ fun main() {
                     }
                 }
 
-                registerService<AwesomeService> { ctx -> AwesomeServiceImpl(ctx) }
+                registerService<AwesomeService> { AwesomeServiceImpl() }
             }
         }
     }.start(wait = true)
@@ -57,9 +60,11 @@ val rpcClient = HttpClient { installRPC() }.rpc {
     }
 }
 
-streamScoped {
-    rpcClient.withService<AwesomeService>().getNews("KotlinBurg").collect { article ->
-        println(article)
-    }
+val service = rpcClient.withService<AwesomeService>()
+
+service.greeting("Alex")    
+    
+service.getNews("KotlinBurg").collect { article ->
+    println(article)
 }
 ```
