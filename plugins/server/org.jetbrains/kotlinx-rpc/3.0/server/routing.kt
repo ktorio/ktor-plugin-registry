@@ -14,6 +14,6 @@ fun Routing.configureRouting() {
             }
         }
 
-        registerService<SampleService> { ctx -> SampleServiceImpl(ctx) }
+        registerService<SampleService> { SampleServiceImpl() }
     }
 }
