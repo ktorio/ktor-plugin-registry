@@ -27,7 +27,7 @@ To add a new plugin, follow these easy steps:
                 ├── versions.ktor.yaml
                 └── 2.0
                     ├── manifest.ktor.yaml
-                    ├── install,kt
+                    ├── install.kt
                     └── documentation.md
     ```
    - You can include any number of install files for populating new projects.  More information under 
