@@ -5,7 +5,6 @@
 package io.ktor.plugins.registry.utils
 
 import io.ktor.plugins.registry.*
-import io.ktor.plugins.registry.utils.PluginCategory.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -157,6 +156,7 @@ data class PluginManifestData(
                     if (dependency.function != null) {
                         put("function", dependency.function)
                     }
+                    put("alias", dependency.alias)
                 }
             }
         }
