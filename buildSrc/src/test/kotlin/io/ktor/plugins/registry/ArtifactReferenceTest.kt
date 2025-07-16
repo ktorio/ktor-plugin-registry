@@ -19,6 +19,18 @@ class ArtifactReferenceTest {
     }
 
     @Test
+    fun parsesReferenceWithAlias() {
+        val input = "org.jetbrains:kotlinx-html:1.7.3"
+        val alias = "alias-kotlinx-html"
+        val reference = ArtifactReference.parse(input, alias = alias)
+        assertEquals("$input as $alias", reference.toString())
+        assertEquals("org.jetbrains", reference.group)
+        assertEquals("kotlinx-html", reference.name)
+        assertEquals("1.7.3", reference.version.toString())
+        assertEquals(alias, reference.alias)
+    }
+
+    @Test
     fun parsesFunctionReferences() {
         val input = "npm(htmx.org:2.0.3)"
         val reference = ArtifactReference.parse(input)

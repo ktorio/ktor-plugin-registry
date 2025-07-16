@@ -58,6 +58,7 @@ data class ArtifactReference(
     val version: ArtifactVersion,
     val module: ProjectModule? = null,
     val function: String? = null,
+    val alias: String = name,
 ) {
     companion object {
         private val artifactRegex = Regex("""(?:(?<group>[\w.-]+?):)?(?<artifact>[\w.-]+?):(?<version>.+)""")
@@ -69,12 +70,14 @@ data class ArtifactReference(
             defaultGroup: String? = null,
             versionVariables: Map<String, String> = emptyMap(),
             module: ProjectModule? = null,
+            alias: String? = null,
         ): ArtifactReference =
             referenceRegex.matchEntire(text)?.let { match ->
                 when(val function = match.groups["function"]?.value) {
-                    null -> match.asReference(versionVariables, module, defaultGroup)
+                    null -> match.asReference(versionVariables, module, defaultGroup, alias = alias)
                     "npm" -> artifactRegex.matchEntire(match.groups["arg"]!!.value)
-                                ?.asReference(versionVariables, module, function = function)
+                        ?.asReference(versionVariables, module, function = function, alias = alias)
+
                     else -> throw IllegalArgumentException("Unexpected function for dependency: $function")
                 }
             } ?: throw IllegalArgumentException("Invalid artifact reference string \"$text\"")
@@ -84,6 +87,7 @@ data class ArtifactReference(
             module: ProjectModule?,
             defaultGroup: String? = null,
             function: String? = null,
+            alias: String? = null,
         ): ArtifactReference? =
             destructured.let { (group, name, version) ->
                 ArtifactReference(
@@ -92,6 +96,7 @@ data class ArtifactReference(
                     version = ArtifactVersion.parse(version, versionVariables),
                     module = module,
                     function = function,
+                    alias = alias ?: name
                 )
             }
     }
@@ -108,6 +113,10 @@ data class ArtifactReference(
 
             if (function != null) {
                 append(')')
+            }
+
+            if (alias != name) {
+                append(" as ").append(alias)
             }
         }
 
@@ -257,8 +266,13 @@ class ArtifactReferenceSerializer: KSerializer<ArtifactReference> {
         encoder.encodeString(value.toString())
     }
 
-    override fun deserialize(decoder: Decoder): ArtifactReference =
-        ArtifactReference.parse(decoder.decodeString())
+    /**
+     * @see ArtifactReference.toString
+     */
+    override fun deserialize(decoder: Decoder): ArtifactReference {
+        val parts = decoder.decodeString().split(" as ", limit = 2)
+        return ArtifactReference.parse(parts[0], alias = parts.getOrNull(1))
+    }
 }
 
 class ArtifactVersionSerializer: KSerializer<ArtifactVersion> {

@@ -164,23 +164,55 @@ private fun readPluginConfigs(
     }
 }
 
+private fun parseDependency(artifacts: YamlScalar, groupId: String, versionVariables: Map<String, String>) =
+    ArtifactReference.parse(artifacts.content, groupId, versionVariables)
+
+private fun parseDependencyWithAlias(
+    artifacts: YamlMap,
+    groupId: String,
+    versionVariables: Map<String, String>
+): ArtifactReference {
+    fun YamlMap.findValue(find: String): String {
+        return entries.filter { it.key.content == find }
+            .map { it.value.yamlScalar.content }
+            .firstOrNull() ?: throw IllegalArgumentException("Dependency with alias must have '$find' key")
+    }
+
+    return ArtifactReference.parse(
+        artifacts.findValue("dependency"),
+        groupId,
+        versionVariables,
+        alias = artifacts.findValue("alias")
+    )
+}
+
 private fun readArtifacts(
     artifacts: YamlNode,
     groupId: String,
     versionVariables: Map<String, String>,
 ): List<ArtifactReference> =
     when (artifacts) {
-        is YamlMap -> artifacts.entries.flatMap { (moduleName, moduleArtifacts) ->
-            readArtifacts(moduleArtifacts, groupId, versionVariables).map {
-                it.copy(module = moduleName.content.asProjectModule())
+        is YamlMap -> {
+            // parse as a dependency with alias
+            if (artifacts.entries.keys.any { it.content == "alias" }) {
+                listOf(parseDependencyWithAlias(artifacts, groupId, versionVariables))
+            } else {
+                // parse as a map of module names to artifacts
+                artifacts.entries.flatMap { (moduleName, moduleArtifacts) ->
+                    readArtifacts(moduleArtifacts, groupId, versionVariables).map {
+                        it.copy(module = moduleName.content.asProjectModule())
+                    }
+                }
             }
         }
         is YamlList -> artifacts.items.map {
-            ArtifactReference.parse(it.yamlScalar.content, groupId, versionVariables)
+            when (it) {
+                is YamlScalar -> parseDependency(it, groupId, versionVariables)
+                is YamlMap -> parseDependencyWithAlias(it, groupId, versionVariables)
+                else -> throw IllegalArgumentException("Unexpected item type in artifacts list: $it")
+            }
         }
-        is YamlScalar -> listOf(
-            ArtifactReference.parse(artifacts.content, groupId, versionVariables)
-        )
+        is YamlScalar -> listOf(parseDependency(artifacts, groupId, versionVariables))
         else -> throw IllegalArgumentException("Unexpected node $artifacts")
     }
 
