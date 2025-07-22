@@ -29,7 +29,7 @@ Start by configuring OpenTelemetry in your application:
 val openTelemetry: OpenTelemetry = ...
 
 embeddedServer(Netty, 8080) {
-    server.install(KtorServerTelemetry) {
+    install(KtorServerTelemetry) {
         setOpenTelemetry(openTelemetry)
     }
 }
