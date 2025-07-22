@@ -6,17 +6,16 @@ and monitor your application's health in production.
 
 ## Usage
 
-> In this example, we will use [Jaeger](https://www.jaegertracing.io/) as a tracing backend, but you can use any other
-> OpenTelemetry-compatible observability backend by configuring the appropriate exporter.
->
-> To enable Jaeger, you can run the following command:
-> ```bash
-> docker run -d --name jaeger_instance \
->   -p 4317:4317 \
->   -p 16686:16686 \
->   jaegertracing/all-in-one:latest
-> ```
-> Jaeger UI available on http://localhost:16686/search
+In this example, we will use [Jaeger](https://www.jaegertracing.io/) as a tracing backend, but you can use any other
+OpenTelemetry-compatible observability backend by configuring the appropriate exporter.
+To enable Jaeger, you can run the following command:
+```
+docker run -d --name jaeger_instance \
+    -p 4317:4317 \
+    -p 16686:16686 \
+    jaegertracing/all-in-one:latest
+```
+Jaeger UI will be available on http://localhost:16686/search
 
 OpenTelemetry provides both server and client instrumentation that work together to create comprehensive observability.
 The server instrumentation monitors incoming requests to your application,
@@ -32,7 +31,7 @@ embeddedServer(Netty, 8080) {
     install(KtorServerTelemetry) {
         setOpenTelemetry(openTelemetry)
     }
-}
+}.start(wait = true)
 ```
 
 * Client
