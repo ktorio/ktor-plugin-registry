@@ -1,0 +1,12 @@
+name: OpenTelemetry
+description: Instruments applications with distributed tracing, metrics, and logging for comprehensive observability
+vcsLink: https://github.com/open-telemetry/opentelemetry-java-instrumentation
+license: Apache 2.0
+category: Monitoring
+documentation: documentation.md
+installation:
+  default: install.kt
+  in_routing: routing.kt
+  client: client.kt
+sources:
+  - OpenTelemetry.kt (core)
