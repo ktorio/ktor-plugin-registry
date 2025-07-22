@@ -23,7 +23,7 @@ fun Application.configureOpenTelemetry() {
 
         attributesExtractor {
             onStart {
-                attributes.put("start-time", System.currentTimeMillis())
+                attributes.put("start-time", Instant.now().toEpochMilli())
             }
             onEnd {
                 attributes.put("end-time", Instant.now().toEpochMilli())
