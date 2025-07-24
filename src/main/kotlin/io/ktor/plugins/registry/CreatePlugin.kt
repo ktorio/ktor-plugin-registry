@@ -100,7 +100,7 @@ fun main() {
                     ├── versions.ktor.yaml
                     └── $DEFAULT_KTOR_VERSION
                         ├── manifest.ktor.yaml
-                        ├── install,kt
+                        ├── install.kt
                         └── documentation.md
                                      
         Use the information in the README.md, and examples under ./templates and ./plugins, for help with editing.

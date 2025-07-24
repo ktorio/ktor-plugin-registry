@@ -1,0 +1,11 @@
+"[3.0,)":
+  core:
+    - io.opentelemetry:opentelemetry-sdk-extension-autoconfigure:1.52.0
+    - io.opentelemetry.semconv:opentelemetry-semconv:1.34.0
+    - io.opentelemetry:opentelemetry-exporter-otlp:1.52.0
+    - dependency: io.opentelemetry.instrumentation:opentelemetry-ktor-3.0:2.18.0-alpha
+      alias: opentelemetry-ktor
+#  To generate client folder
+  client:
+    - dependency: io.opentelemetry.instrumentation:opentelemetry-ktor-3.0:2.18.0-alpha
+      alias: opentelemetry-ktor
