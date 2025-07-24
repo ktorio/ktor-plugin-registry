@@ -3,7 +3,6 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.instrumentation.ktor.v3_0.KtorServerTelemetry
-import java.time.Instant
 
 fun Application.configureOpenTelemetry() {
     val openTelemetry = getOpenTelemetry(serviceName = "opentelemetry-ktor-sample-server")
@@ -23,10 +22,10 @@ fun Application.configureOpenTelemetry() {
 
         attributesExtractor {
             onStart {
-                attributes.put("start-time", Instant.now().toEpochMilli())
+                attributes.put("start-time", System.currentTimeMillis())
             }
             onEnd {
-                attributes.put("end-time", Instant.now().toEpochMilli())
+                attributes.put("end-time", System.currentTimeMillis())
             }
         }
     }
