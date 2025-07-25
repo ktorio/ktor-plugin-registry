@@ -1,2 +1,6 @@
-"[2.0,3.0)": io.github.flaxoos:ktor-server-kafka:1.2.10
-"[3.0,)": io.github.flaxoos:ktor-server-kafka:2.+
+"[2.0,3.0)":
+  - io.github.flaxoos:ktor-server-kafka:1.2.10
+  - io.ktor:ktor-client-core:==
+"[3.0,)":
+  - io.github.flaxoos:ktor-server-kafka:2.+
+  - io.ktor:ktor-client-core:==
