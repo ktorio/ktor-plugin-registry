@@ -1,4 +1,3 @@
-import io.ktor.server.application.*
 import io.github.flaxoos.ktor.server.plugins.kafka.Kafka
 import io.github.flaxoos.ktor.server.plugins.kafka.MessageTimestampType
 import io.github.flaxoos.ktor.server.plugins.kafka.TopicName
