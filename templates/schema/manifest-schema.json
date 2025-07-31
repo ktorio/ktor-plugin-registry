@@ -96,6 +96,14 @@
         "outside_web": {
           "description": "Outside the main function of the web module",
           "type": "string"
+        },
+        "gradle_settings": {
+          "description": "In settings.gradle.kts",
+          "type": "string"
+        },
+        "gradle_build": {
+          "description": "In build.gradle.kts",
+          "type": "string"
         }
       }
     },
@@ -137,7 +145,18 @@
                 "type": "string"
               }
             }
-          }
+          },
+          "pluginRepositories": {
+            "description": "A list of repositories that will be used for resolving gradle plugins.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                }
+              }
+            }
         },
         "plugins": {
           "description": "A list of gradle plugins that will be included in the generated build script.",

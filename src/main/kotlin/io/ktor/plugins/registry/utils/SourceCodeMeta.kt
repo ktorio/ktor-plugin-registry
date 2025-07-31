@@ -58,7 +58,13 @@ enum class CodeInjectionSite(
     WEB(CodeExtractionMethod.FUNCTION_BODY, module = "web"),
 
     // Outside the main function of the web module
-    OUTSIDE_WEB(CodeExtractionMethod.CODE_CONTENTS, module = "web");
+    OUTSIDE_WEB(CodeExtractionMethod.CODE_CONTENTS, module = "web"),
+
+    // In gradle.settings.kts
+    GRADLE_SETTINGS(CodeExtractionMethod.VERBATIM),
+
+    // In gradle.build.kts
+    GRADLE_BUILD(CodeExtractionMethod.VERBATIM);
 
     val lowercaseName: String get() = name.lowercase()
 }
