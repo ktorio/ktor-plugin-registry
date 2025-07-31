@@ -197,6 +197,14 @@ data class PluginManifestData(
                             }
                         }
                     }
+                    putJsonArray("plugin_repositories") {
+                        for (repository in gradle.pluginRepositories) {
+                            addJsonObject {
+                                put("type", "url_based")
+                                put("url", repository.url)
+                            }
+                        }
+                    }
                 }
             })
         }
@@ -277,6 +285,7 @@ data class PluginManifestData(
     @Serializable
     data class GradleInstallRecipe(
         val repositories: MutableList<GradleRepository> = mutableListOf(),
+        val pluginRepositories: MutableList<GradleRepository> = mutableListOf(),
         val plugins: List<GradlePlugin> = emptyList(),
         val disabled: Boolean = false,
     )
