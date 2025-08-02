@@ -13,8 +13,8 @@ Optionally, you can configure various `WebSockets` options:
 
 ```kotlin
 install(WebSockets) {
-    pingPeriod = Duration.ofSeconds(15)
-    timeout = Duration.ofSeconds(15)
+    pingPeriod = 15.seconds
+    timeout = 15.seconds
     maxFrameSize = Long.MAX_VALUE
     masking = false
 }
