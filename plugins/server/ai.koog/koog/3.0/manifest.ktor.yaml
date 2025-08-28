@@ -4,5 +4,4 @@ name: Koog
 description: Integrate LLMs and build AI Agents with Koog framework
 vcsLink: https://github.com/JetBrains/koog
 license: Apache 2.0
-# Pick one of: Administration, Frameworks, Databases, HTTP, Monitoring, Routing, Security, Serialization, Sockets, Templating
 category: Frameworks
