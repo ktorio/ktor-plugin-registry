@@ -129,9 +129,9 @@ llm {
     openAI(apiKey = "your-openai-api-key") {
         baseUrl = "https://api.openai.com"
         timeouts {
-            requestTimeoutMillis = 30000
-            connectTimeoutMillis = 10000
-            socketTimeoutMillis = 30000
+            requestTimeout = 30.seconds
+            connectTimeout = 10.seconds
+            socketTimeout = 30.seconds
         }
     }
 
