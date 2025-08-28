@@ -198,9 +198,9 @@ install(Koog) {
 }
 ```
 
-### Agent Configuration
+### Default Agent Configuration
 
-Configure agent behavior, tools, and features:
+Configure global agent behavior, tools, and features:
 
 ```kotlin
 agent {
