@@ -1,5 +1,5 @@
 [versions]
-kotlin-version = "2.2.0"
+kotlin-version = "2.2.20"
 kaml-version = "0.85.0"
 logback-version = "1.5.18"
 serialization-version = "1.9.0"
