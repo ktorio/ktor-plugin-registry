@@ -183,7 +183,7 @@ sealed class CodeRef(
 
     class SourceFile(
         code: String,
-        site: CodeInjectionSite = CodeInjectionSite.SOURCE_FILE_KT,
+        site: CodeInjectionSite,
         override val file: String? = null,
         module: String? = null,
         test: Boolean = false,

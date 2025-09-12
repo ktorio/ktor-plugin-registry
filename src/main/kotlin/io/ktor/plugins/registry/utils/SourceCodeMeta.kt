@@ -45,6 +45,9 @@ enum class CodeInjectionSite(
     // In separate file near the code
     SOURCE_FILE_KT(CodeExtractionMethod.FILE),
 
+    // A non-kotlin source file
+    SOURCE_FILE_MISC(CodeExtractionMethod.FILE),
+
     // In application.conf file
     APPLICATION_CONF(CodeExtractionMethod.VERBATIM, "application.conf"),
 
