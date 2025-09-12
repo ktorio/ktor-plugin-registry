@@ -185,7 +185,9 @@ private fun PluginConfiguration.resolveManifest(
         codeAnalysis.readCodeSnippet(sourcesDir, site, installBlock, readSourceFile)
     }
     val sourceFiles = model.sources.filterIsInstance<PluginManifestData.CodeSnippetSource.File>().map { file ->
-        codeAnalysis.readSourceFile(sourcesDir, file, findCodeInput = readSourceFile)
+        val notKotlin = file.file.substringAfterLast('.') != "kt"
+        val site = if (notKotlin) CodeInjectionSite.SOURCE_FILE_MISC else CodeInjectionSite.SOURCE_FILE_KT
+        codeAnalysis.readSourceFile(sourcesDir, file, site, findCodeInput = readSourceFile)
     }
     val resourceFiles = model.resources.filterIsInstance<PluginManifestData.CodeSnippetSource.File>().map { template ->
         codeAnalysis.readSourceFile(sourcesDir, template, CodeInjectionSite.RESOURCES, readSourceFile)
@@ -244,7 +246,7 @@ private fun CodeAnalysis.readCodeSnippet(
 private fun CodeAnalysis.readSourceFile(
     pluginPath: Path,
     template: PluginManifestData.CodeSnippetSource.File,
-    site: CodeInjectionSite = CodeInjectionSite.SOURCE_FILE_KT,
+    site: CodeInjectionSite,
     findCodeInput: (String) -> InputStream?,
 ): CodeRef {
     val file = template.module?.let { "${template.module}/${template.file}" } ?: template.file
