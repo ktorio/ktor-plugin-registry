@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package io.ktor;
+
+message ClientGreeting {
+  string name = 1;
+}
+
+message ServerGreeting {
+  string content = 2;
+}
+
+service SampleService {
+  rpc greeting(ClientGreeting) returns (ServerGreeting);
+}

@@ -1,0 +1,4 @@
+"[3.0,)":
+  - org.jetbrains.kotlinx:kotlinx-rpc-grpc-ktor-server:$kotlinx-rpc-grpc
+  - io.grpc:grpc-netty:1.73.0
+  - io.grpc:grpc-kotlin-stub:1.4.1
