@@ -1,0 +1,26 @@
+platform: jvm
+dependencies:
+  - $ktorLibs.server.core
+  - $libs.logback.classic
+gradle:
+  plugins:
+    - ktor
+sources:
+  - path: application.conf.hbs
+    target: file:resources/application.conf
+    if: configFormat == "HOCON"
+  - path: application.yaml.hbs
+    target: file:resources/application.yaml
+    if: configFormat == "YAML"
+  - target: slot://org.jetbrains/amper/settings
+    text: "ktor: enabled"
+  - path: src/Http.kt
+    if: _slots.contains("http")
+  - path: src/Serialization.kt
+    if: _slots.contains("serialization")
+  - path: src/Monitoring.kt
+    if: _slots.contains("monitoring")
+  - path: src/Security.kt
+    if: _slots.contains("security")
+  - path: src/Databases.kt
+    if: _slots.contains("databases")

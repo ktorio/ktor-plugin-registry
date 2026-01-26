@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Kastle Module Configuration",
+  "type": "object",
+  "properties": {
+    "platforms": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["jvm", "android", "ios", "js", "wasmJs", "native"]
+      }
+    },
+    "platform": {
+      "type": "string",
+      "description": "Single platform shorthand"
+    },
+    "dependencies": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of dependencies (e.g., $libs.ktor)"
+    },
+    "testDependencies": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "amper": {
+      "type": "object",
+      "properties": {
+        "compose": { "type": "string" },
+        "application": {
+          "type": "object",
+          "properties": {
+            "mainClass": { "type": "string" }
+          }
+        }
+      }
+    },
+    "gradle": {
+      "type": "object",
+      "properties": {
+        "plugins": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "propertyValues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": { "type": "string" },
+          "value": { "type": "string" },
+          "expression": {
+            "type": "string",
+            "description": "Kotlin expression to be evaluated during project generation.",
+            "x-intellij-language-injection": "kotlin"
+          }
+        },
+        "required": ["key"]
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string" },
+          "text": { "type": "string" },
+          "target": { "type": "string" },
+          "condition": {
+            "type": "string",
+            "x-intellij-language-injection": "kotlin"
+          },
+          "priority": { "type": "integer" }
+        }
+      }
+    }
+  }
+}

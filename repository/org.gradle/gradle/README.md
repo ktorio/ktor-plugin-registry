@@ -1,0 +1,1 @@
+The Gradle build tool provides a flexible scripting framework for developing JVM applications.

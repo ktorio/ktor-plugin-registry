@@ -1,27 +1,13 @@
 [versions]
-kotlin-version = "2.2.21"
-kaml-version = "0.85.0"
-logback-version = "1.5.18"
-serialization-version = "1.9.0"
-maven-artifact-version = "3.9.11"
-detekt-version = "1.23.8"
-jgit-version="7.3.0.202506031305-r"
-compress-version="1.28.0"
+ktor = "3.4.0"
+kotlin = "2.3.0"
+logback = "1.5.21"
+prometheus = "1.6.+"
 
 [libraries]
-kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-version" }
-kotlin-stdlib-wasm = { module = "org.jetbrains.kotlin:kotlin-stdlib-wasm-js", version.ref = "kotlin-version" }
-kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "serialization-version" }
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization-version" }
-kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml-version" }
-logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback-version" }
-maven-artifact = { module = "org.apache.maven:maven-artifact", version.ref = "maven-artifact-version" }
-jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit-version" }
-jgit-ssh-apache = { module = "org.eclipse.jgit:org.eclipse.jgit.ssh.apache", version.ref = "jgit-version" }
-apache-compress = { module = "org.apache.commons:commons-compress", version.ref = "compress-version" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+micrometer-micrometerRegistryPrometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "prometheus" }
+webjars-jquery = { module = "org.webjars:jquery", version = "3.2.1" }
 
 [plugins]
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt-version" }
-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin-version" }
-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-version" }
-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin-version" }
+ktor = { id = "io.ktor.plugin", version.ref = "ktor" }

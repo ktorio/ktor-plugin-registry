@@ -1,0 +1,6 @@
+name: Netty Engine
+description: Configures your Ktor server to use the Netty engine
+tags:
+  - core
+requires:
+  - io.ktor/server-core

@@ -1,0 +1,29 @@
+ktor {
+  deployment {
+    port = 8080
+    port = ${?PORT}
+  }
+  application {
+    modules = [
+      {{#if hasHttp}}
+      {{_project.group}}.HttpKt.configureHttp
+      {{/if}}
+      {{#if hasMonitoring}}
+      {{_project.group}}.MonitoringKt.configureMonitoring
+      {{/if}}
+      {{#if hasSerialization}}
+      {{_project.group}}.SerializationKt.configureSerialization
+      {{/if}}
+      {{#if hasDatabases}}
+      {{_project.group}}.DatabasesKt.configureDatabases
+      {{/if}}
+      {{#if hasSecurity}}
+      {{_project.group}}.SecurityKt.configureSecurity
+      {{/if}}
+      {{#each serverModules}}
+      {{_project.group}}.{{this}}
+      {{/each}}
+      {{_project.group}}.RoutingKt.configureRouting
+    ]
+  }
+}

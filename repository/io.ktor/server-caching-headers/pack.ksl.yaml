@@ -1,0 +1,10 @@
+name: Caching Headers
+description: Provides options for responding with standard cache-control headers
+license: Apache 2.0
+tags:
+  - http
+  - server
+links:
+  vcs: https://github.com/ktorio/ktor/blob/419744383223899e69746b2afe50d873d442e568/ktor-server/ktor-server-core/jvm/src/io/ktor/features/CachingHeaders.kt
+requires:
+  - io.ktor/server-core

@@ -1,0 +1,3 @@
+platform: jvm
+dependencies:
+  - $ktorLibs.server.mustache
