@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Kastle Pack Manifest",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "The unique ID of the pack (format: group/id)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of the pack"
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version of the pack"
+    },
+    "description": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "license": {
+      "type": "string"
+    },
+    "icon": {
+      "type": "string"
+    },
+    "links": {
+      "type": "object",
+      "properties": {
+        "vcs": { "type": "string" },
+        "home": { "type": "string" },
+        "docs": { "type": "string" }
+      }
+    },
+    "requires": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of Pack IDs this pack depends on"
+    },
+    "propertyValues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": { "type": "string" },
+          "value": { "type": "string" },
+          "expression": {
+            "type": "string",
+            "description": "Kotlin expression to be evaluated during project generation.",
+            "x-intellij-language-injection": "kotlin"
+          }
+        },
+        "required": ["key"]
+      },
+      "description": "List of property assignments with key and value or expression"
+    },
+    "properties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": { "type": "string" },
+          "type": { "type": "string", "enum": ["string", "boolean", "int"] },
+          "default": { "type": ["string", "boolean", "number"] },
+          "hidden": { "type": "boolean" }
+        },
+        "required": ["key"]
+      }
+    },
+    "commonSources": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/sourceDefinition" }
+    },
+    "rootSources": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/sourceDefinition" }
+    }
+  },
+  "required": ["name"],
+  "definitions": {
+    "sourceDefinition": {
+      "type": "object",
+      "properties": {
+        "path": { "type": "string" },
+        "text": { "type": "string" },
+        "target": { "type": "string" },
+        "if": {
+          "type": "string",
+          "description": "Condition expression",
+          "x-intellij-language-injection": "kotlin"
+        }
+      }
+    }
+  }
+}

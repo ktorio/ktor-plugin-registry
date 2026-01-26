@@ -1,0 +1,13 @@
+name: Status Pages
+description: Provides exception handling for routes
+license: Apache 2.0
+tags:
+  - routing
+  - server
+links:
+  vcs: https://github.com/ktorio/ktor/blob/7e78e715cec3ff039cd628f8ff8ce875c35cde4c/ktor-server/ktor-server-core/jvm/src/io/ktor/features/StatusPages.kt
+propertyValues:
+  - key: io.ktor/server-core/serverModules
+    value: StatusPagesKt.installStatusPages
+requires:
+  - io.ktor/server-core

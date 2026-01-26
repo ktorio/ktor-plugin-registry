@@ -1,0 +1,13 @@
+name: Resources
+description: Provides type-safe routing
+license: Apache 2.0
+tags:
+  - routing
+  - server
+links:
+  vcs: https://github.com/ktorio/ktor/blob/main/ktor-shared/ktor-resources/common/src/io/ktor/resources/Resources.kt
+propertyValues:
+  - key: io.ktor/server-core/serverModules
+    value: ResourcesKt.installResources
+requires:
+  - io.ktor/server-core

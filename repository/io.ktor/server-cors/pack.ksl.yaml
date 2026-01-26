@@ -1,0 +1,10 @@
+name: CORS
+description: Enables Cross-Origin Resource Sharing (CORS)
+license: Apache 2.0
+tags:
+  - http
+  - server
+links:
+  vcs: https://github.com/ktorio/ktor/blob/31dedb3bdaeb1e5f63ba0bfd566e63742ea7a209/ktor-server/ktor-server-core/jvm/src/io/ktor/features/CORS.kt
+requires:
+  - io.ktor/server-core

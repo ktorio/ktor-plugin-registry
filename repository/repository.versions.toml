@@ -1,0 +1,6 @@
+[versions]
+prometheus = "1.6.+"
+
+[libraries]
+micrometer-micrometerRegistryPrometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "prometheus" }
+webjars-jquery = { module = "org.webjars:jquery", version = "3.2.1" }

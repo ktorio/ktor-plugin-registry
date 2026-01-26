@@ -1,0 +1,10 @@
+name: Authentication OAuth
+description: Handles OAuth Bearer authentication scheme
+license: Apache 2.0
+tags:
+  - security
+  - server
+links:
+  vcs: https://github.com/ktorio/ktor/blob/4a50c76c3264b0121b91a203d38473bb4aafbace/ktor-features/ktor-auth/jvm/src/io/ktor/auth/OAuth.kt
+requires:
+  - io.ktor/server-auth

@@ -1,0 +1,19 @@
+platform: jvm
+dependencies:
+  - $ktorLibs.server.auth.jwt
+sources:
+  - target: slot://io.ktor/server-core/applicationConf
+    text: |-
+      jwt {
+          domain = "https://jwt-provider-domain/"
+          audience = "jwt-audience"
+          realm = "ktor sample app"
+      }
+      
+  - target: slot://io.ktor/server-core/applicationYaml
+    text: |-
+      jwt:
+        domain: "https://jwt-provider-domain/"
+        audience: "jwt-audience"
+        realm: "ktor sample app"
+      

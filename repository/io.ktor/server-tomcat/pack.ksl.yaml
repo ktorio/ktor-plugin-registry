@@ -1,0 +1,6 @@
+name: Tomcat Engine
+description: Configures your Ktor server to use the Tomcat engine
+tags:
+  - core
+requires:
+  - io.ktor/server-core

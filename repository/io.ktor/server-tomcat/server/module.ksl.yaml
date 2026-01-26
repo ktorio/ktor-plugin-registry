@@ -1,0 +1,15 @@
+platform: jvm
+
+dependencies:
+  - $ktorLibs.server.tomcat
+
+amper:
+  application:
+    mainClass: io.ktor.server.tomcat.EngineMain
+
+sources:
+  - target: slot://org.gradle/gradle/buildRoot
+    text: |-
+      application {
+          mainClass = "io.ktor.server.tomcat.EngineMain"
+      }

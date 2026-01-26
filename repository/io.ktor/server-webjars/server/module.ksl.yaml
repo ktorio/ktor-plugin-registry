@@ -1,0 +1,4 @@
+platform: jvm
+dependencies:
+  - $ktorLibs.server.webjars
+  - $libs.webjars.jquery

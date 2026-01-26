@@ -1,0 +1,13 @@
+name: Velocity
+description: Serves HTML content, templated using Apache Velocity
+license: Apache 2.0
+tags:
+  - templating
+  - server
+links:
+  vcs: https://github.com/ktorio/ktor/blob/7e78e715cec3ff039cd628f8ff8ce875c35cde4c/ktor-features/ktor-velocity/jvm/src/io/ktor/velocity/Velocity.kt
+propertyValues:
+  - key: io.ktor/server-core/serverModules
+    value: VelocityKt.installVelocity
+requires:
+  - io.ktor/server-core

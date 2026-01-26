@@ -1,0 +1,4 @@
+platform: jvm
+dependencies:
+  - $ktorLibs.server.metrics.micrometer
+  - $libs.micrometer.micrometerRegistryPrometheus
