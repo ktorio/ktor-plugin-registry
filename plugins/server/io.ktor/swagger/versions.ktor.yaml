@@ -1,1 +1,4 @@
-"[2.2,)": ktor-server-swagger:==
+"[2.2,3.4.0)": ktor-server-swagger:==
+"[3.4,)":
+  - ktor-server-swagger:==
+  - ktor-server-routing-openapi:==
