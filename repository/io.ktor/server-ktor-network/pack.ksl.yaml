@@ -1,0 +1,13 @@
+name: Raw Sockets
+description: Adds raw socket support for TCP and UDP
+license: Apache 2.0
+tags:
+  - sockets
+  - server
+links:
+  vcs: https://github.com/ktorio/ktor/tree/d05996269def3ae106eb9779ac85ee448da609de/ktor-network/common/src/io/ktor/network/sockets
+propertyValues:
+  - key: io.ktor/server-core/serverModules
+    value: NetworkKt.installNetwork
+requires:
+  - io.ktor/server-core

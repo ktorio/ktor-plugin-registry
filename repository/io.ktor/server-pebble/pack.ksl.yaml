@@ -1,0 +1,13 @@
+name: Pebble
+description: Allows you to use Pebble templates as views within your application
+license: Apache 2.0
+tags:
+  - templating
+  - server
+links:
+  vcs: https://github.com/ktorio/ktor/blob/7e78e715cec3ff039cd628f8ff8ce875c35cde4c/ktor-features/ktor-pebble/jvm/src/io/ktor/pebble/Pebble.kt
+propertyValues:
+  - key: io.ktor/server-core/serverModules
+    value: PebbleKt.installPebble
+requires:
+  - io.ktor/server-core

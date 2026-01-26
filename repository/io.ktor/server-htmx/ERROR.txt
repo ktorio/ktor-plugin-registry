@@ -1,0 +1,21 @@
+java.lang.IllegalStateException: Invalid dependencies: map @ YamlPath(segments=[com.charleskorn.kaml.YamlPathSegment$Root@77a57272, MapElementKey(key=[3.2,), location=Location(line=1, column=1)), MapElementValue(location=Location(line=2, column=3))]) (size: 2)
+- key:
+    scalar @ YamlPath(segments=[com.charleskorn.kaml.YamlPathSegment$Root@77a57272, MapElementKey(key=[3.2,), location=Location(line=1, column=1)), MapElementValue(location=Location(line=2, column=3)), MapElementKey(key=server, location=Location(line=2, column=3))]) : server
+  value:
+    list @ YamlPath(segments=[com.charleskorn.kaml.YamlPathSegment$Root@77a57272, MapElementKey(key=[3.2,), location=Location(line=1, column=1)), MapElementValue(location=Location(line=2, column=3)), MapElementKey(key=server, location=Location(line=2, column=3)), MapElementValue(location=Location(line=3, column=5))]) (size: 2)
+    - item 0:
+      scalar @ YamlPath(segments=[com.charleskorn.kaml.YamlPathSegment$Root@77a57272, MapElementKey(key=[3.2,), location=Location(line=1, column=1)), MapElementValue(location=Location(line=2, column=3)), MapElementKey(key=server, location=Location(line=2, column=3)), MapElementValue(location=Location(line=3, column=5)), ListEntry(index=0, location=Location(line=3, column=7))]) : ktor-server-htmx:==
+    - item 1:
+      scalar @ YamlPath(segments=[com.charleskorn.kaml.YamlPathSegment$Root@77a57272, MapElementKey(key=[3.2,), location=Location(line=1, column=1)), MapElementValue(location=Location(line=2, column=3)), MapElementKey(key=server, location=Location(line=2, column=3)), MapElementValue(location=Location(line=3, column=5)), ListEntry(index=1, location=Location(line=4, column=7))]) : ktor-htmx-html:==
+- key:
+    scalar @ YamlPath(segments=[com.charleskorn.kaml.YamlPathSegment$Root@77a57272, MapElementKey(key=[3.2,), location=Location(line=1, column=1)), MapElementValue(location=Location(line=2, column=3)), MapElementKey(key=web, location=Location(line=5, column=3))]) : web
+  value:
+    list @ YamlPath(segments=[com.charleskorn.kaml.YamlPathSegment$Root@77a57272, MapElementKey(key=[3.2,), location=Location(line=1, column=1)), MapElementValue(location=Location(line=2, column=3)), MapElementKey(key=web, location=Location(line=5, column=3)), MapElementValue(location=Location(line=6, column=5))]) (size: 2)
+    - item 0:
+      scalar @ YamlPath(segments=[com.charleskorn.kaml.YamlPathSegment$Root@77a57272, MapElementKey(key=[3.2,), location=Location(line=1, column=1)), MapElementValue(location=Location(line=2, column=3)), MapElementKey(key=web, location=Location(line=5, column=3)), MapElementValue(location=Location(line=6, column=5)), ListEntry(index=0, location=Location(line=6, column=7))]) : npm(htmx.org:2.0.3)
+    - item 1:
+      scalar @ YamlPath(segments=[com.charleskorn.kaml.YamlPathSegment$Root@77a57272, MapElementKey(key=[3.2,), location=Location(line=1, column=1)), MapElementValue(location=Location(line=2, column=3)), MapElementKey(key=web, location=Location(line=5, column=3)), MapElementValue(location=Location(line=6, column=5)), ListEntry(index=1, location=Location(line=7, column=7))]) : org.jetbrains.kotlinx:kotlinx-browser:$kotlinx-browser
+	at io.ktor.MigratePluginKt.migratePluginToKastle(MigratePlugin.kt:100)
+	at io.ktor.MigratePluginKt.migrateToKastle(MigratePlugin.kt:27)
+	at io.ktor.MainKt.main(Main.kt:13)
+	at io.ktor.MainKt.main(Main.kt)

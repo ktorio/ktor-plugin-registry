@@ -1,0 +1,10 @@
+name: Compression
+description: Compresses responses using encoding algorithms like GZIP
+license: Apache 2.0
+tags:
+  - http
+  - server
+links:
+  vcs: https://github.com/ktorio/ktor/blob/4517e3856a3cae8f157d2f6966635217827d2abd/ktor-server/ktor-server-core/jvm/src/io/ktor/features/Compression.kt
+requires:
+  - io.ktor/server-core

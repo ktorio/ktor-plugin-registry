@@ -1,0 +1,4 @@
+platform: jvm
+dependencies:
+  - $ktorLibs.client.core
+  - $ktorLibs.client.apache

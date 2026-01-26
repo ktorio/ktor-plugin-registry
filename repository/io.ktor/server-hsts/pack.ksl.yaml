@@ -1,0 +1,10 @@
+name: HSTS
+description: Enables HTTP Strict Transport Security (HSTS)
+license: Apache 2.0
+tags:
+  - http
+  - server
+links:
+  vcs: https://github.com/ktorio/ktor/blob/7e78e715cec3ff039cd628f8ff8ce875c35cde4c/ktor-server/ktor-server-core/jvm/src/io/ktor/features/HSTS.kt
+requires:
+  - io.ktor/server-core

@@ -1,0 +1,15 @@
+platform: jvm
+
+dependencies:
+  - $ktorLibs.server.netty
+
+amper:
+  application:
+    mainClass: io.ktor.server.netty.EngineMain
+
+sources:
+  - target: slot://org.gradle/gradle/buildRoot
+    text: |-
+      application {
+          mainClass = "io.ktor.server.netty.EngineMain"
+      }

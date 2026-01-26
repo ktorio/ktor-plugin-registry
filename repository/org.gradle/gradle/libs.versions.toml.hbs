@@ -1,0 +1,16 @@
+[versions]
+{{#each _project.versions.entries }}
+{{ key }} = "{{ value }}"
+{{/each}}
+
+[libraries]
+{{#each _project.libraries.entries }}
+{{ key }} = { module = "{{ value.module }}", version.ref = "{{ value.version.ref }}" }
+{{/each}}
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+{{#each _project.gradle.plugins}}
+{{ catalogKey }} = { id = "{{ id }}", version.ref = "{{ version.ref }}" }
+{{/each}}

@@ -57,6 +57,42 @@
             </SchemaInfo>
           </value>
         </entry>
+        <entry key="Kastle Pack Schema">
+          <value>
+            <SchemaInfo>
+              <option name="generatedName" value="New Schema" />
+              <option name="name" value="Kastle Pack Schema" />
+              <option name="relativePathToSchema" value="schema/pack-schema.json" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="pattern" value="true" />
+                    <option name="mappingKind" value="Pattern" />
+                    <option name="path" value="**/pack.ksl.yaml" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key="Kastle Module Schema">
+          <value>
+            <SchemaInfo>
+              <option name="generatedName" value="New Schema" />
+              <option name="name" value="Kastle Module Schema" />
+              <option name="relativePathToSchema" value="schema/module-schema.json" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="pattern" value="true" />
+                    <option name="mappingKind" value="Pattern" />
+                    <option name="path" value="**/module.ksl.yaml" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
       </map>
     </state>
   </component>

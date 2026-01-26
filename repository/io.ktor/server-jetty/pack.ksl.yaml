@@ -1,0 +1,6 @@
+name: Jetty Engine
+description: Configures your Ktor server to use the Jetty engine
+tags:
+  - core
+requires:
+  - io.ktor/server-core

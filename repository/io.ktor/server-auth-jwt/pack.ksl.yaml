@@ -1,0 +1,10 @@
+name: Authentication JWT
+description: Handles JSON Web Token (JWT) bearer authentication scheme
+license: Apache 2.0
+tags:
+  - security
+  - server
+links:
+  vcs: https://github.com/ktorio/ktor/blob/7e78e715cec3ff039cd628f8ff8ce875c35cde4c/ktor-features/ktor-auth-jwt/jvm/src/io/ktor/auth/jwt/JWTAuth.kt
+requires:
+  - io.ktor/server-auth
