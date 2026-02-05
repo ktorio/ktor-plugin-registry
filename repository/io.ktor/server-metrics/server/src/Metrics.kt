@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 public fun Application.configureMetrics() {
     install(DropwizardMetrics) {
         Slf4jReporter.forRegistry(registry)
-            .outputTo(this@configureMonitoring.log)
+            .outputTo(this@configureMetrics.log)
             .convertRatesTo(TimeUnit.SECONDS)
             .convertDurationsTo(TimeUnit.MILLISECONDS)
             .build()
