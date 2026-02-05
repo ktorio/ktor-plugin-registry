@@ -11,3 +11,4 @@ webjars-jquery = { module = "org.webjars:jquery", version = "3.2.1" }
 
 [plugins]
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

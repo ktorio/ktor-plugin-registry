@@ -5,11 +5,11 @@ dependencies:
 
 amper:
   application:
-    mainClass: io.ktor.server.jetty.EngineMain
+    mainClass: io.ktor.server.jetty.jakarta.EngineMain
 
 sources:
   - target: slot://org.gradle/gradle/buildRoot
     text: |-
       application {
-          mainClass = "io.ktor.server.jetty.EngineMain"
+          mainClass = "io.ktor.server.jetty.jakarta.EngineMain"
       }

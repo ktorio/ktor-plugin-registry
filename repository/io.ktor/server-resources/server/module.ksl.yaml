@@ -1,3 +1,6 @@
 platform: jvm
 dependencies:
   - $ktorLibs.server.resources
+gradle:
+  plugins:
+    - $kotlin.serialization

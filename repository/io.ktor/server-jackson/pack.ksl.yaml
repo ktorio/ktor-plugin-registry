@@ -8,3 +8,4 @@ links:
   vcs: https://github.com/ktorio/ktor/blob/e03bafda3b3d72fcac166e46cf55e5d2d9383660/ktor-client/ktor-client-features/ktor-client-json/ktor-client-jackson/jvm/src/io/ktor/client/features/json/JacksonSerializer.kt
 requires:
   - io.ktor/server-core
+  - io.ktor/server-content-negotiation

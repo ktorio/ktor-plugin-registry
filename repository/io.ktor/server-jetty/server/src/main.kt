@@ -4,5 +4,5 @@
 package kastle
 
 fun main(args: Array<String>) {
-    io.ktor.server.jetty.EngineMain.main(args)
+    io.ktor.server.jetty.jakarta.EngineMain.main(args)
 }

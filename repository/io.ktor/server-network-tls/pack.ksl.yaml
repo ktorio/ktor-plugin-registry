@@ -11,3 +11,4 @@ propertyValues:
     value: NetworkTlsKt.installNetworkTls
 requires:
   - io.ktor/server-core
+  - io.ktor/server-network
