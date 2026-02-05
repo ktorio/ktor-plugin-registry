@@ -8,3 +8,4 @@ links:
   vcs: https://github.com/ktorio/ktor/blob/2dd2ed73538973e2ff44987ddba0efa0371bb0d6/ktor-features/ktor-serialization/jvm/src/io/ktor/serialization/JsonSupport.kt
 requires:
   - io.ktor/server-core
+  - io.ktor/server-content-negotiation

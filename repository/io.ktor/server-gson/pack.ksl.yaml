@@ -8,3 +8,4 @@ links:
   vcs: https://github.com/ktorio/ktor/blob/192286740d912cc4767cbbf43d3951ba86eb7a41/ktor-features/ktor-gson/jvm/src/io/ktor/gson/GsonSupport.kt
 requires:
   - io.ktor/server-core
+  - io.ktor/server-content-negotiation
