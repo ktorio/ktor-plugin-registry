@@ -1,0 +1,10 @@
+name: Caching
+description: Allows you to save previously fetched resources in cache
+license: Apache 2.0
+tags:
+  - http
+  - client
+links:
+  vcs: https://github.com/ktorio/ktor-documentation/tree/main/codeSnippets/snippets/client-caching
+requires:
+  - io.ktor/client-core

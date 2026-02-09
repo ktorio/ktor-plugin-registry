@@ -1,0 +1,17 @@
+platform: jvm
+dependencies:
+  - $ktorLibs.server.htmx
+  - $ktorLibs.server.htmlBuilder
+  - $ktorLibs.htmx.html
+sources:
+  - target: slot://org.gradle/gradle/buildRoot
+    text: |-
+      val copyWebDistToServerResources by tasks.registering(Copy::class) {
+          dependsOn(project(":web").tasks.named("jsBrowserDistribution"))
+          from(project(":web").layout.buildDirectory.dir("dist/js/productionExecutable"))
+          into(layout.buildDirectory.dir("resources/main/web"))
+      }
+
+      tasks.named("processResources") {
+          dependsOn(copyWebDistToServerResources)
+      }

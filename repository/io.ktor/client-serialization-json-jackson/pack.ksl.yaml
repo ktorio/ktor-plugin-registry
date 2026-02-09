@@ -1,0 +1,10 @@
+name: Jackson Serialization
+description: Serializes request bodies to json using Jackson
+license: Apache 2.0
+tags:
+  - serialization
+  - client
+links:
+  vcs: https://github.com/ktorio/ktor/blob/main/ktor-client/ktor-client-plugins/ktor-client-json/ktor-client-jackson/jvm/src/io/ktor/client/plugins/jackson/JacksonSerializer.kt
+requires:
+  - io.ktor/client-core

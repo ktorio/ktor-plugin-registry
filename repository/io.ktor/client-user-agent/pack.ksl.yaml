@@ -1,0 +1,10 @@
+name: UserAgent
+description: Adds a User-Agent header to all requests
+license: Apache 2.0
+tags:
+  - http
+  - client
+links:
+  vcs: https://github.com/ktorio/ktor/blob/main/ktor-client/ktor-client-core/common/src/io/ktor/client/plugins/UserAgent.kt
+requires:
+  - io.ktor/client-core

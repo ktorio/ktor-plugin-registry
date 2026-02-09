@@ -1,0 +1,10 @@
+name: CBOR Serialization
+description: Serializes request bodies to CBOR format
+license: Apache 2.0
+tags:
+  - serialization
+  - client
+links:
+  vcs: https://github.com/ktorio/ktor
+requires:
+  - io.ktor/client-core

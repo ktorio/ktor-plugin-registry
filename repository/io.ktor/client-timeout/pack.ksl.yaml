@@ -1,0 +1,10 @@
+name: HttpTimeout
+description: Configures HTTP timeouts
+license: Apache 2.0
+tags:
+  - http
+  - client
+links:
+  vcs: https://github.com/ktorio/ktor-documentation/tree/main/codeSnippets/snippets/client-timeout
+requires:
+  - io.ktor/client-core
