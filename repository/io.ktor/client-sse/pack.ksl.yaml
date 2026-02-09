@@ -1,0 +1,10 @@
+name: Server-Sent Events (SSE)
+description: Support for server push events
+license: Apache 2.0
+tags:
+  - http
+  - client
+links:
+  vcs: https://github.com/ktorio/ktor/blob/main/ktor-client/ktor-client-core/common/src/io/ktor/client/plugins/sse/SSE.kt
+requires:
+  - io.ktor/client-core

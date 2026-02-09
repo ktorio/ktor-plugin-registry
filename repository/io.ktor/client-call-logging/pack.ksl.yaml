@@ -1,0 +1,10 @@
+name: Logging
+description: Logs HTTP calls
+license: Apache 2.0
+tags:
+  - monitoring
+  - client
+links:
+  vcs: https://github.com/ktorio/ktor/blob/f028b0ca428335b6545b81afef803e236242b3a5/ktor-server/ktor-server-core/jvm/src/io/ktor/features/CallLogging.kt
+requires:
+  - io.ktor/client-core

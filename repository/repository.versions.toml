@@ -1,6 +1,10 @@
 [versions]
 prometheus = "1.6.+"
+kotlinx-browser = "0.5.0"
+kotlinx-html = "0.12.0"
 
 [libraries]
 micrometer-micrometerRegistryPrometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "prometheus" }
 webjars-jquery = { module = "org.webjars:jquery", version = "3.2.1" }
+kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinx-browser" }
+kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html", version.ref = "kotlinx-html" }

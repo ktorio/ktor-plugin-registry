@@ -1,0 +1,7 @@
+platforms: [jvm]
+dependencies:
+  - $ktorLibs.client.contentNegotiation
+  - $ktorLibs.serialization.kotlinx.json
+gradle:
+  plugins:
+    - $kotlin.serialization

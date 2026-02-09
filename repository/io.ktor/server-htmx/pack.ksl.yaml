@@ -1,0 +1,12 @@
+name: HTMX
+description: Includes HTMX for front-end scripting
+license: Zero-Clause BSD
+tags:
+  - templating
+  - server
+  - web
+links:
+  vcs: https://github.com/bigskysoftware/htmx
+# TODO include a common JS module for web
+requires:
+  - io.ktor/server-core

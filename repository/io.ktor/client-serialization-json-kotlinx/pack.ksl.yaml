@@ -1,0 +1,10 @@
+name: kotlinx.serialization
+description: Serializes request bodies to json using kotlinx.serialization
+license: Apache 2.0
+tags:
+  - serialization
+  - client
+links:
+  vcs: https://github.com/ktorio/ktor/blob/main/ktor-client/ktor-client-plugins/ktor-client-json/ktor-client-serialization/common/src/io/ktor/client/plugins/kotlinx/serializer/KotlinxSerializer.kt
+requires:
+  - io.ktor/client-core

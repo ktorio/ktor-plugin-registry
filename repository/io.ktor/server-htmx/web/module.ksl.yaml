@@ -1,0 +1,6 @@
+platform: js
+dependencies:
+  - npm(htmx.org, 2.0.3)
+propertyValues:
+  - key: org.gradle/gradle/isExecutable
+    value: true

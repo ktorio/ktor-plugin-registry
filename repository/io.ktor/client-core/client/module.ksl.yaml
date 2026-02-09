@@ -1,0 +1,3 @@
+platforms: [jvm, android, ios, js, wasmJs]
+dependencies:
+  - $ktorLibs.client.core
