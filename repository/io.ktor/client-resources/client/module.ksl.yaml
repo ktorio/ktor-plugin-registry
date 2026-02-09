@@ -1,0 +1,3 @@
+platforms: [jvm]
+dependencies:
+  - $ktorLibs.client.resources

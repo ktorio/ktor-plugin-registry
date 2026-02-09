@@ -1,0 +1,10 @@
+name: ContentEncoding
+description: Enables specified compression algorithms and configures their settings
+license: Apache 2.0
+tags:
+  - http
+  - client
+links:
+  vcs: https://github.com/ktorio/ktor-documentation/tree/main/codeSnippets/snippets/client-content-encoding
+requires:
+  - io.ktor/client-core

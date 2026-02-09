@@ -6,12 +6,13 @@ import io.ktor.server.routing.*
 
 fun Application.configureRouting() {
     routing {
-        if (!_slots.contains("routingRoot")) {
+        if (_slots.contains("routingRoot")) {
+            _slot("routingRoot")
+        } else {
             get("/") {
                 call.respondText("Hello, World!")
             }
         }
-        _slot("routingRoot")
         _slots("routing")
     }
 }

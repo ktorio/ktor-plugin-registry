@@ -105,6 +105,13 @@ if (_module.platform != "jvm") {
                                         implementation(_unsafe("${dependency.key}"))
                                     }
                                 }
+                                "function" -> {
+                                    if (dependency.exported) {
+                                        api(_unsafe("${dependency.functionName}(${dependency.args.joinToString()})"))
+                                    } else {
+                                        implementation(_unsafe("${dependency.functionName}(${dependency.args.joinToString()})"))
+                                    }
+                                }
                             }
                         }
                     }
@@ -135,6 +142,13 @@ if (_module.platform != "jvm") {
                                         api(_unsafe("${dependency.key}"))
                                     } else {
                                         implementation(_unsafe("${dependency.key}"))
+                                    }
+                                }
+                                "function" -> {
+                                    if (dependency.exported) {
+                                        api(_unsafe("${dependency.functionName}(${dependency.args.joinToString()})"))
+                                    } else {
+                                        implementation(_unsafe("${dependency.functionName}(${dependency.args.joinToString()})"))
                                     }
                                 }
                             }
