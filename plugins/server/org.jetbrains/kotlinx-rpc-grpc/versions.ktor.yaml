@@ -8,3 +8,4 @@
     - io.grpc:grpc-netty:1.79.0
   client:
     - org.jetbrains.kotlinx:kotlinx-rpc-grpc-client:$kotlinx-rpc-grpc
+    - io.grpc:grpc-netty:1.79.0

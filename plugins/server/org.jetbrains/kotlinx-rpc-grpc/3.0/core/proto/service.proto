@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package io.ktor;
+package com.example.proto;
 
 message ClientGreeting {
   string name = 1;
