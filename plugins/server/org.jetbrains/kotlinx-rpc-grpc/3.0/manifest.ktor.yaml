@@ -33,4 +33,5 @@ installation:
 sources:
   - SampleServiceImpl.kt (server)
   - proto/service.proto (core, srcDir=proto)
-  - client.kt (client)
+  - GrpcClient.kt (client)
+  - port.kt (core)

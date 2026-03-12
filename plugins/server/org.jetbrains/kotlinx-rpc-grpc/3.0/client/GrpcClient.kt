@@ -1,8 +1,11 @@
+import com.example.proto.invoke
+import com.example.proto.ClientGreeting
+import com.example.proto.SampleService
 import kotlinx.rpc.grpc.client.GrpcClient
 import kotlinx.rpc.withService
 
 suspend fun main() {
-    val client = GrpcClient("localhost", 8081) {
+    val client = GrpcClient("localhost", GRPC_PORT) {
         credentials = plaintext()
     }
 
