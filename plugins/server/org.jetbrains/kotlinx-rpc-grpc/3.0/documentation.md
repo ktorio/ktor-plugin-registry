@@ -7,7 +7,7 @@ Add gRPC services to your Ktor application!
 The artifacts provided are dev artifacts, and the API may and will change in the future.**
 
 **Please use it to play with the plugin. We will appreciate any feedback on
-[Github](https://github.com/Kotlin/kotlinx-rpc/issues)
+[GitHub](https://github.com/Kotlin/kotlinx-rpc/issues)
 or in [Slack](https://kotlinlang.slack.com/archives/C072YJ3Q91V)**
 
 ## Project structure
