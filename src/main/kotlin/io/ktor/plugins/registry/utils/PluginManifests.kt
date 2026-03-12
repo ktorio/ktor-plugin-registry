@@ -133,6 +133,7 @@ data class PluginManifestData(
                                     if (ref.file != null) put("name", ref.file)
                                     if (ref.module != null) put("module", ref.module)
                                     if (ref.test) put("test", true)
+                                    if (ref.srcDir != null) put("src_dir", ref.srcDir)
                                 }
                             }
                         })
@@ -336,6 +337,7 @@ data class PluginManifestData(
             val file: String,
             val module: String? = null,
             val test: Boolean = false,
+            val srcDir: String? = null,
         ) : CodeSnippetSource()
     }
 
@@ -355,14 +357,19 @@ data class PluginManifestData(
                 null -> CodeSnippetSource.Text(stringValue)
                 else -> {
                     val (fileName, keywordsString) = fileReferenceMatch.destructured
-                    val keywords = keywordsString.trim()
+                    val parts = keywordsString.trim()
                         .split("\\s*,\\s*".toRegex())
                         .filterNot { it.isEmpty() }
-                        .toSet()
+                    val kvPairs = parts.filter { '=' in it }.associate {
+                        val (k, v) = it.split('=', limit = 2)
+                        k.trim() to v.trim()
+                    }
+                    val simpleKeywords = parts.filterNot { '=' in it }.toSet()
                     CodeSnippetSource.File(
                         file = fileName,
-                        module = (keywords - "test").firstOrNull(),
-                        test = "test" in keywords
+                        module = (simpleKeywords - "test").firstOrNull(),
+                        test = "test" in simpleKeywords,
+                        srcDir = kvPairs["srcDir"],
                     )
                 }
             }

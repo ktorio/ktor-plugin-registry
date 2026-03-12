@@ -4,7 +4,7 @@
 
 package io.ktor.plugins.registry
 
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.*
 import kotlinx.serialization.serializer
 import org.slf4j.LoggerFactory
 import java.nio.charset.Charset
@@ -50,6 +50,25 @@ class RegistryBuilderTest {
         buildRegistry {
             it == "exposed"
         }
+    }
+
+    @Test
+    fun `srcDir exports src_dir in JSON`() {
+        buildRegistry { it == "module-dir-test" }
+        val jsonFile = buildDir.resolve("registry/server/manifests/module-dir-test-2.0.json")
+        assertTrue(jsonFile.exists(), "Expected manifest file at $jsonFile")
+        val json = Json.parseToJsonElement(jsonFile.readText()).jsonObject
+
+        val templates = json["install_recipe"]!!
+            .jsonObject["templates"]!!
+            .jsonArray
+
+        val protoTemplate = templates.first {
+            it.jsonObject["name"]?.jsonPrimitive?.content == "custom/test-file.proto"
+        }.jsonObject
+
+        assertEquals("proto", protoTemplate["src_dir"]?.jsonPrimitive?.content)
+        assertEquals("source_file_misc", protoTemplate["position"]?.jsonPrimitive?.content)
     }
 
     @Test

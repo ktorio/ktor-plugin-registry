@@ -10,6 +10,7 @@ interface SourceCodeMeta {
     val file: String? get() = null
     val module: String? get() = null
     val test: Boolean get() = false
+    val srcDir: String? get() = null
 }
 
 // Intended destination of a code snippet in the generated project
@@ -90,9 +91,11 @@ fun CodeInjectionSite.asMeta(
     file: String? = null,
     module: String? = null,
     test: Boolean = false,
+    srcDir: String? = null,
 ) = object : SourceCodeMeta {
     override val site = this@asMeta
     override val file = file
     override val module = module
     override val test = test
+    override val srcDir = srcDir
 }

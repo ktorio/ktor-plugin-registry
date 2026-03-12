@@ -100,7 +100,9 @@ class PluginCodeAnalyzer(
                 CodeRef.InjectedKotlin(codeContents.trim(), meta.site, ktFile.importListAsStrings())
             }
             CodeExtractionMethod.VERBATIM -> CodeRef.SourceFile(contents, meta.site)
-            CodeExtractionMethod.FILE -> CodeRef.SourceFile(contents, meta.site, meta.file, meta.module, meta.test)
+            CodeExtractionMethod.FILE -> CodeRef.SourceFile(
+                contents, meta.site, meta.file, meta.module, meta.test, meta.srcDir
+            )
         }
 
     private fun compileKotlinSource(contents: String, filename: String? = null): KtFile =
@@ -187,6 +189,7 @@ sealed class CodeRef(
         override val file: String? = null,
         module: String? = null,
         test: Boolean = false,
+        override val srcDir: String? = null,
     ) : CodeRef(site, code, module, test)
 }
 
