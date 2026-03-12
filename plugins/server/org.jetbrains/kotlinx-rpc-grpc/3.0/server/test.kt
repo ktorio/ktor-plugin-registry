@@ -1,3 +1,6 @@
+import com.example.proto.invoke
+import com.example.proto.ClientGreeting
+import com.example.proto.SampleService
 import io.ktor.server.testing.testApplication
 import kotlinx.rpc.grpc.client.GrpcClient
 import kotlinx.rpc.grpc.ktor.server.grpc

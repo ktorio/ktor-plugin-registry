@@ -6,9 +6,7 @@ Add gRPC services to your Ktor application!
 **This is a dev preview of the kotlinx-rpc gRPC plugin for Ktor. It is not yet ready for production use.
 The artifacts provided are dev artifacts, and the API may and will change in the future.**
 
-**Please use it to play with the plugin. We will appreciate any feedback on
-[GitHub](https://github.com/Kotlin/kotlinx-rpc/issues)
-or in [Slack](https://kotlinlang.slack.com/archives/C072YJ3Q91V)**
+**Please use it to play with the plugin. We will appreciate any feedback on [GitHub](https://github.com/Kotlin/kotlinx-rpc/issues) or in [Slack](https://kotlinlang.slack.com/archives/C072YJ3Q91V)**
 
 ## Project structure
 
@@ -53,7 +51,7 @@ class SampleServiceImpl : SampleService {
 Register the service using the `grpc` extension on `Application`:
 ```kotlin
 fun Application.module() {
-    grpc {
+    grpc(GRPC_PORT) {
         services {
             registerService<SampleService> { SampleServiceImpl() }
         }
@@ -65,7 +63,7 @@ fun Application.module() {
 
 Use `GrpcClient` to connect and call the service:
 ```kotlin
-val client = GrpcClient("localhost", 8081) {
+val client = GrpcClient("localhost", GRPC_PORT) {
     credentials = plaintext()
 }
 
@@ -82,6 +80,6 @@ client.awaitTermination()
 - [Getting started](https://kotlin.github.io/kotlinx-rpc/get-started.html)
 - [gRPC Configuration](https://kotlin.github.io/kotlinx-rpc/grpc-configuration.html)
 - [gRPC Services](https://kotlin.github.io/kotlinx-rpc/grpc-services.html)
-- [gRPC Ktor Server](https://kotlin.github.io/kotlinx-rpc/grpc-ktor-server.html)
+- [gRPC With Ktor Server](https://kotlin.github.io/kotlinx-rpc/grpc-ktor-server.html)
 - [Schema and codegen](https://kotlin.github.io/kotlinx-rpc/grpc-codegen.html)
 - [Using generated code](https://kotlin.github.io/kotlinx-rpc/grpc-generated-code.html)
