@@ -265,6 +265,7 @@ private fun PluginManifestData.CodeSnippetSource.File.atSite(site: CodeInjection
         override val file = this@atSite.file
         override val module = this@atSite.module
         override val test = this@atSite.test
+        override val srcDir = this@atSite.srcDir
     }
 
 private fun readDocumentation(
