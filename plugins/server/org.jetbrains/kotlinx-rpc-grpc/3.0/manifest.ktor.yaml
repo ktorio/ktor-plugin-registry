@@ -1,0 +1,36 @@
+name: gRPC
+description: Add gRPC services to your Ktor server with kotlinx.rpc
+vcsLink: https://github.com/Kotlin/kotlinx-rpc
+license: Apache 2.0
+category: Frameworks
+maven:
+  disabled: true
+# TODO KRPC-131 waiting for fixes to enable amper support
+amper:
+  disabled: true
+gradle:
+  pluginRepositories:
+    - url: https://redirector.kotlinlang.org/maven/kxrpc-grpc
+  repositories:
+    - url: https://redirector.kotlinlang.org/maven/kxrpc-grpc
+  plugins:
+    - id: org.jetbrains.kotlinx.rpc.plugin
+      version: $kotlinx-rpc-grpc
+      module: core
+    - id: org.jetbrains.kotlinx.rpc.plugin
+      version: $kotlinx-rpc-grpc
+      module: server
+    - id: org.jetbrains.kotlinx.rpc.plugin
+      version: $kotlinx-rpc-grpc
+      module: client
+installation:
+  inside_app: inside_app.kt
+  test_function: test.kt
+  gradle_build: |-
+    rpc {
+        protoc()
+    }
+sources:
+  - SampleServiceImpl.kt (server)
+  - proto/service.proto (core, srcDir=proto)
+  - client.kt (client)
