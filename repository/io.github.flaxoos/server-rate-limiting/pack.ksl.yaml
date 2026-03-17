@@ -1,0 +1,13 @@
+name: Rate Limiting
+description: Manage request rate limiting as you see fit
+license: Apache 2.0
+tags:
+  - administration
+  - server
+links:
+  vcs: https://github.com/Flaxoos/extra-ktor-plugins
+propertyValues:
+  - key: io.ktor/server-core/serverModules
+    value: RateLimitingKt.installRateLimiting
+requires:
+  - io.ktor/server-core

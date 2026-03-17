@@ -29,6 +29,10 @@ dependencyResolutionManagement {
     repositories {
         mavenCentral()
         maven("https://packages.jetbrains.team/maven/p/kastle/maven")
+
+        // TODO pack repositories should be loaded automatically
+        maven("https://packages.confluent.io/maven")
+        maven("https://jitpack.io")
     }
     versionCatalogs {
         create("ktorLibs") {

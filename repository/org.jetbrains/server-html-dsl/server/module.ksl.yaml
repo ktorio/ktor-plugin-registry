@@ -1,0 +1,4 @@
+platform: jvm
+dependencies:
+  - $ktorLibs.server.htmlBuilder
+  - $libs.kotlinx.kotlinxHtml

@@ -1,0 +1,13 @@
+name: Koin
+description: Provides dependency injection
+license: Apache 2.0
+tags:
+  - frameworks
+  - server
+links:
+  vcs: https://github.com/InsertKoinIO/koin
+propertyValues:
+  - key: io.ktor/server-core/serverModules
+    value: KoinKt.configureKoin
+requires:
+  - io.ktor/server-core

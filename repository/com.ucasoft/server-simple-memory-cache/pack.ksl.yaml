@@ -1,0 +1,11 @@
+name: Simple Memory Cache
+description: Provides memory cache for Simple Cache plugin
+license: Apache 2.0
+tags:
+  - http
+  - server
+links:
+  vcs: https://github.com/Scogun/ktor-simple-cache/tree/main/ktor-simple-memory-cache
+requires:
+  - io.ktor/server-core
+  - com.ucasoft/server-simple-cache

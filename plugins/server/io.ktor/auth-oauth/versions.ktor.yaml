@@ -1,3 +1,0 @@
-"[2.0,)":
-  - io.ktor:ktor-client-core:==
-  - io.ktor:ktor-client-apache:==

@@ -1,0 +1,11 @@
+name: kotlinx.rpc
+description: Adds remote procedure call (RPC) routing
+license: Apache 2.0
+tags:
+  - server
+links:
+  vcs: https://github.com/Kotlin/kotlinx-rpc
+requires:
+  - io.ktor/server-core
+  - io.ktor/client-core
+  - io.ktor/server-kotlinx-serialization

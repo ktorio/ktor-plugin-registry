@@ -4,7 +4,7 @@ dependencies:
   - $libs.logback.classic
 gradle:
   plugins:
-    - ktor
+    - $libs.ktor
 sources:
   - path: application.conf.hbs
     target: file:resources/application.conf

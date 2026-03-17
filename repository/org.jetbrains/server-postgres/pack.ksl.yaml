@@ -1,0 +1,15 @@
+name: PostgreSQL
+description: Adds Postgres database support
+license: Apache 2.0
+icon: logo.svg
+tags:
+  - databases
+  - server
+links:
+  vcs: https://github.com/mongodb/mongo
+propertyValues:
+  - key: io.ktor/server-core/serverModules
+    value: PostgresKt.installPostgres
+requires:
+  - io.ktor/server-core
+  - io.ktor/server-kotlinx-serialization

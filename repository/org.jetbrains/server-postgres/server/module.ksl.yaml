@@ -1,0 +1,4 @@
+platform: jvm
+dependencies:
+  - $libs.postgresql
+  - $libs.h2database.h2

@@ -1,3 +1,0 @@
-"[3.0,)":
-  - dev.ktml:ktml-ktor:$ktml
-  - dev.ktml:ktml-dev-mode:$ktml

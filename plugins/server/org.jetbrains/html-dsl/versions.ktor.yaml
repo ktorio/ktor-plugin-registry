@@ -1,3 +1,0 @@
-"[2.0,)":
-  - io.ktor:ktor-server-html-builder:==
-  - org.jetbrains.kotlinx:kotlinx-html:$kotlinx-html

@@ -1,0 +1,8 @@
+name: Apache Maven
+description: XML-based build system for JVM languages
+tags:
+  - core
+links:
+  vcs: https://github.com/apache/maven
+commonSources:
+  - path: pom.xml.hbs

@@ -1,0 +1,13 @@
+name: HTML DSL
+description: Generates HTML from Kotlin DSL
+license: Apache 2.0
+tags:
+  - templating
+  - server
+links:
+  vcs: https://github.com/Kotlin/kotlinx.html
+propertyValues:
+  - key: io.ktor/server-core/serverModules
+    value: HtmlDslKt.installHtmlDsl
+requires:
+  - io.ktor/server-core
