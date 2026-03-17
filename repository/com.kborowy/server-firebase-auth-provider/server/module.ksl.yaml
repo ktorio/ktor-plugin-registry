@@ -1,0 +1,3 @@
+platform: jvm
+dependencies:
+  - $libs.kborowy.firebaseAuthProvider

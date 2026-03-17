@@ -1,0 +1,13 @@
+name: KHealth
+description: A simple and customizable health plugin
+license: MIT
+tags:
+  - monitoring
+  - server
+links:
+  vcs: https://github.com/HaydenMeloche/khealth
+repositories:
+  - id: jitpack
+    url: https://jitpack.io
+requires:
+  - io.ktor/server-core

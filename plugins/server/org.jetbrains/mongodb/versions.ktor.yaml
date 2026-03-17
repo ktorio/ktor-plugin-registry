@@ -1,8 +1,0 @@
-"[2.2,3.0.0)":
-  - org.mongodb:mongodb-driver-core:$mongo
-  - org.mongodb:mongodb-driver-sync:$mongo
-  - org.mongodb:bson:$mongo
-"[3.0.0,)":
-  - org.mongodb:mongodb-driver-core:$mongo
-  - org.mongodb:mongodb-driver-sync:$mongo
-  - org.mongodb:bson:$mongo

@@ -1,0 +1,10 @@
+name: AsyncAPI
+description: Generates and serves AsyncAPI documentation
+license: Apache 2.0
+tags:
+  - http
+  - server
+links:
+  vcs: https://github.com/asyncapi/kotlin-asyncapi
+requires:
+  - io.ktor/server-core

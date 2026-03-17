@@ -1,0 +1,5 @@
+platform: jvm
+dependencies:
+  - $libs.mongodb.driverCore
+  - $libs.mongodb.driverSync
+  - $libs.mongodb.bson

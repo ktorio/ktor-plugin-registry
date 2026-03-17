@@ -1,0 +1,10 @@
+name: Cohort
+description: Spring Actuator style implementation for Ktor
+license: Apache 2.0
+tags:
+  - monitoring
+  - server
+links:
+  vcs: https://github.com/sksamuel/cohort
+requires:
+  - io.ktor/server-core

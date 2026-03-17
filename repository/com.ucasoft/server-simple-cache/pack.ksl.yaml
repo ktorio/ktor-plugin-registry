@@ -1,0 +1,10 @@
+name: Simple Cache
+description: Provides API for cache management
+license: Apache 2.0
+tags:
+  - http
+  - server
+links:
+  vcs: https://github.com/Scogun/ktor-simple-cache/tree/main/ktor-simple-cache
+requires:
+  - io.ktor/server-core

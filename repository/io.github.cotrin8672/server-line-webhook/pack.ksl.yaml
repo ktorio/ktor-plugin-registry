@@ -1,0 +1,11 @@
+name: LineWebhook
+description: Validates the signature of LineBot webhooks
+license: Apache 2.0
+tags:
+  - security
+  - server
+links:
+  vcs: https://github.com/cotrin8672/ktor-line-webhook-plugin
+requires:
+  - io.ktor/server-core
+  - io.ktor/server-double-receive

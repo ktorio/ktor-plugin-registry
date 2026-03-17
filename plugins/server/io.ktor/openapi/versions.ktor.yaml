@@ -1,4 +1,0 @@
-"[2.2,3.4.0)": ktor-server-openapi:==
-"[3.4,)":
-  - ktor-server-openapi:==
-  - ktor-server-routing-openapi:==

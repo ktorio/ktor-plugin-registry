@@ -1,0 +1,13 @@
+name: RabbitMQ
+description: Adds RabbitMQ support to your application
+license: Apache 2.0
+tags:
+  - frameworks
+  - server
+links:
+  vcs: https://github.com/DamirDenis-Tudor/ktor-server-rabbitmq
+propertyValues:
+  - key: io.ktor/server-core/serverModules
+    value: RabbitmqKt.installRabbitmq
+requires:
+  - io.ktor/server-core

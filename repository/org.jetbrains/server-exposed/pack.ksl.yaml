@@ -1,0 +1,15 @@
+name: Exposed
+description: Adds Exposed database to your application
+license: Apache 2.0
+icon: icon.svg
+tags:
+  - databases
+  - server
+links:
+  vcs: https://github.com/JetBrains/Exposed
+propertyValues:
+  - key: io.ktor/server-core/serverModules
+    value: ExposedKt.configureExposed
+requires:
+  - io.ktor/server-core
+  - io.ktor/server-kotlinx-serialization

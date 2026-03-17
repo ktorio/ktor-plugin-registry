@@ -1,3 +1,0 @@
-"[2.0,)":
-  - io.ktor:ktor-server-host-common:==
-  - io.ktor:ktor-server-status-pages:==

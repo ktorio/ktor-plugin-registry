@@ -1,0 +1,18 @@
+platform: jvm
+dependencies:
+  - $libs.damirdenis-tudor.ktorServerRabbitmq
+sources:
+  - target: slot://io.ktor/server-core/applicationConf
+    text: |-
+      ktor {
+        rabbitmq {
+          uri = "amqp://guest:guest@localhost:5672"
+          defaultConnectionName = "default_connection"
+          dispatcherThreadPollSize = 4
+          connectionAttempts = 10
+          attemptDelay = 5
+          tls {
+            enabled = false
+          }
+        }
+      }
