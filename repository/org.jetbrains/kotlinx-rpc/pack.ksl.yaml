@@ -5,6 +5,9 @@ tags:
   - server
 links:
   vcs: https://github.com/Kotlin/kotlinx-rpc
+propertyValues:
+  - key: io.ktor/server-core/serverModules
+    value: RpcKt.configureRpc
 requires:
   - io.ktor/server-core
   - io.ktor/client-core

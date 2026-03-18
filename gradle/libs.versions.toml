@@ -10,6 +10,7 @@ exposed = "1.0.+"
 h2 = "2.3.+"
 mongodb = "4.10.+"
 koin = "4.1.+"
+kotlinx-rpc = "0.10.2"
 
 [libraries]
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
@@ -45,8 +46,12 @@ mongodb-driverCore = { module = "org.mongodb:mongodb-driver-core", version.ref =
 mongodb-driverSync = { module = "org.mongodb:mongodb-driver-sync", version.ref = "mongodb" }
 mongodb-bson = { module = "org.mongodb:bson", version.ref = "mongodb" }
 postgresql = { module = "org.postgresql:postgresql", version = "42.7.+" }
+kotlinx-rpc-core = { module = "org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-core", version.ref = "kotlinx-rpc" }
+kotlinx-rpc-krpcSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-rpc-krpc-serialization-json", version.ref = "kotlinx-rpc" }
+kotlinx-rpc-server = { module = "org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-server", version.ref = "kotlinx-rpc" }
+kotlinx-rpc-client = { module = "org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-client", version.ref = "kotlinx-rpc" }
 
 [plugins]
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-kotlinx-rpc = { id = "org.jetbrains.kotlinx.rpc.plugin",  }
+kotlinx-rpc = { id = "org.jetbrains.kotlinx.rpc.plugin", version.ref = "kotlinx-rpc" }
