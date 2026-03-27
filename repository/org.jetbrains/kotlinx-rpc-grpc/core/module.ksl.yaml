@@ -1,0 +1,11 @@
+platforms: [jvm, android, ios]
+dependencies:
+  - $libs.kotlinx.rpc.grpcCore
+  - $libs.kotlinx.rpc.protobufCore
+gradle:
+  plugins:
+    - $libs.plugins.kotlinx.rpc
+    - $libs.plugins.kotlin.serialization
+sources:
+  - path: src/stub.kt
+    if: false

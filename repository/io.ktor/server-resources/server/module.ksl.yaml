@@ -3,4 +3,4 @@ dependencies:
   - $ktorLibs.server.resources
 gradle:
   plugins:
-    - $libs.kotlin.serialization
+    - $libs.plugins.kotlin.serialization

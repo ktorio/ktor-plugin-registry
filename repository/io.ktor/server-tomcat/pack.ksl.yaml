@@ -4,3 +4,6 @@ tags:
   - core
 requires:
   - io.ktor/server-core
+propertyValues:
+  - key: io.ktor/server-core/mainClass
+    value: io.ktor.server.tomcat.jakarta.EngineMain

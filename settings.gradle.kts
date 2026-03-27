@@ -8,7 +8,7 @@ enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 pluginManagement {
     repositories {
         mavenLocal()
-        // maven("https://packages.jetbrains.team/maven/p/kastle/maven")
+        maven("https://packages.jetbrains.team/maven/p/kastle/maven")
         google {
             mavenContent {
                 includeGroupAndSubgroups("androidx")
@@ -16,6 +16,7 @@ pluginManagement {
                 includeGroupAndSubgroups("com.google")
             }
         }
+        maven("https://redirector.kotlinlang.org/maven/kxrpc-grpc")
         mavenCentral()
         gradlePluginPortal()
     }
@@ -28,11 +29,13 @@ plugins {
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
+        mavenLocal()
         maven("https://packages.jetbrains.team/maven/p/kastle/maven")
 
         // TODO pack repositories should be loaded automatically
         maven("https://packages.confluent.io/maven")
         maven("https://jitpack.io")
+        maven("https://redirector.kotlinlang.org/maven/kxrpc-grpc")
     }
     versionCatalogs {
         create("ktorLibs") {
@@ -40,3 +43,5 @@ dependencyResolutionManagement {
         }
     }
 }
+
+include("test")

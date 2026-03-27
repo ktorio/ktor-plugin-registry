@@ -10,7 +10,7 @@ import kotlinx.rpc.withService
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ApplicationRpcTest {
+class RpcTest {
     @Test
     fun testRpc() = testApplication {
         application {

@@ -6,13 +6,13 @@ package kastle
 import com.codahale.metrics.*
 import io.ktor.server.application.*
 import io.ktor.server.metrics.dropwizard.*
-import io.ktor.server.response.*
+import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
 public fun Application.configureMetrics() {
     install(DropwizardMetrics) {
         Slf4jReporter.forRegistry(registry)
-            .outputTo(this@configureMetrics.log)
+            .outputTo(LoggerFactory.getLogger("metrics"))
             .convertRatesTo(TimeUnit.SECONDS)
             .convertDurationsTo(TimeUnit.MILLISECONDS)
             .build()

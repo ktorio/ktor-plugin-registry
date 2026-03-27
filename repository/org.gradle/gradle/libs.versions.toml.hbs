@@ -3,14 +3,16 @@
 {{ key }} = "{{ value }}"
 {{/each}}
 
+{{#if _project.libraries.size}}
 [libraries]
 {{#each _project.libraries.entries }}
-{{ key }} = { module = "{{ value.module }}", version.ref = "{{ value.version.ref }}" }
+{{ key }} = { module = "{{ value.module }}", {{#if value.versionRef}}version.ref = "{{value.versionRef}}"{{else}}version = "{{value.version}}"{{/if}} }
 {{/each}}
+{{/if}}
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 {{#each _project.gradle.plugins}}
-{{ catalogKey }} = { id = "{{ id }}", version.ref = "{{ version.ref }}" }
+{{ catalogKey }} = { id = "{{ id }}", {{#if versionRef}}version.ref = "{{versionRef}}"{{else}}version = "{{version}}"{{/if}} }
 {{/each}}

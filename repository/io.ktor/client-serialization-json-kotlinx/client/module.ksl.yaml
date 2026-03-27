@@ -4,4 +4,4 @@ dependencies:
   - $ktorLibs.serialization.kotlinx.json
 gradle:
   plugins:
-    - $libs.kotlin.serialization
+    - $libs.plugins.kotlin.serialization
