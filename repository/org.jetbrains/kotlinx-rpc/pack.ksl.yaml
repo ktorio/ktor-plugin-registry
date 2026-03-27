@@ -3,6 +3,7 @@ description: Adds remote procedure call (RPC) routing
 license: Apache 2.0
 tags:
   - server
+  - frameworks
 links:
   vcs: https://github.com/Kotlin/kotlinx-rpc
 propertyValues:

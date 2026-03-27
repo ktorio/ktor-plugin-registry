@@ -1,0 +1,21 @@
+name: gRPC
+description: Adds gRPC services to your Ktor server with kotlinx.rpc
+license: Apache 2.0
+tags:
+  - server
+  - frameworks
+links:
+  vcs: https://github.com/Kotlin/kotlinx-rpc
+repositories:
+  - id: kotlinx-rpc-grpc
+    url: https://redirector.kotlinlang.org/maven/kxrpc-grpc
+pluginRepositories:
+  - id: kotlinx-rpc-grpc
+    url: https://redirector.kotlinlang.org/maven/kxrpc-grpc
+propertyValues:
+  - key: io.ktor/server-core/serverModules
+    value: GrpcKt.configureGrpc
+requires:
+  - io.ktor/server-core
+  - io.ktor/client-core
+  - io.ktor/server-kotlinx-serialization

@@ -7,6 +7,9 @@ properties:
   - key: serverModules
     type: list<string>?
     hidden: true
+  - key: mainClass
+    type: string
+    hidden: true
   - key: hasHttp
     type: boolean
     hidden: true

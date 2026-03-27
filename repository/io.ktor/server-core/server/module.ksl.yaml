@@ -4,7 +4,7 @@ dependencies:
   - $libs.logback.classic
 gradle:
   plugins:
-    - $libs.ktor
+    - $libs.plugins.ktor
 sources:
   - path: application.conf.hbs
     target: file:resources/application.conf
@@ -24,3 +24,5 @@ sources:
     if: _slots.contains("security")
   - path: src/Databases.kt
     if: _slots.contains("databases")
+  - target: slot://org.gradle/gradle/buildRoot
+    path: build.gradle.kts.hbs

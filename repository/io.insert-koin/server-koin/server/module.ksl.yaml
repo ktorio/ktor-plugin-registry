@@ -1,4 +1,4 @@
 platform: jvm
 dependencies:
-  - $libs.insert-koin.koinKtor
-  - $libs.insert-koin.koinLoggerSlf4j
+  - $libs.insert.koin.koinKtor
+  - $libs.insert.koin.koinLoggerSlf4j

@@ -1,0 +1,7 @@
+platforms: [jvm, android, ios]
+dependencies:
+  - ../core
+  - $libs.kotlinx.rpc.grpcClient
+gradle:
+  plugins:
+    - $libs.plugins.kotlinx.rpc

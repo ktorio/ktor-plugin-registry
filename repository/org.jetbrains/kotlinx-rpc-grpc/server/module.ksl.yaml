@@ -1,0 +1,11 @@
+platform: jvm
+gradle:
+  plugins:
+    - $libs.plugins.kotlinx.rpc
+dependencies:
+  - ../core
+  - $libs.kotlinx.rpc.grpcKtorServer
+  - $libs.grpc.netty
+testDependencies:
+  - $libs.kotlinx.rpc.grpcClient
+  - $ktorLibs.server.testHost

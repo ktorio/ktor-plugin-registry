@@ -6,7 +6,7 @@ plugins {
         alias(libs.plugins.kotlin.jvm) apply false
     }
     for (plugin in _project.gradle.plugins) {
-        alias(_unsafe("libs.plugins.${plugin.name}")) apply false
+        alias(_unsafe("${plugin.name}")) apply false
     }
 }
 
