@@ -4,4 +4,10 @@ dependencies:
   - $libs.kotlinx.rpc.grpcClient
 gradle:
   plugins:
-    - $libs.plugins.kotlinx.rpc
+    - $libs.plugins.kotlinx.rpc.grpc
+sources:
+  - target: slot://org.gradle/gradle/buildRoot
+    text: |-
+      rpc {
+          protoc()
+      }
