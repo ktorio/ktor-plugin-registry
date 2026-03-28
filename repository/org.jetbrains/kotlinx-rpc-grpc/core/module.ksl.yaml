@@ -4,8 +4,13 @@ dependencies:
   - $libs.kotlinx.rpc.protobufCore
 gradle:
   plugins:
-    - $libs.plugins.kotlinx.rpc
+    - $libs.plugins.kotlinx.rpc.grpc
     - $libs.plugins.kotlin.serialization
 sources:
   - path: src/stub.kt
     if: false
+  - target: slot://org.gradle/gradle/buildRoot
+    text: |-
+      rpc {
+          protoc()
+      }

@@ -1,7 +1,7 @@
 platform: jvm
 gradle:
   plugins:
-    - $libs.plugins.kotlinx.rpc
+    - $libs.plugins.kotlinx.rpc.grpc
 dependencies:
   - ../core
   - $libs.kotlinx.rpc.grpcKtorServer
@@ -9,3 +9,9 @@ dependencies:
 testDependencies:
   - $libs.kotlinx.rpc.grpcClient
   - $ktorLibs.server.testHost
+sources:
+  - target: slot://org.gradle/gradle/buildRoot
+    text: |-
+      rpc {
+          protoc()
+      }
