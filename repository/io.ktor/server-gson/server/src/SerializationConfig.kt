@@ -6,6 +6,6 @@ package kastle
 import io.ktor.serialization.gson.*
 import io.ktor.server.plugins.contentnegotiation.*
 
-public fun ContentNegotiationConfig.configureGson() {
+fun ContentNegotiationConfig.configureGson() {
     gson {}
 }

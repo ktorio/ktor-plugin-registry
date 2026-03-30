@@ -7,7 +7,7 @@ import io.ktor.client.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 
-public fun HttpClientConfig<*>.configureClientSerializationJsonKotlinx() {
+fun HttpClientConfig<*>.configureClientSerializationJsonKotlinx() {
     install(ContentNegotiation) {
         json()
     }

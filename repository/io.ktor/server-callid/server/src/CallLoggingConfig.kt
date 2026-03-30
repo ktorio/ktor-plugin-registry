@@ -8,6 +8,6 @@ import io.ktor.server.plugins.callid.*
 import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.routing.*
 
-public fun CallLoggingConfig.configureCallid() {
+fun CallLoggingConfig.configureCallid() {
     callIdMdc("call-id")
 }

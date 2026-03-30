@@ -9,7 +9,7 @@ import io.ktor.server.application.*
 import io.ktor.server.plugins.cachingheaders.*
 import io.ktor.server.response.*
 
-public fun Application.configureCachingHeaders() {
+fun Application.configureCachingHeaders() {
     install(CachingHeaders) {
         options { call, outgoingContent ->
             when (outgoingContent.contentType?.withoutParameters()) {

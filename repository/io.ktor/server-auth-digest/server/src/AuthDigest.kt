@@ -8,7 +8,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.util.*
 
-public fun Application.configureAuthDigest() {
+fun Application.configureAuthDigest() {
     authentication {
         val myRealm = "MyRealm"
         val usersInMyRealmToHA1: Map<String, ByteArray> = mapOf(

@@ -11,7 +11,7 @@ data class Error(val code: Int, val message: String)
 
 class CustomResponseException(message: String): Exception(message)
 
-public fun HttpClientConfig<*>.configureClientResponseValidation() {
+fun HttpClientConfig<*>.configureClientResponseValidation() {
     HttpResponseValidator {
         validateResponse { response ->
             val error: Error = response.body()

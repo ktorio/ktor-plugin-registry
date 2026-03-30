@@ -4,7 +4,7 @@ import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.github.smiley4.ktorswaggerui.SwaggerUI
 
-public fun Application.configureSwaggerUi() {
+fun Application.configureSwaggerUi() {
     install(SwaggerUI) {
         swagger {
             swaggerUrl = "swagger-ui"

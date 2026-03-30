@@ -6,7 +6,7 @@ import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import kotlin.time.Duration.Companion.seconds
 
-public fun Application.configureWebsockets() {
+fun Application.configureWebsockets() {
     install(WebSockets) {
         pingPeriod = 15.seconds
         timeout = 15.seconds

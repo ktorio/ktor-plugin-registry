@@ -9,7 +9,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.*
 import io.micrometer.prometheus.*
 
-public fun Application.configureMetricsMicrometer() {
+fun Application.configureMetricsMicrometer() {
     val appMicrometerRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 
     install(MicrometerMetrics) {

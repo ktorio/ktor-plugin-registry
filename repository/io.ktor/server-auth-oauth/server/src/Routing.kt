@@ -8,7 +8,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 
-public fun Routing.configureAuthOauth() {
+fun Routing.configureAuthOauth() {
     authenticate("auth-oauth-google") {
         get("login") {
             call.respondRedirect("/callback")

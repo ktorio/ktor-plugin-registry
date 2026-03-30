@@ -9,7 +9,7 @@ import io.github.flaxoos.ktor.server.plugins.ratelimiter.implementations.*
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import kotlin.time.Duration.Companion.seconds
-public fun Application.configureRateLimiting() {
+fun Application.configureRateLimiting() {
     routing {
         route("/"){
             install(RateLimiting) {

@@ -4,7 +4,7 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.response.*
 
-public fun Application.configureShutdownUrl() {
+fun Application.configureShutdownUrl() {
     install(ShutDownUrl.ApplicationCallPlugin) {
         // The URL that will be intercepted (you can also use the application.conf's ktor.deployment.shutdown.url key)
         shutDownUrl = "/ktor/application/shutdown"

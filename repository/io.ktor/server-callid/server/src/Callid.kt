@@ -8,7 +8,7 @@ import io.ktor.server.application.*
 import io.ktor.server.plugins.callid.*
 import io.ktor.server.response.*
 
-public fun Application.configureCallid() {
+fun Application.configureCallid() {
     install(CallId) {
         header(HttpHeaders.XRequestId)
         verify { callId: String ->

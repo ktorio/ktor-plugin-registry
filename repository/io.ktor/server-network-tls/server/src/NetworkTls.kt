@@ -10,6 +10,6 @@ import io.ktor.utils.io.core.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
-public fun Application.configureNetworkTls() {
+fun Application.configureNetworkTls() {
     
 }

@@ -8,7 +8,7 @@ import com.ucasoft.ktor.simpleCache.SimpleCache
 import com.ucasoft.ktor.simpleMemoryCache.*
 import kotlin.time.Duration.Companion.seconds
 
-public fun Application.configureSimpleMemoryCache() {
+fun Application.configureSimpleMemoryCache() {
     install(SimpleCache) {
         memoryCache {
             invalidateAt = 10.seconds

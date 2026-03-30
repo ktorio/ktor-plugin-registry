@@ -8,7 +8,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-public fun Routing.configureAuthBasic() {
+fun Routing.configureAuthBasic() {
     authenticate("myauth1") {
         get("/protected/route/basic") {
             val principal = call.principal<UserIdPrincipal>()!!

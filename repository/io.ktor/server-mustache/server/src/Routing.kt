@@ -10,7 +10,7 @@ import io.ktor.server.mustache.MustacheContent
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-public fun Routing.configureMustache() {
+fun Routing.configureMustache() {
     get("/html-mustache") {
         call.respond(MustacheContent("index.hbs", mapOf("user" to MustacheUser(1, "user1"))))
     }

@@ -9,7 +9,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.html.*
 
-public fun Routing.configureHtmlDsl() {
+fun Routing.configureHtmlDsl() {
     get("/html-dsl") {
         call.respondHtml {
             body {

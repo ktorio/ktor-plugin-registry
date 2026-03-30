@@ -8,7 +8,7 @@ import com.ucasoft.ktor.simpleCache.SimpleCache
 import com.ucasoft.ktor.simpleRedisCache.*
 import kotlin.time.Duration.Companion.seconds
 
-public fun Application.configureSimpleRedisCache() {
+fun Application.configureSimpleRedisCache() {
     install(SimpleCache) {
         redisCache {
             invalidateAt = 10.seconds

@@ -11,7 +11,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
 
-public fun Routing.configureResources() {
+fun Routing.configureResources() {
     get<Articles> { article ->
         // Get all articles ...
         call.respond("List of articles sorted starting from ${article.sort}")

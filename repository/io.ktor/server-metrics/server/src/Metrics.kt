@@ -9,7 +9,7 @@ import io.ktor.server.metrics.dropwizard.*
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
-public fun Application.configureMetrics() {
+fun Application.configureMetrics() {
     install(DropwizardMetrics) {
         Slf4jReporter.forRegistry(registry)
             .outputTo(LoggerFactory.getLogger("metrics"))

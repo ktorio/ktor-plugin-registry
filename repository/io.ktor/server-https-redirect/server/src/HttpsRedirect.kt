@@ -7,7 +7,7 @@ import io.ktor.server.application.*
 import io.ktor.server.plugins.httpsredirect.*
 import io.ktor.server.response.*
 
-public fun Application.configureHttpsRedirect() {
+fun Application.configureHttpsRedirect() {
     install(HttpsRedirect) {
             // The port to redirect to. By default 443, the default HTTPS port.
             sslPort = 443
