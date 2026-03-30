@@ -21,6 +21,8 @@ Declare a service in a `.proto` file inside `src/commonMain/proto/`:
 ```protobuf
 syntax = "proto3";
 
+package com.example.proto;
+
 message ClientGreeting {
   string name = 1;
 }
@@ -40,6 +42,11 @@ The `SampleService` interface will be generated for you alongside other types an
 
 Implement the service in the server module:
 ```kotlin
+import com.example.proto.ClientGreeting
+import com.example.proto.SampleService
+import com.example.proto.ServerGreeting
+import com.example.proto.invoke
+
 class SampleServiceImpl : SampleService {
     override suspend fun greeting(name: ClientGreeting): ServerGreeting {
         return ServerGreeting { content = "Hello, ${name.name}!" }
@@ -50,6 +57,8 @@ class SampleServiceImpl : SampleService {
 
 Register the service using the `grpc` extension on `Application`:
 ```kotlin
+import com.example.proto.SampleService
+
 fun Application.module() {
     grpc(GRPC_PORT) {
         services {
@@ -63,6 +72,10 @@ fun Application.module() {
 
 Use `GrpcClient` to connect and call the service:
 ```kotlin
+import com.example.proto.ClientGreeting
+import com.example.proto.SampleService
+import com.example.proto.invoke
+
 val client = GrpcClient("localhost", GRPC_PORT) {
     credentials = plaintext()
 }
