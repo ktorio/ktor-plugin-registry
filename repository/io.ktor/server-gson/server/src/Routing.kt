@@ -9,7 +9,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-public fun Routing.configureGson() {
+fun Routing.configureGson() {
     get("/json/gson") {
             call.respond(mapOf("hello" to "world"))
         }

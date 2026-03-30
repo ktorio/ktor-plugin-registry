@@ -6,7 +6,7 @@ import io.ktor.server.mustache.Mustache
 import io.ktor.server.mustache.MustacheContent
 import io.ktor.server.response.*
 
-public fun Application.configureMustache() {
+fun Application.configureMustache() {
     install(Mustache) {
         mustacheFactory = DefaultMustacheFactory("templates/mustache")
     }

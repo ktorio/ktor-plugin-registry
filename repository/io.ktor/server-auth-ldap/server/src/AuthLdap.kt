@@ -8,7 +8,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.ldap.*
 import io.ktor.server.response.*
 
-public fun Application.configureAuthLdap() {
+fun Application.configureAuthLdap() {
     val localhost = "http://0.0.0.0"
         val ldapServerPort = 6998 // TODO: change to real value!
         authentication {

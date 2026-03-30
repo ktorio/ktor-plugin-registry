@@ -14,7 +14,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.SchemaUtils
 
 // The contents of the `install` function will be used for the project template
-public fun Application.configureTaskScheduling() {
+fun Application.configureTaskScheduling() {
     install(TaskScheduling){
         // Choose task manager config based on your chosen task manager dependencies
         redis { // <-- given no name, this will be the default manager

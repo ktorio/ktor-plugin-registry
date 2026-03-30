@@ -8,7 +8,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.cbor.*
 import kotlinx.serialization.cbor.*
 
-public fun HttpClientConfig<*>.configureClientSerializationCbor() {
+fun HttpClientConfig<*>.configureClientSerializationCbor() {
     install(ContentNegotiation) {
         cbor(Cbor {
             ignoreUnknownKeys = true

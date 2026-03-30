@@ -9,7 +9,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.webjars.*
 
-public fun Routing.configureWebjars() {
+fun Routing.configureWebjars() {
     get("/webjars") {
         call.respondText("<script src='/webjars/jquery/jquery.js'></script>", ContentType.Text.Html)
     }

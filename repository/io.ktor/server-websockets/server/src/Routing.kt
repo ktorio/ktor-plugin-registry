@@ -10,7 +10,7 @@ import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import java.time.Duration
 
-public fun Routing.configureWebsockets() {
+fun Routing.configureWebsockets() {
     webSocket("/ws") { // websocketSession
         for (frame in incoming) {
             if (frame is Frame.Text) {

@@ -5,7 +5,7 @@ import io.ktor.server.pebble.*
 import io.ktor.server.response.*
 import io.pebbletemplates.pebble.loader.ClasspathLoader
 
-public fun Application.configurePebble() {
+fun Application.configurePebble() {
     install(Pebble) {
         loader(ClasspathLoader().apply {
             prefix = "templates"

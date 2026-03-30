@@ -11,6 +11,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-public fun Application.configureNetwork() {
+fun Application.configureNetwork() {
     
 }

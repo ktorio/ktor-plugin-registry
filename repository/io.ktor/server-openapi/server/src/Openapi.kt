@@ -8,7 +8,7 @@ import io.ktor.server.plugins.openapi.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-public fun Application.configureOpenapi() {
+fun Application.configureOpenapi() {
     routing {
         openAPI(path = "openapi")
     }

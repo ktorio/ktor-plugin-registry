@@ -9,7 +9,7 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 
-public fun Application.configureAuthOauth() {
+fun Application.configureAuthOauth() {
     authentication {
         oauth("auth-oauth-google") {
             urlProvider = { "http://localhost:8080/callback" }

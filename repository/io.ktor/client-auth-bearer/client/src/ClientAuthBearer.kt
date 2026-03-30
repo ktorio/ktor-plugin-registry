@@ -7,7 +7,7 @@ import io.ktor.client.*
 import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
 
-public fun HttpClientConfig<*>.configureClientAuthBearer() {
+fun HttpClientConfig<*>.configureClientAuthBearer() {
     install(Auth) {
         bearer {
             loadTokens {

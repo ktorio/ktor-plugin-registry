@@ -8,7 +8,7 @@ import io.ktor.serialization.jackson.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.response.*
 
-public fun ContentNegotiationConfig.configureJackson() {
+fun ContentNegotiationConfig.configureJackson() {
     jackson {
             enable(SerializationFeature.INDENT_OUTPUT)
         }

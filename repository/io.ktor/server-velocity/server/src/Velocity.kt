@@ -6,7 +6,7 @@ import io.ktor.server.velocity.*
 import org.apache.velocity.runtime.RuntimeConstants
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
 
-public fun Application.configureVelocity() {
+fun Application.configureVelocity() {
     install(Velocity) {
         setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath")
         setProperty("classpath.resource.loader.class", ClasspathResourceLoader::class.java.name)

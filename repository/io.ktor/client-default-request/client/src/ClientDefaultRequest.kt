@@ -6,7 +6,7 @@ package kastle
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 
-public fun HttpClientConfig<*>.configureClientDefaultRequest() {
+fun HttpClientConfig<*>.configureClientDefaultRequest() {
     defaultRequest {
         url("https://ktor.io/docs/")
     }

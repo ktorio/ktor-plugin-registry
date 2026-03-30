@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlin.time.Duration.Companion.seconds
 
 // The contents of the `install` function will be used for the project template
-public fun Application.configureCohort() {
+fun Application.configureCohort() {
 
     val healthchecks = HealthCheckRegistry(Dispatchers.Default) {
         register(FreememHealthCheck.mb(250), 10.seconds, 10.seconds)

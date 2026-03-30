@@ -19,7 +19,7 @@ import io.ktor.server.application.Application
 import io.ktor.server.application.install
 
 // The contents of the `install` function will be used for the project template
-public fun Application.configureKafka() {
+fun Application.configureKafka() {
     install(Kafka) {
         schemaRegistryUrl = "my.schemaRegistryUrl"
         val myTopic = TopicName.named("my-topic")

@@ -10,7 +10,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.github.cotrin8672.LineWebhook
 
-public fun Route.configureLineWebhook() {
+fun Route.configureLineWebhook() {
     route("/callback") {
         install(DoubleReceive)
         install(LineWebhook) {

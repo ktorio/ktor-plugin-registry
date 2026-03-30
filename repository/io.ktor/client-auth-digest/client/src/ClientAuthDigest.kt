@@ -7,7 +7,7 @@ import io.ktor.client.*
 import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
 
-public fun HttpClientConfig<*>.configureClientAuthDigest() {
+fun HttpClientConfig<*>.configureClientAuthDigest() {
     install(Auth) {
         digest {
             credentials {

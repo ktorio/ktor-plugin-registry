@@ -6,7 +6,7 @@ package kastle
 import io.ktor.client.*
 import io.ktor.client.plugins.compression.*
 
-public fun HttpClientConfig<*>.configureClientContentEncoding() {
+fun HttpClientConfig<*>.configureClientContentEncoding() {
     install(ContentEncoding) {
         deflate(1.0F)
         gzip(0.9F)

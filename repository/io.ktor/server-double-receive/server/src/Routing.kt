@@ -9,7 +9,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-public fun Routing.configureDoubleReceive() {
+fun Routing.configureDoubleReceive() {
     post("/double-receive") {
         val first = call.receiveText()
         val theSame = call.receiveText()
