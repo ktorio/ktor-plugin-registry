@@ -1,0 +1,32 @@
+{{!-- Product type --}}
+{{#when _module.type }}
+{{ "lib" }}
+product:
+  type: lib
+  platforms: {{ _module.platforms }}
+{{ else }}
+product: {{ _module.type }}
+{{/when}}
+{{!-- Dependencies --}}
+{{#each _module.dependencies.entries }}
+{{#if isSinglePlatform}}dependencies:
+{{else}}dependencies{{#when key}}{{"common"}}{{else}}@{{key}}{{/when}}:
+{{/if}}
+{{#each value}}
+{{#when type}}
+{{ "maven" }}
+  - {{ group }}:{{ artifact }}:{{ version }}{{#if exported}}: exported{{/if}}
+{{ "project" }}
+  - {{ path }}{{#if exported}}: exported{{/if}}
+{{ "catalog" }}
+  - ${{ key }}{{#if exported}}: exported{{/if}}
+{{/when}}
+{{/each}}
+{{/each}}
+{{!-- Settings --}}
+{{#if _module.amper}}
+settings:
+  {{#each _module.amper.entries}}
+  {{ key }}: {{ value }}
+  {{/each}}
+{{/if}}

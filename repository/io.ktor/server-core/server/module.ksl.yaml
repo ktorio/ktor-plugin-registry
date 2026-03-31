@@ -4,7 +4,9 @@ dependencies:
   - $libs.logback.classic
 gradle:
   plugins:
-    - $libs.plugins.ktor
+    - ktorLibs.plugins.ktor
+amper:
+  ktor: enabled
 sources:
   - path: application.conf.hbs
     target: file:resources/application.conf

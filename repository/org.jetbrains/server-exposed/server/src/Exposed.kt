@@ -13,9 +13,8 @@ import org.jetbrains.exposed.v1.r2dbc.R2dbcDatabase
 
 suspend fun Application.configureExposed() {
     val database = R2dbcDatabase.connect(
-        url = "r2dbc:h2:mem:test;DB_CLOSE_DELAY=-1",
+        url = "r2dbc:h2:file:///./h2",
         user = "root",
-        driver = "org.h2.Driver",
         password = "",
     )
     val userService = ExposedUserService(database).also {

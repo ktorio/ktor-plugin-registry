@@ -55,5 +55,6 @@ bin/
 
 ### Generated from scripts ###
 test-project
+test-output
 dependencies
 export

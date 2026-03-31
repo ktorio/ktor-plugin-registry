@@ -4,5 +4,9 @@ tags:
   - core
 links:
   vcs: https://github.com/apache/maven
+rootSources:
+  - path: root.pom.xml.hbs
+    target: file:pom.xml
+    if: _project.modules.size > 1
 commonSources:
   - path: pom.xml.hbs
