@@ -1,0 +1,25 @@
+id: org.jetbrains/amper
+name: Amper
+description: A simple Kotlin build system
+version: 1.0.0
+tags:
+  - buildSystemRoot
+rootSources:
+  - path: project.yaml.hbs
+    target: file:project.yaml
+    if: _project.modules.size > 1
+  - path: amper
+  - path: amper.bat
+  - path: libs.versions.toml.hbs
+    target: file:libs.versions.toml
+commonSources:
+  - path: module.yaml.hbs
+    target: file:module.yaml
+    if: _module.platforms.size > 0
+properties:
+  - key: isSinglePlatform
+    type: boolean
+    hidden: true
+propertyValues:
+  - key: isSinglePlatform
+    expression: _module.platforms.size == 1

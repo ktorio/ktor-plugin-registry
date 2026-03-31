@@ -17,11 +17,6 @@ plugins {
 if (_project.modules.size == 1) {
     group = _project.group
     version = "1.0.0-SNAPSHOT"
-
-    repositories {
-        mavenCentral()
-        _slots("gradleRepositories")
-    }
 }
 
 _slots("buildRoot")
