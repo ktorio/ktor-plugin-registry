@@ -1,0 +1,51 @@
+# {{_project.name}}
+
+This project was created using the [Ktor Project Generator](https://start.ktor.io).
+
+{{!-- TODO table alignment / formatting --}}
+## Features
+Here's a list of features included in this project:
+
+| Name | Description |
+|------|-------------|
+{{#each features}}
+| [{{name}}](https://start.ktor.io/p/{{id}}) | {{description}} |
+{{/each}}
+
+{{#unless _project.module }}
+## Structure
+This project includes the following modules:
+
+| Path | Description |
+|------|-------------|
+{{#each _project.modules }}
+| {{path}} | {{description}} |
+{{/each}}
+{{/unless}}
+
+## Building & Running
+To build or run the project, use one of the following tasks:
+
+{{!-- TODO multi-module projects --}}
+| Task | Description |
+|------|-------------|
+{{#when _project.buildSystem}}
+{{"org.apache/maven"}}
+| `./mvnw test`                                                         | Run the tests     |
+| `./mvnw package`                                                      | Build the project |
+| `java -jar target/{{_project.name}}`-0.0.1-jar-with-dependencies.jar` | Run the server    |
+{{"org.jetbrains/amper"}}
+| `./amper test`    | Run the tests     |
+| `./amper build`   | Build the project |
+| `./amper run`     | Run the server    |
+{{"org.gradle/gradle"}}
+| `./gradlew test`    | Run the tests     |
+| `./gradlew build`   | Build the project |
+| `./gradlew run`     | Run the server    |
+{{/when}}
+
+If the server starts successfully, you'll see the following output:
+```
+2024-12-04 14:32:45.584 [main] INFO  Application - Application started in 0.303 seconds.
+2024-12-04 14:32:45.682 [main] INFO  Application - Responding at http://0.0.0.0:8080
+```
