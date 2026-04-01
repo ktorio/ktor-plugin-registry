@@ -9,7 +9,7 @@ links:
   vcs: https://github.com/mongodb/mongo
 propertyValues:
   - key: io.ktor/server-core/serverModules
-    value: PostgresKt.installPostgres
+    value: PostgresKt.configurePostgres
 requires:
   - io.ktor/server-core
   - io.ktor/server-kotlinx-serialization

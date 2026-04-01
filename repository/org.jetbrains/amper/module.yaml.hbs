@@ -7,11 +7,10 @@ product:
 {{ else }}
 product: {{ _module.type }}
 {{/when}}
+
 {{!-- Dependencies --}}
 {{#each _module.dependencies.entries }}
-{{#if isSinglePlatform}}dependencies:
-{{else}}dependencies{{#when key}}{{"common"}}{{else}}@{{key}}{{/when}}:
-{{/if}}
+{{#if isSinglePlatform}}dependencies:{{else}}dependencies{{#when key}}{{"common"}}{{else}}@{{key}}{{/when}}:{{/if}}
 {{#each value}}
 {{#when type}}
 {{ "maven" }}
@@ -23,10 +22,43 @@ product: {{ _module.type }}
 {{/when}}
 {{/each}}
 {{/each}}
+
+{{!-- Test dependencies --}}
+{{#each _module.testDependencies.entries }}
+{{#if isSinglePlatform}}test-dependencies:{{else}}test-dependencies{{#when key}}{{"common"}}{{else}}@{{key}}{{/when}}:{{/if}}
+{{#each value}}
+{{#when type}}
+{{ "maven" }}
+- {{ group }}:{{ artifact }}:{{ version }}
+{{ "project" }}
+- {{ path }}
+{{ "catalog" }}
+- ${{ key }}
+{{/when}}
+{{/each}}
+{{/each}}
 {{!-- Settings --}}
 {{#if _module.amper}}
 settings:
   {{#each _module.amper.entries}}
-  {{ key }}: {{ value }}
+  {{#when key}}
+  {{"kotlin"}}
+  kotlin:
+  {{#each value.entries}}
+    {{ key }}: {{ value }}
   {{/each}}
+  {{else}}
+  {{ key }}: {{ value }}
+  {{/when}}
+  {{/each}}
+{{/if}}
+{{!-- Repositories --}}
+{{#if isSingleModule}}
+{{#if _project.gradle.repositories.size}}
+repositories:
+{{#each _project.gradle.repositories}}
+  - id: {{id}}
+    url: {{url}}
+{{/each}}
+{{/if}}
 {{/if}}

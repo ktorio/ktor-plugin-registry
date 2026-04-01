@@ -4,3 +4,11 @@ modules:
   - {{path}}
   {{/if}}
   {{/each}}
+{{!-- Repositories --}}
+{{#if _project.gradle.repositories.size}}
+repositories:
+{{#each _project.gradle.repositories}}
+  - id: {{id}}
+    url: {{url}}
+{{/each}}
+{{/if}}

@@ -8,7 +8,7 @@ links:
   vcs: https://github.com/ktorio/ktor/tree/465b7573fba8ef2293b1d8866b3842504418d6f1/ktor-network/ktor-network-tls/jvm/src/io/ktor/network/tls
 propertyValues:
   - key: io.ktor/server-core/serverModules
-    value: NetworkTlsKt.installNetworkTls
+    value: NetworkTlsKt.configureNetworkTls
 requires:
   - io.ktor/server-core
   - io.ktor/server-network

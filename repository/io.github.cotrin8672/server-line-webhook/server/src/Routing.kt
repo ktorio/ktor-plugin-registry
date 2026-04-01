@@ -3,18 +3,18 @@
  */
 package kastle
 
+import io.github.cotrin8672.LineWebhook
 import io.ktor.http.*
-import io.ktor.server.application.*
+import io.ktor.server.config.*
 import io.ktor.server.plugins.doublereceive.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.github.cotrin8672.LineWebhook
 
 fun Route.configureLineWebhook() {
     route("/callback") {
         install(DoubleReceive)
         install(LineWebhook) {
-            channelSecret = System.getenv("CHANNEL_SECRET")
+            channelSecret = application.propertyOrNull("line.webhook.secret") ?: "s3¢r3t"
         }
         post {
             call.respond(HttpStatusCode.OK)

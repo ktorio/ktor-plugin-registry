@@ -20,6 +20,11 @@ properties:
   - key: isSinglePlatform
     type: boolean
     hidden: true
+  - key: isSingleModule
+    type: boolean
+    hidden: true
 propertyValues:
   - key: isSinglePlatform
     expression: _module.platforms.size == 1
+  - key: isSingleModule
+    expression: _project.modules.size == 1

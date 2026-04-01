@@ -8,6 +8,6 @@ links:
   vcs: https://github.com/ktorio/ktor/blob/7e78e715cec3ff039cd628f8ff8ce875c35cde4c/ktor-server/ktor-server-host-common/jvm/src/io/ktor/server/engine/ShutDownUrl.kt
 propertyValues:
   - key: io.ktor/server-core/serverModules
-    value: ShutdownUrlKt.installShutdownUrl
+    value: ShutdownUrlKt.configureShutdownUrl
 requires:
   - io.ktor/server-core

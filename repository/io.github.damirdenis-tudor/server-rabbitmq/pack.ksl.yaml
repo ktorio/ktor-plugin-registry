@@ -8,6 +8,6 @@ links:
   vcs: https://github.com/DamirDenis-Tudor/ktor-server-rabbitmq
 propertyValues:
   - key: io.ktor/server-core/serverModules
-    value: RabbitmqKt.installRabbitmq
+    value: RabbitmqKt.configureRabbitmq
 requires:
   - io.ktor/server-core

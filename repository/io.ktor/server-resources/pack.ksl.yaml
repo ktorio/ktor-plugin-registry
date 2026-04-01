@@ -8,6 +8,6 @@ links:
   vcs: https://github.com/ktorio/ktor/blob/main/ktor-shared/ktor-resources/common/src/io/ktor/resources/Resources.kt
 propertyValues:
   - key: io.ktor/server-core/serverModules
-    value: ResourcesKt.installResources
+    value: ResourcesKt.configureResources
 requires:
   - io.ktor/server-core

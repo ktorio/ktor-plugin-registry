@@ -7,13 +7,11 @@
     <version>0.0.1</version>
     <packaging>pom</packaging>
     <name>{{ _project.name }}</name>
-
     <modules>
         {{#each _project.modules}}
         <module>{{ path }}</module>
         {{/each}}
     </modules>
-
     <properties>
         <kotlin.code.style>official</kotlin.code.style>
         {{#each _project.versions.entries}}
@@ -21,10 +19,16 @@
         {{/each}}
         {{slots mavenProperties}}
     </properties>
-
+    {{#if _project.gradle.repositories.size}}
     <repositories>
+        {{#each _project.gradle.repositories}}
+        <repository>
+            <id>{{id}}</id>
+            <url>{{url}}</url>
+        </repository>
+        {{/each}}
     </repositories>
-
+    {{/if}}
     <build>
         <pluginManagement>
             <plugins>

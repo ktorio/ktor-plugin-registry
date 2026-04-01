@@ -2,6 +2,8 @@ platform: jvm
 dependencies:
   - $ktorLibs.server.core
   - $libs.logback.classic
+testDependencies:
+  - $ktorLibs.server.testHost
 gradle:
   plugins:
     - ktorLibs.plugins.ktor

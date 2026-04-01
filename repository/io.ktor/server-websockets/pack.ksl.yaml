@@ -8,6 +8,6 @@ links:
   vcs: https://github.com/ktorio/ktor/blob/3.0.0/ktor-server/ktor-server-plugins/ktor-server-websockets/common/src/io/ktor/server/websocket/WebSockets.kt
 propertyValues:
   - key: io.ktor/server-core/serverModules
-    value: WebsocketsKt.installWebsockets
+    value: WebsocketsKt.configureWebsockets
 requires:
   - io.ktor/server-core

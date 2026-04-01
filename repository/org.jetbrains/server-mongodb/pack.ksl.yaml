@@ -9,7 +9,7 @@ links:
   vcs: https://github.com/mongodb/mongo
 propertyValues:
   - key: io.ktor/server-core/serverModules
-    value: MongoKt.installMongo
+    value: MongoKt.configureMongo
 requires:
   - io.ktor/server-core
   - io.ktor/server-kotlinx-serialization

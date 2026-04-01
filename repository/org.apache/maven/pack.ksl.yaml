@@ -2,11 +2,24 @@ name: Apache Maven
 description: XML-based build system for JVM languages
 tags:
   - core
+properties:
+  - key: includeWrapper
+    type: boolean
+    default: true
 links:
   vcs: https://github.com/apache/maven
 rootSources:
   - path: root.pom.xml.hbs
     target: file:pom.xml
     if: _project.modules.size > 1
+  - path: mvnw
+    target: file:mvnw
+    if: includeWrapper
+  - path: mvnw.cmd
+    target: file:mvnw.cmd
+    if: includeWrapper
+  - path: .mvn/wrapper/maven-wrapper.properties
+    target: file:.mvn/wrapper/maven-wrapper.properties
+    if: includeWrapper
 commonSources:
   - path: pom.xml.hbs

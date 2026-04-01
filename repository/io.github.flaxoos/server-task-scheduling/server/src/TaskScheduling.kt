@@ -1,11 +1,6 @@
 package kastle
 
-/*
- * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
- */
-
 import com.mongodb.kotlin.client.coroutine.MongoClient
-import dev.inmo.krontab.builder.*
 import io.ktor.server.application.*
 import io.github.flaxoos.ktor.server.plugins.taskscheduling.*
 import io.github.flaxoos.ktor.server.plugins.taskscheduling.managers.lock.redis.*
@@ -15,7 +10,17 @@ import org.jetbrains.exposed.sql.SchemaUtils
 
 // The contents of the `install` function will be used for the project template
 fun Application.configureTaskScheduling() {
-    install(TaskScheduling){
+    // Configure your database connection here
+    val myDatabase = runCatching {
+        org.jetbrains.exposed.sql.Database.connect(
+            url = "jdbc:postgresql://host:port",
+            driver = "org.postgresql.Driver",
+            user = "my_username",
+            password = "my_password"
+        )
+    }.getOrNull() ?: return
+
+    install(TaskScheduling) {
         // Choose task manager config based on your chosen task manager dependencies
         redis { // <-- given no name, this will be the default manager
             connectionPoolInitialSize = 1
@@ -27,12 +32,7 @@ fun Application.configureTaskScheduling() {
             lockExpirationMs = 60_000
         }
         jdbc("my jdbc manager") { // <-- given a name, a manager can be explicitly selected for a task
-            database = org.jetbrains.exposed.sql.Database.connect(
-                url = "jdbc:postgresql://host:port",
-                driver = "org.postgresql.Driver",
-                user = "my_username",
-                password = "my_password"
-            ).also {
+            database = myDatabase.also {
                 transaction { SchemaUtils.create(DefaultTaskLockTable) }
             }
         }

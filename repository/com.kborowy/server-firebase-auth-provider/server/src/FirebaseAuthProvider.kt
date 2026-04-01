@@ -9,9 +9,15 @@ import java.io.File
 import com.kborowy.authprovider.firebase.firebase
 
 fun Application.configureFirebaseAuthProvider() {
+    // export your firebase admin credentials to get started
+    val myAdminFile = File("firebase-adminsdk.json")
+    if (!myAdminFile.exists()) return
+
     install(Authentication) {
         firebase {
-            adminFile = File("path/to/admin/file.json")
+            setup {
+                adminFile = myAdminFile
+            }
             realm = "My Server"
             validate { token ->
                 MyAuthenticatedUser(id = token.uid)

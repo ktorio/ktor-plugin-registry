@@ -8,9 +8,13 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Application.installMongo() {
+fun Application.configureMongo() {
+    // Connect to your mongo instance
     val mongoDatabase = connectToMongoDB()
-    val carService = CarService(mongoDatabase)
+    val carService = runCatching {
+        CarService(mongoDatabase)
+    }.getOrNull() ?: return
+
     routing {
         // Create car
         post("/cars") {

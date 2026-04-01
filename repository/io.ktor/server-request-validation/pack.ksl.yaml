@@ -8,6 +8,6 @@ links:
   vcs: https://github.com/ktorio/ktor/tree/3.0.0/ktor-server/ktor-server-plugins/ktor-server-request-validation
 propertyValues:
   - key: io.ktor/server-core/serverModules
-    value: RequestValidationKt.installRequestValidation
+    value: RequestValidationKt.configureRequestValidation
 requires:
   - io.ktor/server-core

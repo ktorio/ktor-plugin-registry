@@ -8,6 +8,6 @@ links:
   vcs: https://github.com/Flaxoos/extra-ktor-plugins
 propertyValues:
   - key: io.ktor/server-core/serverModules
-    value: RateLimitingKt.installRateLimiting
+    value: RateLimitingKt.configureRateLimiting
 requires:
   - io.ktor/server-core
