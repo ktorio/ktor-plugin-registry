@@ -28,6 +28,9 @@ properties:
   - key: configFormat
     type: enum { HOCON, YAML, none }
     default: HOCON
+  - key: features
+    type: list<map<string,string>>
+    hidden: true
 propertyValues:
   - key: hasHttp
     expression: _slots.contains("http")
@@ -39,6 +42,10 @@ propertyValues:
     expression: _slots.contains("security")
   - key: hasDatabases
     expression: _slots.contains("databases")
+  - key: features
+    expression: _project.packs.filter { !it.tags.contains("core") }
 rootSources:
   - target: slot://org.gradle/gradle/versionCatalogs
     text: create("ktorLibs").from("io.ktor:ktor-version-catalog:3.4.0")
+  - target: file://README.md
+    path: README.md.hbs
