@@ -27,12 +27,14 @@
       "type": "object",
       "properties": {
         "compose": { "type": "string" },
+        "ktor": { "type": "string" },
         "application": {
           "type": "object",
           "properties": {
             "mainClass": { "type": "string" }
           }
-        }
+        },
+        "kotlin": { "type": "object" }
       }
     },
     "gradle": {

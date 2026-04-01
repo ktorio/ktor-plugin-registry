@@ -8,6 +8,6 @@ links:
   vcs: https://github.com/JetBrains/koog
 propertyValues:
   - key: io.ktor/server-core/serverModules
-    value: KoogKt.installKoog
+    value: KoogKt.configureKoog
 requires:
   - io.ktor/server-core

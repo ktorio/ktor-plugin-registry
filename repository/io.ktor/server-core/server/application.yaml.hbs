@@ -4,7 +4,7 @@ ktor:
   application:
     modules:
       {{#if hasHttp}}
-      - {{_project.group}}.HttpKt.configureHTTP
+      - {{_project.group}}.HttpKt.configureHttp
       {{/if}}
       {{#if hasMonitoring}}
       - {{_project.group}}.MonitoringKt.configureMonitoring

@@ -8,6 +8,6 @@ links:
   vcs: https://github.com/ktorio/ktor/blob/7e78e715cec3ff039cd628f8ff8ce875c35cde4c/ktor-features/ktor-thymeleaf/jvm/src/io/ktor/thymeleaf/Thymeleaf.kt
 propertyValues:
   - key: io.ktor/server-core/serverModules
-    value: ThymeleafKt.installThymeleaf
+    value: ThymeleafKt.configureThymeleaf
 requires:
   - io.ktor/server-core

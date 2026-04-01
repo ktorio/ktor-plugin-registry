@@ -3,29 +3,39 @@ package io.ktor.registry
 import io.kotest.core.spec.style.FeatureSpec
 import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.runBlocking
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import org.jetbrains.kastle.*
+import org.jetbrains.kastle.io.FileSystemPackRepository.Companion.export
 import org.jetbrains.kastle.io.deleteRecursively
 import org.jetbrains.kastle.io.export
+import org.jetbrains.kastle.io.readToml
 import org.jetbrains.kastle.io.resolve
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.attribute.PosixFilePermissions
+import kotlin.io.path.listDirectoryEntries
 
 class TestSuite : FeatureSpec({
-    val repository = LocalPackRepository(Path("../repository"))
     val fs = SystemFileSystem
     val outputDir = Path("../test-output").also {
         fs.deleteRecursively(it)
         fs.createDirectories(it)
     }
+    val ktorVersions = Path("../ktor-version-catalog.toml")
+        .readToml<VersionsCatalog>() ?: VersionsCatalog()
+    val repository = runBlocking {
+        LocalPackRepository(Path("../repository"))
+            .export(outputDir.resolve("repository"))
+            .also { it.catalogs(it.catalogs() + ktorVersions.copy(name = "ktorLibs")) }
+    }
     val generator = ProjectGenerator(repository)
     val gradle = PackId("org.gradle", "gradle")
     val maven = PackId("org.apache", "maven")
     val amper = PackId("org.jetbrains", "amper")
-    // gradle is repeated because it's faster and more important
-    val buildSystems = listOf(gradle, maven, gradle, amper, gradle)
+    // less amper because it's slow
+    val buildSystems = listOf(gradle, amper, maven, gradle, maven)
     val engines = listOf(
         "server-netty",
         "server-cio",
@@ -36,10 +46,11 @@ class TestSuite : FeatureSpec({
     }
 
     feature("Ktor repository") {
-        val packs = mutableListOf<PackMetadata>()
+        val packs = mutableListOf<PackDescriptor>()
 
         scenario("Loads successfully") {
-            repository.getAll().collect(packs::add)
+            repository.readAll().collect(packs::add)
+            packs.sortBy { it.name }
         }
 
         var i = 0
@@ -49,17 +60,24 @@ class TestSuite : FeatureSpec({
             // ignore core packs
             if ("core" in pack.tags) continue
 
-            val isMultiModule = pack.modules.size > 1
+            val isMultiModule = pack.sources.modules is ProjectModules.Multi
+            var modules = pack.sources.modules.modules
+            val isMultiPlatform = modules.any { it.platforms.size > 1 }
+            val amperCannotProcess: (SourceModule) -> Boolean = { module ->
+                if (module.amper.isNotEmpty()) true
+                else module.gradle.plugins.isNotEmpty()
+                    || module.dependencies.values.flatten().any { it is FunctionDependency }
+            }
             val buildSystem = buildSystems[i % buildSystems.size].let { bs ->
                 // defaults to gradle when not compatible
                 when(bs) {
-                    maven if (isMultiModule) -> gradle
-                    amper if (pack.modules.any { it.gradle.plugins.isNotEmpty() }) -> gradle
+                    maven if (isMultiModule || isMultiPlatform) -> gradle
+                    amper if (modules.any(amperCannotProcess)) -> gradle
                     else -> bs
                 }
             }
 
-            feature(pack.name) {
+            feature("${pack.name} (${pack.group?.id ?: "unknown group"})") {
                 val projectDir = outputDir.resolve(pack.id.toString()).also {
                     fs.createDirectories(it)
                 }
@@ -89,10 +107,11 @@ class TestSuite : FeatureSpec({
                 scenario("builds (${buildSystem.id})") {
                     generated.join()
                     val projectPath = Paths.get(projectDir.toString())
+                    require(projectPath.listDirectoryEntries().isNotEmpty()) { "Generate failed" }
                     when(buildSystem) {
                         gradle -> {
                             Files.setPosixFilePermissions(projectPath.resolve("gradlew"), PosixFilePermissions.fromString("rwxr-xr-x"))
-                            val process = ProcessBuilder("./gradlew", "test")
+                            val process = ProcessBuilder("./gradlew", "test", "--stacktrace")
                                 .directory(projectPath.toFile())
                                 .redirectErrorStream(true)
                                 .start()
@@ -110,7 +129,18 @@ class TestSuite : FeatureSpec({
                             val output = process.inputStream.bufferedReader().use {
                                 it.readText()
                             }
-                            output shouldContain "testJvm" // TODO add test to server-core
+                            output shouldContain "0 tests failed"
+                        }
+                        maven -> {
+                            Files.setPosixFilePermissions(projectPath.resolve("mvnw"), PosixFilePermissions.fromString("rwxr-xr-x"))
+                            val process = ProcessBuilder("./mvnw", "test")
+                                .directory(projectPath.toFile())
+                                .redirectErrorStream(true)
+                                .start()
+                            val output = process.inputStream.bufferedReader().use {
+                                it.readText()
+                            }
+                            output shouldContain "BUILD SUCCESS"
                         }
                     }
                 }

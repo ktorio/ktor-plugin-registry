@@ -8,6 +8,6 @@ links:
   vcs: https://github.com/ktorio/ktor/blob/4a50c76c3264b0121b91a203d38473bb4aafbace/ktor-features/ktor-mustache/jvm/src/io/ktor/mustache/Mustache.kt
 propertyValues:
   - key: io.ktor/server-core/serverModules
-    value: MustacheKt.installMustache
+    value: MustacheKt.configureMustache
 requires:
   - io.ktor/server-core

@@ -114,37 +114,24 @@ if (_module.platform != "jvm") {
             }
 
             for (e in _module.testDependencies.entries) {
-                if (e.value.isNotEmpty()) {
+                if (e.value.isNotEmpty() || e.key == "common") {
                     _unsafe("${e.key}Test").dependencies {
+                        if (e.key == "common") {
+                            kotlin("test")
+                        }
                         for (dependency in e.value) {
                             when (dependency.type) {
                                 "maven" -> {
-                                    if (dependency.exported) {
-                                        api("${dependency.group}:${dependency.artifact}:${dependency.version}")
-                                    } else {
-                                        implementation("${dependency.group}:${dependency.artifact}:${dependency.version}")
-                                    }
+                                    implementation("${dependency.group}:${dependency.artifact}:${dependency.version}")
                                 }
                                 "project" -> {
-                                    if (dependency.exported) {
-                                        api(project(dependency.gradlePath))
-                                    } else {
-                                        implementation(project(dependency.gradlePath))
-                                    }
+                                    implementation(project(dependency.gradlePath))
                                 }
                                 "catalog" -> {
-                                    if (dependency.exported) {
-                                        api(_unsafe("${dependency.key}"))
-                                    } else {
-                                        implementation(_unsafe("${dependency.key}"))
-                                    }
+                                    implementation(_unsafe("${dependency.key}"))
                                 }
                                 "function" -> {
-                                    if (dependency.exported) {
-                                        api(_unsafe("${dependency.functionName}(${dependency.args.joinToString()})"))
-                                    } else {
-                                        implementation(_unsafe("${dependency.functionName}(${dependency.args.joinToString()})"))
-                                    }
+                                    implementation(_unsafe("${dependency.functionName}(${dependency.args.joinToString()})"))
                                 }
                             }
                         }
@@ -180,28 +167,17 @@ if (_module.platform != "jvm") {
                 }
             }
         }
+        testImplementation(kotlin("test"))
         for (dependency in _module.testDependencies.values.flatten()) {
             when (dependency.type) {
                 "maven" -> {
-                    if (dependency.exported) {
-                        api("${dependency.group}:${dependency.artifact}:${dependency.version}")
-                    } else {
-                        implementation("${dependency.group}:${dependency.artifact}:${dependency.version}")
-                    }
+                    testImplementation("${dependency.group}:${dependency.artifact}:${dependency.version}")
                 }
                 "project" -> {
-                    if (dependency.exported) {
-                        api(project(dependency.gradlePath))
-                    } else {
-                        implementation(project(dependency.gradlePath))
-                    }
+                    testImplementation(project(dependency.gradlePath))
                 }
                 "catalog" -> {
-                    if (dependency.exported) {
-                        api(_unsafe("${dependency.key}"))
-                    } else {
-                        implementation(_unsafe("${dependency.key}"))
-                    }
+                    testImplementation(_unsafe("${dependency.key}"))
                 }
             }
         }

@@ -8,6 +8,6 @@ links:
   vcs: https://github.com/Kotlin/kotlinx.html
 propertyValues:
   - key: io.ktor/server-core/serverModules
-    value: HtmlDslKt.installHtmlDsl
+    value: HtmlDslKt.configureHtmlDsl
 requires:
   - io.ktor/server-core

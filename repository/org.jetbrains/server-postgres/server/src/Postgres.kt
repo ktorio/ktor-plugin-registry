@@ -8,7 +8,7 @@ import io.ktor.server.routing.*
 import java.sql.Connection
 import java.sql.DriverManager
 
-fun Application.installPostgres() {
+fun Application.configurePostgres() {
     val dbConnection: Connection = connectToPostgres(embedded = true)
     val cityService = CityService(dbConnection)
 

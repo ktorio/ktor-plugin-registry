@@ -42,7 +42,6 @@ flaxoos-ktorServerTaskSchedulingMongodb = { module = "io.github.flaxoos:ktor-ser
 flaxoos-ktorServerTaskSchedulingJdbc = { module = "io.github.flaxoos:ktor-server-task-scheduling-jdbc", version = "2.2.1" }
 flaxoos-ktorServerRateLimiting = { module = "io.github.flaxoos:ktor-server-rate-limiting", version = "2.2.1" }
 flaxoos-ktorServerKafka = { module = "io.github.flaxoos:ktor-server-kafka", version = "2.2.1" }
-smiley4-ktorSwaggerUi = { module = "io.github.smiley4:ktor-swagger-ui", version = "2.2.1" }
 insert-koin-koinKtor = { module = "io.insert-koin:koin-ktor", version.ref = "koin" }
 insert-koin-koinLoggerSlf4j = { module = "io.insert-koin:koin-logger-slf4j", version.ref = "koin" }
 mongodb-driverCore = { module = "org.mongodb:mongodb-driver-core", version.ref = "mongodb" }

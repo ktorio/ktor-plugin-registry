@@ -8,6 +8,6 @@ links:
   vcs: https://github.com/ktorio/ktor/blob/4517e3856a3cae8f157d2f6966635217827d2abd/ktor-server/ktor-server-core/jvm/src/io/ktor/features/AutoHeadResponse.kt
 propertyValues:
   - key: io.ktor/server-core/serverModules
-    value: AutoHeadResponseKt.installAutoHeadResponse
+    value: AutoHeadResponseKt.configureAutoHeadResponse
 requires:
   - io.ktor/server-core

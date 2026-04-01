@@ -8,6 +8,6 @@ links:
   vcs: https://github.com/ktorio/ktor
 propertyValues:
   - key: io.ktor/server-core/serverModules
-    value: DiKt.installDi
+    value: DIKt.configureDependencyInjection
 requires:
   - io.ktor/server-core

@@ -4,3 +4,6 @@ dependencies:
 gradle:
   plugins:
     - $libs.plugins.kotlin.serialization
+amper:
+  kotlin:
+    serialization: enabled

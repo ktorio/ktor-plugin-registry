@@ -1,3 +1,0 @@
-platform: jvm
-dependencies:
-  - $ktorLibs.server.doubleReceive

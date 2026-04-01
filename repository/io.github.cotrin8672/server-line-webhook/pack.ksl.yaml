@@ -8,4 +8,3 @@ links:
   vcs: https://github.com/cotrin8672/ktor-line-webhook-plugin
 requires:
   - io.ktor/server-core
-  - io.ktor/server-double-receive

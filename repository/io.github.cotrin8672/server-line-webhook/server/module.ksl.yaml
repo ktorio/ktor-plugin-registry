@@ -1,3 +1,4 @@
 platform: jvm
 dependencies:
   - $libs.cotrin8672.ktorLineWebhookPlugin
+  - $ktorLibs.server.doubleReceive

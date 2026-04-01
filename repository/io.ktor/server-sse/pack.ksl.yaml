@@ -8,6 +8,6 @@ links:
   vcs: https://github.com/ktorio/ktor/blob/main/ktor-server/ktor-server-plugins/ktor-server-sse/jvmAndNix/src/io/ktor/server/sse/SSE.kt
 propertyValues:
   - key: io.ktor/server-core/serverModules
-    value: SseKt.installSse
+    value: SseKt.configureSse
 requires:
   - io.ktor/server-core

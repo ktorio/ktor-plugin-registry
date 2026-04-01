@@ -21,16 +21,24 @@
         {{/each}}
         {{slots mavenProperties}}
     </properties>
+    {{#if _project.gradle.repositories.size}}
     <repositories>
+        {{#each _project.gradle.repositories}}
+        <repository>
+            <id>{{id}}</id>
+            <url>{{url}}</url>
+        </repository>
+        {{/each}}
     </repositories>
+    {{/if}}
     {{/if}}
     <dependencies>
         {{#each _module.dependencies.entries}}
         {{#each value}}
         <dependency>
             <groupId>{{ group }}</groupId>
-            <artifactId>{{ artifact }}{{#if isJava}}{{else}}-jvm{{/if}}</artifactId>
-            <version>${{{ versionRef }}_version}</version>
+            <artifactId>{{ artifact }}{{#if kmp}}-jvm{{/if}}</artifactId>
+            <version>{{#if versionRef}}${{{ versionRef }}_version}{{else}}{{version}}{{/if}}</version>
         </dependency>
         {{/each}}
         {{/each}}
@@ -38,8 +46,8 @@
         {{#each value}}
         <dependency>
             <groupId>{{ group }}</groupId>
-            <artifactId>{{ artifact }}{{#if isJava}}{{else}}-jvm{{/if}}</artifactId>
-            <version>${{{ versionRef }}_version}</version>
+            <artifactId>{{ artifact }}{{#if kmp}}-jvm{{/if}}</artifactId>
+            <version>{{#if versionRef}}${{{ versionRef }}_version}{{else}}{{version}}{{/if}}</version>
             <scope>test</scope>
         </dependency>
         {{/each}}
