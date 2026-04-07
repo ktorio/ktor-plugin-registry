@@ -1,0 +1,6 @@
+platforms: [jvm, android]
+dependencies:
+  - $libs.opentelemetry.sdkAutoconfigure!
+  - $libs.opentelemetry.semconv!
+  - $libs.opentelemetry.exporterOtlp!
+  - $libs.opentelemetry.ktorInstrumentation!
