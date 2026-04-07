@@ -31,6 +31,9 @@ properties:
   - key: features
     type: list<map<string,string>>
     hidden: true
+  - key: serverTarget
+    type: string
+    hidden: true
 propertyValues:
   - key: hasHttp
     expression: _slots.contains("http")
@@ -44,6 +47,8 @@ propertyValues:
     expression: _slots.contains("databases")
   - key: features
     expression: _project.packs.filter { !it.tags.contains("core") }
+  - key: serverTarget
+    expression: if (_project.modules.any { it.path == "server" }) ":server:" else ""
 rootSources:
   - target: slot://org.gradle/gradle/versionCatalogs
     text: create("ktorLibs").from("io.ktor:ktor-version-catalog:3.4.0")
