@@ -1,0 +1,13 @@
+name: OpenTelemetry
+description: Instruments applications with distributed tracing, metrics, and logging for comprehensive observability
+license: Apache 2.0
+tags:
+  - monitoring
+  - server
+links:
+  vcs: https://github.com/open-telemetry/opentelemetry-java-instrumentation
+propertyValues:
+  - key: io.ktor/server-core/serverModules
+    value: ServerOpenTelemetryKt.configureOpenTelemetry
+requires:
+  - io.ktor/server-core

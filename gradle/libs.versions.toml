@@ -14,6 +14,9 @@ kotlinx-rpc = "0.10.2"
 kotlinx-rpc-grpc = "0.11.0-grpc-185"
 kotest = "6.0.5"
 kotlinx-io = "0.8.2"
+opentelemetry = "1.52.0"
+opentelemetry-semconv = "1.34.0"
+opentelemetry-ktor = "2.18.0-alpha"
 
 [libraries]
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
@@ -62,6 +65,10 @@ kotest-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kote
 kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinx-io" }
 kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin" }
+opentelemetry-sdkAutoconfigure = { module = "io.opentelemetry:opentelemetry-sdk-extension-autoconfigure", version.ref = "opentelemetry" }
+opentelemetry-semconv = { module = "io.opentelemetry.semconv:opentelemetry-semconv", version.ref = "opentelemetry-semconv" }
+opentelemetry-exporterOtlp = { module = "io.opentelemetry:opentelemetry-exporter-otlp", version.ref = "opentelemetry" }
+opentelemetry-ktorInstrumentation = { module = "io.opentelemetry.instrumentation:opentelemetry-ktor-3.0", version.ref = "opentelemetry-ktor" }
 
 [plugins]
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
