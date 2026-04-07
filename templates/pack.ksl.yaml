@@ -1,0 +1,13 @@
+name: {{PLUGIN_NAME}}
+description: Provides type-safe routing
+license: Apache 2.0
+tags:
+  - server
+  - http
+links:
+  vcs: https://github.com/{{GROUP}}/{{PLUGIN_ID}}
+propertyValues:
+  - key: io.ktor/server-core/serverModules
+    value: {{PLUGIN_CLASS}}Kt.install{{PLUGIN_CLASS}}
+requires:
+  - io.ktor/{{PLUGIN_TYPE}}-core

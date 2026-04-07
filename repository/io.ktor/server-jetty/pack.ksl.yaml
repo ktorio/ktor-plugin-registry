@@ -6,4 +6,4 @@ requires:
   - io.ktor/server-core
 propertyValues:
   - key: io.ktor/server-core/mainClass
-    value: io.ktor.server.netty.EngineMain
+    value: io.ktor.server.jetty.jakarta.EngineMain

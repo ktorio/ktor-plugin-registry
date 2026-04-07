@@ -167,6 +167,7 @@ if (_module.platform != "jvm") {
                 }
             }
         }
+
         testImplementation(kotlin("test"))
         for (dependency in _module.testDependencies.values.flatten()) {
             when (dependency.type) {
