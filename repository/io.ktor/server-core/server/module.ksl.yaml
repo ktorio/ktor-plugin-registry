@@ -16,6 +16,8 @@ sources:
   - path: application.yaml.hbs
     target: file:resources/application.yaml
     if: configFormat == "YAML"
+  - path: src/Application.kt
+    if: configFormat == "none"
   - target: slot://org.jetbrains/amper/settings
     text: "ktor: enabled"
   - path: src/Http.kt
@@ -30,3 +32,5 @@ sources:
     if: _slots.contains("databases")
   - target: slot://org.gradle/gradle/buildRoot
     path: build.gradle.kts.hbs
+  - target: slot://org.gradle/gradle/kotlinRoot
+    text: "jvmToolchain(21)"

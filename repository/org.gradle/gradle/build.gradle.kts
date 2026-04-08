@@ -141,6 +141,11 @@ if (_module.platform != "jvm") {
         }
     }
 } else {
+    if (_slots.contains("kotlinRoot")) {
+        kotlin {
+            _slots("kotlinRoot")
+        }
+    }
     dependencies {
         for (dependency in _module.dependencies.values.flatten()) {
             when (dependency.type) {

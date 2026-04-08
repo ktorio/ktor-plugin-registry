@@ -1,3 +1,8 @@
 application {
     mainClass = "{{mainClass}}"
 }
+{{#if hasKtorGradle}}
+    ktor {
+        {{slots "gradlePlugin"}}
+    }
+{{/if}}
