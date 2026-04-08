@@ -10,6 +10,9 @@ properties:
   - key: mainClass
     type: string
     hidden: true
+  - key: engineClass
+    type: string
+    hidden: true
   - key: hasHttp
     type: boolean
     hidden: true
@@ -23,6 +26,9 @@ properties:
     type: boolean
     hidden: true
   - key: hasDatabases
+    type: boolean
+    hidden: true
+  - key: hasKtorGradle
     type: boolean
     hidden: true
   - key: configFormat
@@ -45,6 +51,8 @@ propertyValues:
     expression: _slots.contains("security")
   - key: hasDatabases
     expression: _slots.contains("databases")
+  - key: hasKtorGradle
+    expression: _slots.contains("gradlePlugin")
   - key: features
     expression: _project.packs.filter { !it.tags.contains("core") }
   - key: serverTarget

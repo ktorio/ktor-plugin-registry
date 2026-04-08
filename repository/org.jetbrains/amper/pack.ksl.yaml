@@ -3,6 +3,7 @@ name: Amper
 description: A simple Kotlin build system
 version: 1.0.0
 tags:
+  - core
   - buildSystemRoot
 rootSources:
   - path: project.yaml.hbs

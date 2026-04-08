@@ -23,7 +23,7 @@ pluginManagement {
 }
 
 plugins {
-    id("org.jetbrains.kastle") version "0.1.0"
+    id("org.jetbrains.kastle") version "0.1.1"
 }
 
 dependencyResolutionManagement {

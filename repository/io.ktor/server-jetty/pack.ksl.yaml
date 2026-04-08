@@ -5,5 +5,7 @@ tags:
 requires:
   - io.ktor/server-core
 propertyValues:
+  - key: io.ktor/server-core/engineClass
+    value: io.ktor.server.jetty.jakarta.Jetty
   - key: io.ktor/server-core/mainClass
     value: io.ktor.server.jetty.jakarta.EngineMain

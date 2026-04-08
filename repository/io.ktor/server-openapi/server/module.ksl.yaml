@@ -1,3 +1,10 @@
 platform: jvm
 dependencies:
   - $ktorLibs.server.openapi
+  - $ktorLibs.server.routingOpenapi
+sources:
+  - target: slot://io.ktor/server-core/gradlePlugin
+    text: |-
+      openApi {
+          enabled = true
+      }
