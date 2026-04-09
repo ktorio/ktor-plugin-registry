@@ -57,3 +57,13 @@ Here are a few examples to illustrate different techniques that you can apply fo
 | [Exposed](repository/org.jetbrains/server-exposed)  | Several injections and dependencies                  |
 | [Kafka](repository/io.github.flaxoos/server-kafka)  | Includes configuration files and a custom repository |
 | [kotlinx-rpc](repository/org.jetbrains/kotlinx-rpc) | Multi-module layout with core, client, and server    |                                              
+
+## Testing
+
+There is a [test](/test) module which contains a single Kotest suite that will iterate through all plugins and ensure 
+that the resulting project builds successfully and its tests pass.
+
+To run the tests:
+```bash
+./gradlew :test:kotest
+```

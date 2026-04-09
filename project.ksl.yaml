@@ -1,0 +1,11 @@
+name: test-project
+group: com.example
+# All features declared here
+packs:
+  - org.gradle/gradle
+  - io.ktor/server-core
+  - io.ktor/server-jetty
+  - io.ktor/server-compression
+# Customize properties here
+properties:
+  "io.ktor/server-core/configFormat": YAML
