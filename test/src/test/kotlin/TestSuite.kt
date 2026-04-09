@@ -1,8 +1,10 @@
 package io.ktor.registry
 
+import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FeatureSpec
 import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.runBlocking
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
@@ -15,9 +17,16 @@ import org.jetbrains.kastle.io.resolve
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.attribute.PosixFilePermissions
+import java.util.concurrent.ConcurrentLinkedDeque
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.listDirectoryEntries
 
+@OptIn(ExperimentalKotest::class)
 class TestSuite : FeatureSpec({
+// Concurrent testing would be nice, but it is incompatible with the Kotest plugin
+//    testExecutionMode = TestExecutionMode.Concurrent
+//    coroutineDispatcherFactory = ThreadPoolDispatcherFactory
+
     val fs = SystemFileSystem
     val outputDir = Path("../test-output").also {
         fs.deleteRecursively(it)
@@ -34,8 +43,11 @@ class TestSuite : FeatureSpec({
     val gradle = PackId("org.gradle", "gradle")
     val maven = PackId("org.apache", "maven")
     val amper = PackId("org.jetbrains", "amper")
-    // less amper because it's slow
-    val buildSystems = listOf(gradle, amper, maven, gradle, maven)
+    // more gradle, less amper / maven, for performance
+    val buildSystems = listOf(gradle, amper, maven, gradle, gradle)
+    // TODO not thread-safe
+    val executables = mutableMapOf<PackId, java.nio.file.Path>()
+
     val engines = listOf(
         "server-netty",
         "server-cio",
@@ -45,108 +57,124 @@ class TestSuite : FeatureSpec({
         PackId.parse("io.ktor/$it")
     }
 
-    feature("Ktor repository") {
-        val packs = mutableListOf<PackDescriptor>()
+    val testCases = ConcurrentLinkedDeque<KtorPackTestCase>().also { list ->
+        runBlocking {
+            repository.readAll().collectIndexed { i, pack ->
+                // ignore client packs
+                if ("server" !in pack.tags) return@collectIndexed
+                // ignore core packs
+                if ("core" in pack.tags) return@collectIndexed
 
-        scenario("Loads successfully") {
-            repository.readAll().collect(packs::add)
-            packs.sortBy { it.name }
+                list.add(
+                    KtorPackTestCase(
+                        pack = pack,
+                        buildSystem = buildSystems[i % buildSystems.size],
+                        serverEngine = engines[i % engines.size],
+                    )
+                )
+            }
+        }
+    }.sortedBy {
+        it.pack.name
+    }
+
+    // Reuse the same wrappers so that Gradle can at least use the same daemon.
+    fun runWrapper(
+        buildSystemId: PackId,
+        projectPath: java.nio.file.Path,
+        fileName: String,
+        target: String,
+        expectedOutput: String
+    ) {
+        val wrapperExecutable = executables.getOrPut(buildSystemId) {
+            projectPath.resolve(fileName).also { executable ->
+                Files.setPosixFilePermissions(
+                    executable,
+                    PosixFilePermissions.fromString("rwxr-xr-x")
+                )
+            }
+        }
+        val process = ProcessBuilder(listOf(wrapperExecutable.absolutePathString(), target))
+            .directory(projectPath.toFile())
+            .redirectErrorStream(true)
+            .start()
+        val output = process.inputStream.bufferedReader().use { it.readText() }
+        output shouldContain expectedOutput
+    }
+
+    for (testCase in testCases) {
+        val pack = testCase.pack
+        val engine = testCase.serverEngine
+        val buildSystem = testCase.buildSystem.let { bs ->
+            // defaults to gradle when not compatible
+            when (bs) {
+                maven if (testCase.isMultiModule() || testCase.isMultiPlatform()) -> gradle
+                amper if (!testCase.isCompatibleWithAmper()) -> gradle
+                else -> bs
+            }
         }
 
-        var i = 0
-        for (pack in packs) {
-            // ignore client packs
-            if ("server" !in pack.tags) continue
-            // ignore core packs
-            if ("core" in pack.tags) continue
-
-            val isMultiModule = pack.sources.modules is ProjectModules.Multi
-            var modules = pack.sources.modules.modules
-            val isMultiPlatform = modules.any { it.platforms.size > 1 }
-            val amperCannotProcess: (SourceModule) -> Boolean = { module ->
-                if (module.amper.isNotEmpty()) true
-                else module.gradle.plugins.isNotEmpty()
-                    || module.dependencies.values.flatten().any { it is FunctionDependency }
+        feature(testCase.featureName) {
+            val projectDir = outputDir.resolve(pack.id.toString()).also {
+                fs.createDirectories(it)
             }
-            val buildSystem = buildSystems[i % buildSystems.size].let { bs ->
-                // defaults to gradle when not compatible
-                when(bs) {
-                    maven if (isMultiModule || isMultiPlatform) -> gradle
-                    amper if (modules.any(amperCannotProcess)) -> gradle
-                    else -> bs
-                }
-            }
+            val generated = Job()
 
-            feature("${pack.name} (${pack.group?.id ?: "unknown group"})") {
-                val projectDir = outputDir.resolve(pack.id.toString()).also {
-                    fs.createDirectories(it)
+            scenario("generates") {
+                try {
+                    generator.generate(
+                        ProjectDescriptor(
+                            name = "test-${pack.id.id}",
+                            group = "io.ktor",
+                            properties = emptyMap(),
+                            packs = listOf(
+                                buildSystem,
+                                engine,
+                                pack.id,
+                            ),
+                        )
+                    ).export(projectDir)
+                } catch (e: Throwable) {
+                    generated.completeExceptionally(e)
+                    throw e
                 }
-                val generated = Job()
-
-                scenario("generates") {
-                    try {
-                        generator.generate(
-                            ProjectDescriptor(
-                                name = "test-${pack.id.id}",
-                                group = "io.ktor",
-                                properties = emptyMap(),
-                                packs = listOf(
-                                    buildSystem,
-                                    engines[i % engines.size],
-                                    pack.id,
-                                ),
-                            )
-                        ).export(projectDir)
-                    } catch (e: Throwable) {
-                        generated.completeExceptionally(e)
-                        throw e
-                    }
-                    generated.complete()
-                }
-
-                scenario("builds (${buildSystem.id})") {
-                    generated.join()
-                    val projectPath = Paths.get(projectDir.toString())
-                    require(projectPath.listDirectoryEntries().isNotEmpty()) { "Generate failed" }
-                    when(buildSystem) {
-                        gradle -> {
-                            Files.setPosixFilePermissions(projectPath.resolve("gradlew"), PosixFilePermissions.fromString("rwxr-xr-x"))
-                            val process = ProcessBuilder("./gradlew", "test", "--stacktrace")
-                                .directory(projectPath.toFile())
-                                .redirectErrorStream(true)
-                                .start()
-                            val output = process.inputStream.bufferedReader().use {
-                                it.readText()
-                            }
-                            output shouldContain "BUILD SUCCESSFUL"
-                        }
-                        amper -> {
-                            Files.setPosixFilePermissions(projectPath.resolve("amper"), PosixFilePermissions.fromString("rwxr-xr-x"))
-                            val process = ProcessBuilder("./amper", "test")
-                                .directory(projectPath.toFile())
-                                .redirectErrorStream(true)
-                                .start()
-                            val output = process.inputStream.bufferedReader().use {
-                                it.readText()
-                            }
-                            output shouldContain "0 tests failed"
-                        }
-                        maven -> {
-                            Files.setPosixFilePermissions(projectPath.resolve("mvnw"), PosixFilePermissions.fromString("rwxr-xr-x"))
-                            val process = ProcessBuilder("./mvnw", "test")
-                                .directory(projectPath.toFile())
-                                .redirectErrorStream(true)
-                                .start()
-                            val output = process.inputStream.bufferedReader().use {
-                                it.readText()
-                            }
-                            output shouldContain "BUILD SUCCESS"
-                        }
-                    }
-                }
+                generated.complete()
             }
 
-            i++
+            scenario("builds (${buildSystem.id})") {
+                generated.join()
+                val projectPath = Paths.get(projectDir.toString())
+                require(projectPath.listDirectoryEntries().isNotEmpty()) { "Generate failed" }
+                when (buildSystem) {
+                    gradle -> runWrapper(buildSystem, projectPath, "gradlew", "test", "BUILD SUCCESSFUL")
+                    amper -> runWrapper(buildSystem, projectPath, "amper", "test", "0 tests failed")
+                    maven -> runWrapper(buildSystem, projectPath, "mvnw", "test", "BUILD SUCCESS")
+                }
+            }
         }
     }
 })
+
+data class KtorPackTestCase(
+    val pack: PackDescriptor,
+    val buildSystem: PackId,
+    val serverEngine: PackId,
+) {
+    val modules: List<SourceModule> get() = pack.sources.modules.modules
+    val featureName: String get() = "${pack.name} (${pack.group?.id?.substringAfterLast('.') ?: "unknown group"})"
+
+    fun isMultiModule(): Boolean = pack.sources.modules is ProjectModules.Multi
+    fun isMultiPlatform(): Boolean = modules.any { it.platforms.size > 1 }
+    fun isCompatibleWithAmper(): Boolean = modules.all { module ->
+        if (module.amper.isNotEmpty()) true
+        else module.gradle.plugins.isEmpty()
+                && module.dependencies.values.flatten()
+                    .none { it is FunctionDependency || (it as? CatalogReference)?.let(::isMissingFromAmper) == true }
+    }
+}
+
+fun isMissingFromAmper(library: CatalogReference) =
+    library.keyInCatalog in setOf(
+        "server.routingOpenapi",
+        "server.di",
+    )
