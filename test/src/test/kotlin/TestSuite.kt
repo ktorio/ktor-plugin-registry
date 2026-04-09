@@ -2,6 +2,7 @@ package io.ktor.registry
 
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FeatureSpec
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectIndexed
@@ -120,6 +121,17 @@ class TestSuite : FeatureSpec({
             }
             val generated = Job()
 
+            /**
+             * There are some optional fields in KASTLE that are non-optional in the Ktor generator.
+             */
+            scenario("validate") {
+                pack.group?.name.shouldNotBeNull()
+                pack.group?.url.shouldNotBeNull()
+            }
+
+            /**
+             * Ensures the project can be generated from this pack.
+             */
             scenario("generates") {
                 try {
                     generator.generate(
@@ -141,6 +153,9 @@ class TestSuite : FeatureSpec({
                 generated.complete()
             }
 
+            /**
+             * We can build and run tests on the generated project.
+             */
             scenario("builds (${buildSystem.id})") {
                 generated.join()
                 val projectPath = Paths.get(projectDir.toString())

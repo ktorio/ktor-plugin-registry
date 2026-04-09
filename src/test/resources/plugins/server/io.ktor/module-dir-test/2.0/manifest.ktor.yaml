@@ -1,7 +1,0 @@
-name: Module Dir Test
-description: Test plugin for srcDir support
-vcsLink: https://github.com/ktorio/ktor
-license: Apache 2.0
-category: Frameworks
-sources:
-  - custom/test-file.proto (server, srcDir=proto)
