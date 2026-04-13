@@ -24,5 +24,6 @@ val client = HttpClient(CIO) {
 
     client.get("http://localhost:8080/customer/1")
     client.get("http://localhost:8080/customer/1")
-}```
+}
+```
 

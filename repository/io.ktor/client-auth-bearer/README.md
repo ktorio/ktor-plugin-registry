@@ -1,11 +1,7 @@
 
 Bearer authentication involves security tokens called bearer tokens. As an example, these tokens can be used as a part of OAuth flow to authorize users of your application by using external providers, such as Google, Facebook, Twitter, and so on. You can learn how the OAuth flow might look from the OAuth authorization flow section for a Ktor server.
 
-
-
 ## Usage
-
-
 
 1. Call the `bearer` function inside the `install` block.
    ```kotlin
@@ -64,8 +60,7 @@ Bearer authentication involves security tokens called bearer tokens. As an examp
 
    c. The client makes one more request to a protected resource automatically using a new token this time.
 
-5. Optionally, specify a condition for sending credentials without waiting for the `401` (Unauthorized) response. For example, you can check whether a request is made to a specified host.
-
+5. Optionally, specify a condition for sending credentials without waiting for the `401` (Unauthorized) response. For example, you can check whether a request is made to a specified host.<br />
    ```kotlin
    install(Auth) {
        bearer {

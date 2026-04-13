@@ -15,5 +15,6 @@ val client = HttpClient(CIO) {
         deflate(1.0F)
         gzip(0.9F)
     }
-}```
+}
+```
 

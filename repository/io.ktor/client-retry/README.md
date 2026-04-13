@@ -15,7 +15,9 @@ import io.ktor.client.plugins.*
 val client = HttpClient(CIO) {
     install(HttpRequestRetry)
 }
-### Configure retry conditions {id="conditions"}
+```
+
+### Configure retry conditions
 
 There are also configuration settings that allow you to configure conditions for retrying a request or specify delay logic:
 
@@ -34,7 +36,7 @@ install(HttpRequestRetry) {
 }
 ```
 
-### Modify a request before retrying {id="modify"}
+### Modify a request before retrying
 
 If you need to modify a request before retrying, use `modifyRequest`:
 
@@ -45,7 +47,6 @@ install(HttpRequestRetry) {
         request.headers.append("x-retry-count", retryCount.toString())
     }
 }
-```
 ```
 
 * The `retryOnServerErrors` function enables retrying a request if a `5xx` response is received from a server and specifies the number of retries.

@@ -2,7 +2,6 @@ name: Ktor Client
 description: Introduces the Ktor HTTP client
 license: Apache 2.0
 tags:
-  - http
   - client
   - core
 links:

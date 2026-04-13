@@ -1,7 +1,7 @@
 name: Exposed
 description: Adds Exposed database to your application
 license: Apache 2.0
-icon: icon.svg
+icon: exposed.svg
 tags:
   - databases
   - server
