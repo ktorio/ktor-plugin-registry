@@ -1,6 +1,7 @@
 name: Thymeleaf
 description: Serves HTML content, templated using Thymeleaf
 license: Apache 2.0
+icon: thymeleaf.svg
 tags:
   - templating
   - server

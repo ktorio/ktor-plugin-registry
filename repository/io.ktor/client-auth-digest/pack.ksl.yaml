@@ -2,9 +2,8 @@ name: Authentication Digest
 description: Authentication with a hash function applied to username and password
 license: Apache 2.0
 tags:
-  - http
   - client
 links:
   vcs: https://github.com/ktorio/ktor-documentation/tree/main/codeSnippets/snippets/client-auth-digest
 requires:
-  - io.ktor/server-auth
+  - io.ktor/client-core

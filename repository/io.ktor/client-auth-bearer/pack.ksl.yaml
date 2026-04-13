@@ -2,9 +2,8 @@ name: Authentication Bearer
 description: Authentication with a hash function applied to username and password
 license: Apache 2.0
 tags:
-  - http
   - client
 links:
   vcs: https://github.com/ktorio/ktor/blob/main/ktor-client/ktor-client-plugins/ktor-client-auth/common/src/io/ktor/client/plugins/auth/providers/BearerAuthProvider.kt
 requires:
-  - io.ktor/server-auth
+  - io.ktor/client-core

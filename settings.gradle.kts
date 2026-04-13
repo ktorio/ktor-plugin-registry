@@ -23,7 +23,7 @@ pluginManagement {
 }
 
 plugins {
-    id("org.jetbrains.kastle") version "0.1.1"
+    id("org.jetbrains.kastle") version "0.1.3"
 }
 
 dependencyResolutionManagement {
@@ -39,7 +39,7 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("ktorLibs") {
-            from("io.ktor:ktor-version-catalog:3.4.0")
+            from("io.ktor:ktor-version-catalog:3.4.2")
         }
     }
 }

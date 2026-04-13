@@ -9,8 +9,6 @@ The HttpTimeout plugin allows you to configure the following timeouts:
 
 You can specify these timeouts for all requests or only specific ones.
 
-
-
 ## Usage
 
 To configure timeouts, you can use corresponding properties:
@@ -24,7 +22,8 @@ val client = HttpClient(CIO) {
     install(HttpTimeout) {
         requestTimeoutMillis = 1000
     }
-}```
+}
+```
 
 If you need to set a timeout only for a specific request, use the [HttpRequestBuilder.timeout](https://api.ktor.io/ktor-client/ktor-client-core/io.ktor.client.plugins/timeout.html) property:
 
@@ -33,7 +32,8 @@ val response: HttpResponse = client.get("http://0.0.0.0:8080/path1") {
     timeout {
         requestTimeoutMillis = 3000
     }
-}```
+}
+```
 
 Note that timeouts specified for a specific request override global timeouts from the `install` block.
 

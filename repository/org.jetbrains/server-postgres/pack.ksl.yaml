@@ -1,7 +1,7 @@
 name: PostgreSQL
 description: Adds Postgres database support
 license: Apache 2.0
-icon: logo.svg
+icon: logo.png
 tags:
   - databases
   - server

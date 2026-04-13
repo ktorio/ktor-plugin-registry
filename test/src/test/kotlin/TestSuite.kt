@@ -2,6 +2,7 @@ package io.ktor.registry
 
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FeatureSpec
+import io.kotest.engine.concurrency.TestExecutionMode
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.Job
@@ -15,6 +16,8 @@ import org.jetbrains.kastle.io.deleteRecursively
 import org.jetbrains.kastle.io.export
 import org.jetbrains.kastle.io.readToml
 import org.jetbrains.kastle.io.resolve
+import org.jetbrains.kastle.logging.ConsoleLogger
+import org.jetbrains.kastle.logging.LogLevel
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.attribute.PosixFilePermissions
@@ -24,10 +27,6 @@ import kotlin.io.path.listDirectoryEntries
 
 @OptIn(ExperimentalKotest::class)
 class TestSuite : FeatureSpec({
-// Concurrent testing would be nice, but it is incompatible with the Kotest plugin
-//    testExecutionMode = TestExecutionMode.Concurrent
-//    coroutineDispatcherFactory = ThreadPoolDispatcherFactory
-
     val fs = SystemFileSystem
     val outputDir = Path("../test-output").also {
         fs.deleteRecursively(it)
@@ -40,13 +39,12 @@ class TestSuite : FeatureSpec({
             .export(outputDir.resolve("repository"))
             .also { it.catalogs(it.catalogs() + ktorVersions.copy(name = "ktorLibs")) }
     }
-    val generator = ProjectGenerator(repository)
+    val generator = ProjectGenerator(repository, log = ConsoleLogger(level = LogLevel.INFO))
     val gradle = PackId("org.gradle", "gradle")
     val maven = PackId("org.apache", "maven")
     val amper = PackId("org.jetbrains", "amper")
     // more gradle, less amper / maven, for performance
     val buildSystems = listOf(gradle, amper, maven, gradle, gradle)
-    // TODO not thread-safe
     val executables = mutableMapOf<PackId, java.nio.file.Path>()
 
     val engines = listOf(
@@ -156,7 +154,7 @@ class TestSuite : FeatureSpec({
             /**
              * We can build and run tests on the generated project.
              */
-            scenario("builds (${buildSystem.id})") {
+            scenario("builds (${buildSystem.id})").config(blockingTest = true) {
                 generated.join()
                 val projectPath = Paths.get(projectDir.toString())
                 require(projectPath.listDirectoryEntries().isNotEmpty()) { "Generate failed" }

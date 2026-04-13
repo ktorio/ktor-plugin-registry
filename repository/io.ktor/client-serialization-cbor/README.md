@@ -7,7 +7,6 @@ The [ContentNegotiation](https://api.ktor.io/ktor-client/ktor-client-plugins/kto
 
 > On the server, Ktor provides the __ContentNegotiation__ plugin for serializing/deserializing content.
 
-
 ## Usage
 
 To install ContentNegotiation, pass it to the install function inside a client configuration block:

@@ -1,6 +1,3 @@
-/**
- * slot://io.ktor/client-core/http
- */
 package kastle
 
 import io.ktor.client.*

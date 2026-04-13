@@ -5,8 +5,6 @@ By default, Ktor doesn't validate a response depending on its status code. If re
 * Add stricter validation of 2xx responses.
 * Customize validation of non-2xx responses.
 
-
-
 ## Usage
 
 Ktor allows you to enable default validation by setting the `expectSuccess` property to `true`. This can be done on a client configuration level ...
@@ -18,7 +16,9 @@ import io.ktor.client.engine.cio.*
 val client = HttpClient(CIO) {
     expectSuccess = true
 }
-```... or by using the same property on a request level.
+```
+
+... or by using the same property on a request level.
 
 ### Custom validation
 
@@ -30,7 +30,9 @@ val client = HttpClient(CIO) {
         // ...
     }
 }
-```###### Validate 2xx responses
+```
+
+###### Validate 2xx responses
 
 As mentioned above, default validation throws exceptions for non-2xx error responses. If you need to add stricter validation and check 2xx responses, use the `validateResponse` function available in `HttpCallValidator`.
 

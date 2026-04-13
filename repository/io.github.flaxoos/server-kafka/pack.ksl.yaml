@@ -1,6 +1,7 @@
 name: Kafka
 description: Adds Kafka support to your application
 license: MIT License
+icon: icon.svg
 tags:
   - databases
   - server

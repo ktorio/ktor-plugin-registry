@@ -31,7 +31,7 @@ fun main() {
     }
 }
 ```
-##Provide a custom logger
+## Provide a custom logger
 To use a custom logger in your client application, you need to create a `Logger` instance and override the log function. The example below shows how to use the [Napier](https://github.com/AAkira/Napier) library to log HTTP calls:
 
 ```kotlin

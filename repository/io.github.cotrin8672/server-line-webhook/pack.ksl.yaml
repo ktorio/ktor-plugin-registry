@@ -1,6 +1,7 @@
 name: LineWebhook
 description: Validates the signature of LineBot webhooks
 license: Apache 2.0
+icon: logo.svg
 tags:
   - security
   - server

@@ -1,6 +1,3 @@
-/**
- * slot://io.ktor/client-core/monitoring
- */
 package kastle
 
 import io.ktor.client.*
