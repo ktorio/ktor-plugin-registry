@@ -1,4 +1,10 @@
 #!/bin/sh
+# Create a new plugin manifest structure for this repository.
+#
+# What this script does:
+# - Prompts for group, plugin name, plugin ID, and plugin type
+# - Populates a new plugin directory in the repository with the required files
+# - After running the script, you can easily edit the files to complete your plugin
 set -eu
 
 die() {
@@ -58,6 +64,12 @@ plugin_name=$(prompt_with_default "Plugin name" "$plugin_name_default" "Koin, Ra
 plugin_id_default=$(to_kebab_case "$plugin_name")
 [ -n "$plugin_id_default" ] || plugin_id_default="my-plugin"
 plugin_id=$(prompt_with_default "Plugin ID" "$plugin_id_default" "lowercase-kebab-case, e.g. my-plugin")
+
+case "$plugin_id" in
+  *[!a-z0-9-]* | -* | *- | *--*)
+    die "Plugin ID must be lowercase kebab-case (for example: my-plugin)."
+    ;;
+esac
 
 plugin_type_default="server"
 printf 'Plugin type [%s] (server/client): ' "$plugin_type_default" >&2

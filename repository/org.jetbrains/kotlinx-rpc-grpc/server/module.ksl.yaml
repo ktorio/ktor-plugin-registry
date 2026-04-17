@@ -4,10 +4,10 @@ gradle:
     - $libs.plugins.kotlinx.rpc.grpc
 dependencies:
   - ../core
-  - $libs.kotlinx.rpc.grpcKtorServer
+  - $libs.kotlinx.rpc.grpc.ktorServer
   - $libs.grpc.netty
 testDependencies:
-  - $libs.kotlinx.rpc.grpcClient
+  - $libs.kotlinx.rpc.grpc.client
   - $ktorLibs.server.testHost
 sources:
   - target: slot://org.gradle/gradle/buildRoot

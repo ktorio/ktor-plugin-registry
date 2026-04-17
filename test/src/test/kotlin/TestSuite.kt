@@ -4,6 +4,7 @@ import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FeatureSpec
 import io.kotest.engine.concurrency.TestExecutionMode
 import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectIndexed
@@ -125,6 +126,9 @@ class TestSuite : FeatureSpec({
             scenario("validate") {
                 pack.group?.name.shouldNotBeNull()
                 pack.group?.url.shouldNotBeNull()
+                val isClient = "client" in pack.tags
+                val isServer = "server" in pack.tags
+                (isClient xor isServer) shouldBe true
             }
 
             /**
