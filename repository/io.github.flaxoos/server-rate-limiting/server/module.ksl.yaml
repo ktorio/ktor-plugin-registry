@@ -1,3 +1,3 @@
 platform: jvm
 dependencies:
-  - $libs.flaxoos.ktorServerRateLimiting
+  - $libs.flaxoos.ktor.server.rateLimiting

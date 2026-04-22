@@ -1,6 +1,6 @@
 platform: jvm
 dependencies:
-  - $libs.flaxoos.ktorServerTaskSchedulingCore
-  - $libs.flaxoos.ktorServerTaskSchedulingRedis
-  - $libs.flaxoos.ktorServerTaskSchedulingMongodb
-  - $libs.flaxoos.ktorServerTaskSchedulingJdbc
+  - $libs.flaxoos.ktor.server.taskSchedulingCore
+  - $libs.flaxoos.ktor.server.taskSchedulingRedis
+  - $libs.flaxoos.ktor.server.taskSchedulingMongodb
+  - $libs.flaxoos.ktor.server.taskSchedulingJdbc
