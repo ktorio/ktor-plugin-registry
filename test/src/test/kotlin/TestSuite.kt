@@ -2,19 +2,19 @@ package io.ktor.registry
 
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FeatureSpec
-import io.kotest.engine.concurrency.TestExecutionMode
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.runBlocking
+import kotlinx.io.files.FileSystem
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import org.jetbrains.kastle.*
 import org.jetbrains.kastle.io.FileSystemPackRepository.Companion.export
-import org.jetbrains.kastle.io.deleteRecursively
 import org.jetbrains.kastle.io.export
+import org.jetbrains.kastle.io.isDirectory
 import org.jetbrains.kastle.io.readToml
 import org.jetbrains.kastle.io.resolve
 import org.jetbrains.kastle.logging.ConsoleLogger
@@ -195,3 +195,15 @@ fun isMissingFromAmper(library: CatalogReference) =
         "server.routingOpenapi",
         "server.di",
     )
+
+fun FileSystem.deleteRecursively(path: Path, visited: Set<Path> = mutableSetOf()) {
+    if (isDirectory(path)) {
+        val contents = list(path)
+        for (entry in contents - visited)
+            deleteRecursively(entry, visited + path)
+    }
+    // Delete the current file or empty directory
+    runCatching {
+        delete(path, mustExist = false)
+    }
+}

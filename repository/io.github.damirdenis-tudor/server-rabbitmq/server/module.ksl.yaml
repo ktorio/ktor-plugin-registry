@@ -1,6 +1,6 @@
 platform: jvm
 dependencies:
-  - $libs.damirdenis.tudor.ktorServerRabbitmq
+  - $libs.damirdenisTudor.ktorServerRabbitmq
 sources:
   - target: slot://io.ktor/server-core/applicationConf
     text: |-
