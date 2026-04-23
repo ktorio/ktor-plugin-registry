@@ -1,26 +1,26 @@
 [versions]
 kotlin = "2.3.20"
-logback = "1.5.21"
-prometheus = "1.16.4"
+logback = "1.5.32"
+prometheus = "1.16.5"
 kotlinx-browser = "0.5.0"
 kotlinx-html = "0.12.0"
-koog = "0.5.1"
+koog = "0.8.0"
 exposed = "1.2.0"
 h2 = "2.4.240"
-mongodb = "4.11.5"
-koin = "4.2.0"
+mongodb = "5.6.5"
+koin = "4.2.1"
 kotlinx-rpc = "0.10.2"
 kotlinx-rpc-grpc = "0.11.0-grpc-187"
-kotest = "6.0.5"
-kotlinx-io = "0.8.2"
-opentelemetry = "1.52.0"
-opentelemetry-semconv = "1.34.0"
-opentelemetry-ktor = "2.18.0-alpha"
+kotest = "6.1.11"
+kotlinx-io = "0.9.0"
+opentelemetry = "1.61.0"
+opentelemetry-semconv = "1.40.0"
+opentelemetry-ktor = "2.27.0-alpha"
 
 [libraries]
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 micrometer-registryPrometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "prometheus" }
-webjars-jquery = { module = "org.webjars:jquery", version = "3.2.1" }
+webjars-jquery = { module = "org.webjars:jquery", version = "4.0.0" }
 kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinx-browser" }
 kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html", version.ref = "kotlinx-html" }
 koog-ktor = { module = "ai.koog:koog-ktor", version.ref = "koog" }
@@ -29,21 +29,21 @@ exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "e
 exposed-r2dbc = { module = "org.jetbrains.exposed:exposed-r2dbc", version.ref = "exposed" }
 h2database-h2 = { module = "com.h2database:h2", version.ref = "h2" }
 h2database-r2dbc = { module = "io.r2dbc:r2dbc-h2", version = "1.1.0.RELEASE" }
-openfolder-kotlinAsyncapiKtor = { module = "org.openfolder:kotlin-asyncapi-ktor", version = "3.2.1" }
+openfolder-kotlinAsyncapiKtor = { module = "org.openfolder:kotlin-asyncapi-ktor", version = "3.2.2" }
 kborowy-firebaseAuthProvider = { module = "com.kborowy:firebase-auth-provider", version = "1.6.0" }
-cohort-cohortKtor = { module = "com.sksamuel.cohort:cohort-ktor", version = "2.8.3" }
-ucasoft-ktorSimpleMemoryCache = { module = "com.ucasoft.ktor:ktor-simple-memory-cache", version = "0.59.4" }
-ucasoft-ktorSimpleCache = { module = "com.ucasoft.ktor:ktor-simple-cache", version = "0.59.4" }
-ucasoft-ktorSimpleRedisCache = { module = "com.ucasoft.ktor:ktor-simple-redis-cache", version = "0.59.4" }
+cohort-cohortKtor = { module = "com.sksamuel.cohort:cohort-ktor", version = "2.9.1" }
+ucasoft-ktorSimpleMemoryCache = { module = "com.ucasoft.ktor:ktor-simple-memory-cache", version = "0.63.3" }
+ucasoft-ktorSimpleCache = { module = "com.ucasoft.ktor:ktor-simple-cache", version = "0.63.3" }
+ucasoft-ktorSimpleRedisCache = { module = "com.ucasoft.ktor:ktor-simple-redis-cache", version = "0.63.3" }
 hayden-khealth = { module = "dev.hayden:khealth", version = "3.0.2" }
 cotrin8672-ktorLineWebhookPlugin = { module = "io.github.cotrin8672:ktor-line-webhook-plugin", version = "1.5.0" }
 damirdenisTudor-ktorServerRabbitmq = { module = "io.github.damirdenis-tudor:ktor-server-rabbitmq", version = "1.5.0" }
-flaxoos-ktor-server-taskSchedulingCore = { module = "io.github.flaxoos:ktor-server-task-scheduling-core", version = "2.2.1" }
-flaxoos-ktor-server-taskSchedulingRedis = { module = "io.github.flaxoos:ktor-server-task-scheduling-redis", version = "2.2.1" }
-flaxoos-ktor-server-taskSchedulingMongodb = { module = "io.github.flaxoos:ktor-server-task-scheduling-mongodb", version = "2.2.1" }
-flaxoos-ktor-server-taskSchedulingJdbc = { module = "io.github.flaxoos:ktor-server-task-scheduling-jdbc", version = "2.2.1" }
-flaxoos-ktor-server-rateLimiting = { module = "io.github.flaxoos:ktor-server-rate-limiting", version = "2.2.1" }
-flaxoos-ktor-server-kafka = { module = "io.github.flaxoos:ktor-server-kafka", version = "2.2.1" }
+flaxoos-ktor-server-taskSchedulingCore = { module = "io.github.flaxoos:ktor-server-task-scheduling-core", version = "2.3.0" }
+flaxoos-ktor-server-taskSchedulingRedis = { module = "io.github.flaxoos:ktor-server-task-scheduling-redis", version = "2.3.0" }
+flaxoos-ktor-server-taskSchedulingMongodb = { module = "io.github.flaxoos:ktor-server-task-scheduling-mongodb", version = "2.3.0" }
+flaxoos-ktor-server-taskSchedulingJdbc = { module = "io.github.flaxoos:ktor-server-task-scheduling-jdbc", version = "2.3.0" }
+flaxoos-ktor-server-rateLimiting = { module = "io.github.flaxoos:ktor-server-rate-limiting", version = "2.3.0" }
+flaxoos-ktor-server-kafka = { module = "io.github.flaxoos:ktor-server-kafka", version = "2.3.0" }
 koin-ktor = { module = "io.insert-koin:koin-ktor", version.ref = "koin" }
 koin-loggerSlf4j = { module = "io.insert-koin:koin-logger-slf4j", version.ref = "koin" }
 mongodb-driverCore = { module = "org.mongodb:mongodb-driver-core", version.ref = "mongodb" }
@@ -58,7 +58,7 @@ kotlinx-rpc-grpc-core = { module = "org.jetbrains.kotlinx:kotlinx-rpc-grpc-core"
 kotlinx-rpc-protobufCore = { module = "org.jetbrains.kotlinx:kotlinx-rpc-protobuf-core", version.ref = "kotlinx-rpc-grpc" }
 kotlinx-rpc-grpc-ktorServer = { module = "org.jetbrains.kotlinx:kotlinx-rpc-grpc-ktor-server", version.ref = "kotlinx-rpc-grpc" }
 kotlinx-rpc-grpc-client = { module = "org.jetbrains.kotlinx:kotlinx-rpc-grpc-client", version.ref = "kotlinx-rpc-grpc" }
-grpc-netty = { module = "io.grpc:grpc-netty", version = "1.79.0" }
+grpc-netty = { module = "io.grpc:grpc-netty", version = "1.80.0" }
 kotest-framework = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
 kotest-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
 kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
