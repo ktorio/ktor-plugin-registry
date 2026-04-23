@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.3.20"
-logback = "1.5.21"
+logback = "1.5.32"
 prometheus = "1.16.4"
 kotlinx-browser = "0.5.0"
 kotlinx-html = "0.12.0"
