@@ -57,6 +57,12 @@ class TestSuite : FeatureSpec({
         PackId.parse("io.ktor/$it")
     }
 
+    val configOptions = listOf(
+        "HOCON",
+        "YAML",
+        "none"
+    )
+
     val testCases = ConcurrentLinkedDeque<KtorPackTestCase>().also { list ->
         runBlocking {
             repository.readAll().collectIndexed { i, pack ->
@@ -70,6 +76,7 @@ class TestSuite : FeatureSpec({
                         pack = pack,
                         buildSystem = buildSystems[i % buildSystems.size],
                         serverEngine = engines[i % engines.size],
+                        configFormat = configOptions[i % configOptions.size],
                     )
                 )
             }
@@ -114,6 +121,7 @@ class TestSuite : FeatureSpec({
                 else -> bs
             }
         }
+        val configFormat = testCase.configFormat
 
         feature(testCase.featureName) {
             val projectDir = outputDir.resolve(pack.id.toString()).also {
@@ -141,12 +149,16 @@ class TestSuite : FeatureSpec({
                         ProjectDescriptor(
                             name = "test-${pack.id.id}",
                             group = "io.ktor",
-                            properties = emptyMap(),
-                            packs = listOf(
-                                buildSystem,
-                                engine,
-                                pack.id,
+                            properties = mapOf(
+                                VariableId.parse("io.ktor/server-core/configFormat") to configFormat
                             ),
+                            packs = buildList {
+                                add(buildSystem)
+                                add(engine)
+                                add(pack.id)
+                                if (configFormat == "YAML")
+                                    add(PackId.parse("io.ktor/server-config-yaml"))
+                            },
                         )
                     ).export(projectDir)
                 } catch (e: Throwable) {
@@ -159,7 +171,7 @@ class TestSuite : FeatureSpec({
             /**
              * We can build and run tests on the generated project.
              */
-            scenario("builds (${buildSystem.id})").config(blockingTest = true) {
+            scenario("tests pass (${buildSystem.id}, $configFormat)").config(blockingTest = true) {
                 generated.join()
                 val projectPath = Paths.get(projectDir.toString())
                 require(projectPath.listDirectoryEntries().isNotEmpty()) { "Generate failed" }
@@ -177,6 +189,7 @@ data class KtorPackTestCase(
     val pack: PackDescriptor,
     val buildSystem: PackId,
     val serverEngine: PackId,
+    val configFormat: String,
 ) {
     val modules: List<SourceModule> get() = pack.sources.modules.modules
     val featureName: String get() = "${pack.name} (${pack.group?.id?.substringAfterLast('.') ?: "unknown group"})"

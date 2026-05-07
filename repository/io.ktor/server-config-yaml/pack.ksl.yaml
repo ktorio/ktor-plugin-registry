@@ -2,5 +2,3 @@ name: YAML Config
 description: Adds YAML support for configuration
 tags:
   - core
-requires:
-  - io.ktor/server-core
