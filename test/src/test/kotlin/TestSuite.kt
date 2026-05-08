@@ -163,7 +163,7 @@ class TestSuite : FeatureSpec({
                 val projectPath = Paths.get(projectDir.toString())
                 require(projectPath.listDirectoryEntries().isNotEmpty()) { "Generate failed" }
                 when (buildSystem) {
-                    gradle -> runWrapper(buildSystem, projectPath, "gradlew", "test", "BUILD SUCCESSFUL")
+                    gradle -> runWrapper(buildSystem, projectPath, "gradlew", "test --no-configuration-cache", "BUILD SUCCESSFUL")
                     amper -> runWrapper(buildSystem, projectPath, "amper", "test", "0 tests failed")
                     maven -> runWrapper(buildSystem, projectPath, "mvnw", "test", "BUILD SUCCESS")
                 }
