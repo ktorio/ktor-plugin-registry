@@ -45,6 +45,12 @@ val aliases = mapOf(
     "https://maven.google.com" to "https://dl.google.com/dl/android/maven2",
 )
 
+/**
+ * Name prefix for upstream-origin fallback repositories registered by [redirect].
+ * Used to skip them when `configureEach` re-fires and to whitelist them in [CheckRepositoriesTask].
+ */
+private val FALLBACK_REPO_PREFIX = "ktorsettings.cacheRedirectorFallback."
+
 fun String.maybeRedirect(): String {
     val url = this.trimEnd('/')
     val deAliasedUrl = aliases.getOrDefault(url, url)
@@ -57,11 +63,49 @@ fun String.maybeRedirect(): String {
 
 fun URI.maybeRedirect(): URI = URI(toString().maybeRedirect())
 
-fun RepositoryHandler.redirect() = configureEach {
-    when (this) {
-        is MavenArtifactRepository -> url = url.maybeRedirect()
-        is IvyArtifactRepository -> @Suppress("SENSELESS_COMPARISON") if (url != null) {
-            url = url.maybeRedirect()
+/**
+ * Returns the upstream origin URL the cache-redirector points to, or `null` if [this]
+ * isn't a recognized cache-redirector URL.
+ */
+fun String.cacheRedirectorOrigin(): String? {
+    val url = this.trimEnd('/')
+    val entry = cacheMap.entries.find { (_, redirected) -> url.startsWith(redirected) } ?: return null
+    val rest = url.substringAfter(entry.value, "")
+    return "${entry.key}$rest"
+}
+
+fun RepositoryHandler.redirect() {
+    // Lazy URL rewriting only. Mutating the container (adding a new repo) from inside
+    // configureEach is forbidden by DefaultMutationGuard, so fallbacks are scheduled
+    // for after the DSL has been fully evaluated.
+    configureEach {
+        if (name.startsWith(FALLBACK_REPO_PREFIX)) return@configureEach
+        when (this) {
+            is MavenArtifactRepository -> url = url.maybeRedirect()
+            is IvyArtifactRepository -> @Suppress("SENSELESS_COMPARISON") if (url != null) {
+                url = url.maybeRedirect()
+            }
+        }
+    }
+}
+
+private fun RepositoryHandler.addCacheRedirectorFallbacks() {
+    val redirectedOrigins = filterIsInstance<MavenArtifactRepository>()
+        .filterNot { it.name.startsWith(FALLBACK_REPO_PREFIX) }
+        .mapNotNull { it.url?.toString()?.cacheRedirectorOrigin() }
+        .distinct()
+
+    val explicitOrigins = filterIsInstance<MavenArtifactRepository>()
+        .mapNotNull { it.url?.toString()?.trimEnd('/') }
+        .toSet()
+
+    for (origin in redirectedOrigins) {
+        if (origin.trimEnd('/') in explicitOrigins) continue
+        val safeName = FALLBACK_REPO_PREFIX + Integer.toHexString(origin.hashCode())
+        if (findByName(safeName) != null) continue
+        maven {
+            name = safeName
+            url = URI(origin)
         }
     }
 }
@@ -142,7 +186,10 @@ abstract class CheckRepositoriesTask : DefaultTask() {
         host == "buildserver.labs.intellij.net"
 
     private fun RepositoryHandler.findNonCachedRepositories(): List<String> {
+        // Treat fallbacks registered by `redirect()` as already covered: they exist precisely
+        // because there is also a cache-redirector entry for the same coordinates.
         val mavenNonCachedRepos = filterIsInstance<MavenArtifactRepository>()
+            .filterNot { it.name.startsWith(FALLBACK_REPO_PREFIX) }
             .filterNot { it.url.isCachedOrLocal() }
             .map { it.url.toString() }
 
@@ -217,9 +264,25 @@ if (useCacheRedirector.get()) {
     dependencyResolutionManagement.repositories.redirect()
     buildscript.repositories.redirect()
 
+    // Add upstream fallbacks AFTER the settings DSL has finished evaluating, so the user's
+    // own `repositories { mavenCentral() }` declarations have already been added (and
+    // URL-rewritten by the `configureEach` callback above). Adding repositories here is
+    // outside the lazy mutation context, so it's allowed.
+    gradle.settingsEvaluated {
+        pluginManagement.repositories.addCacheRedirectorFallbacks()
+        dependencyResolutionManagement.repositories.addCacheRedirectorFallbacks()
+        buildscript.repositories.addCacheRedirectorFallbacks()
+    }
+
     gradle.beforeProject {
         buildscript.repositories.redirect()
         repositories.redirect()
+        // For per-project repositories, register fallbacks once the project's build script
+        // has finished configuring its `repositories { ... }` block.
+        afterEvaluate {
+            buildscript.repositories.addCacheRedirectorFallbacks()
+            repositories.addCacheRedirectorFallbacks()
+        }
         overrideNativeCompilerDownloadUrl()
         addCheckRepositoriesTask()
     }

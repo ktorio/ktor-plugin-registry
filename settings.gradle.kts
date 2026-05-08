@@ -27,7 +27,7 @@ pluginManagement {
 plugins {
     // Build optimizations
     id("ktorsettings.develocity")
-//    id("ktorsettings.configuration-cache")
+    id("ktorsettings.configuration-cache")
     id("ktorsettings.cache-redirector")
 
     // Builds all template packs
