@@ -10,6 +10,7 @@ product: {{ _module.type }}
 
 {{!-- Dependencies --}}
 {{#each _module.dependencies.entries }}
+{{#if value}}
 {{#if isSinglePlatform}}dependencies:{{else}}dependencies{{#when key}}{{"common"}}{{else}}@{{key}}{{/when}}:{{/if}}
 {{#each value}}
 {{#when type}}
@@ -21,10 +22,11 @@ product: {{ _module.type }}
   - ${{ key }}{{#if exported}}: exported{{/if}}
 {{/when}}
 {{/each}}
+{{/if}}
 {{/each}}
-
 {{!-- Test dependencies --}}
 {{#each _module.testDependencies.entries }}
+{{#if value}}
 {{#if isSinglePlatform}}test-dependencies:{{else}}test-dependencies{{#when key}}{{"common"}}{{else}}@{{key}}{{/when}}:{{/if}}
 {{#each value}}
 {{#when type}}
@@ -36,6 +38,7 @@ product: {{ _module.type }}
 - ${{ key }}
 {{/when}}
 {{/each}}
+{{/if}}
 {{/each}}
 {{!-- Settings --}}
 {{#if _module.amper}}

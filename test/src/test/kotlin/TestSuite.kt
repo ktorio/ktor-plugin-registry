@@ -84,7 +84,8 @@ class TestSuite : FeatureSpec({
         projectPath: java.nio.file.Path,
         fileName: String,
         target: String,
-        expectedOutput: String
+        expectedOutput: String,
+        vararg extraArgs: String,
     ) {
         val wrapperExecutable = executables.getOrPut(buildSystemId) {
             projectPath.resolve(fileName).also { executable ->
@@ -94,7 +95,7 @@ class TestSuite : FeatureSpec({
                 )
             }
         }
-        val process = ProcessBuilder(listOf(wrapperExecutable.absolutePathString(), target))
+        val process = ProcessBuilder(listOf(wrapperExecutable.absolutePathString(), target, *extraArgs))
             .directory(projectPath.toFile())
             .redirectErrorStream(true)
             .start()
@@ -163,7 +164,7 @@ class TestSuite : FeatureSpec({
                 val projectPath = Paths.get(projectDir.toString())
                 require(projectPath.listDirectoryEntries().isNotEmpty()) { "Generate failed" }
                 when (buildSystem) {
-                    gradle -> runWrapper(buildSystem, projectPath, "gradlew", "test", "BUILD SUCCESSFUL")
+                    gradle -> runWrapper(buildSystem, projectPath, "gradlew", "test", "BUILD SUCCESSFUL", "--no-configuration-cache")
                     amper -> runWrapper(buildSystem, projectPath, "amper", "test", "0 tests failed")
                     maven -> runWrapper(buildSystem, projectPath, "mvnw", "test", "BUILD SUCCESS")
                 }

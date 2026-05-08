@@ -20,9 +20,16 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+
+    includeBuild("build-settings-logic")
 }
 
 plugins {
+    // Build optimizations
+    id("ktorsettings.develocity")
+    id("ktorsettings.cache-redirector")
+
+    // Builds all template packs
     id("org.jetbrains.kastle") version "0.1.3"
 }
 

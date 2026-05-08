@@ -11,3 +11,4 @@ propertyValues:
     value: ServerOpenTelemetryKt.configureOpenTelemetry
 requires:
   - io.ktor/server-core
+  - io.ktor/client-core

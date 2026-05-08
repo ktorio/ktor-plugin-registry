@@ -1,3 +1,8 @@
 platforms: [jvm, android, ios, js, wasmJs]
 dependencies:
   - $ktorLibs.client.core
+amper:
+  ktor: enabled
+sources:
+  - target: slot://org.jetbrains/amper/settings
+    text: "ktor: enabled"
