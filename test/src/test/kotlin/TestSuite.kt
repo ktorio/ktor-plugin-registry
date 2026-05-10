@@ -7,6 +7,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.io.files.FileSystem
 import kotlinx.io.files.Path
@@ -63,26 +64,26 @@ class TestSuite : FeatureSpec({
         "none"
     )
 
-    val testCases = ConcurrentLinkedDeque<KtorPackTestCase>().also { list ->
-        runBlocking {
-            repository.readAll().collectIndexed { i, pack ->
-                // ignore client packs
-                if ("server" !in pack.tags) return@collectIndexed
-                // ignore core packs
-                if ("core" in pack.tags) return@collectIndexed
+    val allPacks = runBlocking {
+        repository.readAll().toList()
+    }.sortedBy { it.name }
 
-                list.add(
-                    KtorPackTestCase(
-                        pack = pack,
-                        buildSystem = buildSystems[i % buildSystems.size],
-                        serverEngine = engines[i % engines.size],
-                        configFormat = configOptions[i % configOptions.size],
-                    )
+    val testCases = buildList {
+        allPacks.forEachIndexed { i, pack ->
+            // ignore client packs
+            if ("server" !in pack.tags) return@forEachIndexed
+            // ignore core packs
+            if ("core" in pack.tags) return@forEachIndexed
+
+            add(
+                KtorPackTestCase(
+                    pack = pack,
+                    buildSystem = buildSystems[i % buildSystems.size],
+                    serverEngine = engines[i % engines.size],
+                    configFormat = configOptions[i % configOptions.size],
                 )
-            }
+            )
         }
-    }.sortedBy {
-        it.pack.name
     }
 
     // Reuse the same wrappers so that Gradle can at least use the same daemon.
