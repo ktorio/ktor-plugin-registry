@@ -10,7 +10,6 @@ private val hasSecurity: Boolean by _properties
 private val serverModules: List<String> by _properties
 
 fun Application.rootModule() {
-    configureRouting()
     for (serverModule in serverModules) {
         _unsafe<Unit>("${serverModule.substringAfterLast(".")}()")
     }
@@ -29,4 +28,5 @@ fun Application.rootModule() {
     if (hasSecurity) {
         configureSecurity()
     }
+    configureRouting()
 }

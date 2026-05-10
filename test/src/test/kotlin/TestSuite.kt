@@ -7,6 +7,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.io.files.FileSystem
 import kotlinx.io.files.Path
@@ -22,7 +23,6 @@ import org.jetbrains.kastle.logging.LogLevel
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.attribute.PosixFilePermissions
-import java.util.concurrent.ConcurrentLinkedDeque
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.listDirectoryEntries
 
@@ -44,6 +44,8 @@ class TestSuite : FeatureSpec({
     val gradle = PackId("org.gradle", "gradle")
     val maven = PackId("org.apache", "maven")
     val amper = PackId("org.jetbrains", "amper")
+    // Amper can be disabled via the `enableAmper` system property (defaults to disabled in CI).
+    val amperEnabled = System.getProperty("enableAmper")?.toBoolean() == true
     // more gradle, less amper / maven, for performance
     val buildSystems = listOf(gradle, amper, maven, gradle, gradle)
     val executables = mutableMapOf<PackId, java.nio.file.Path>()
@@ -57,25 +59,32 @@ class TestSuite : FeatureSpec({
         PackId.parse("io.ktor/$it")
     }
 
-    val testCases = ConcurrentLinkedDeque<KtorPackTestCase>().also { list ->
-        runBlocking {
-            repository.readAll().collectIndexed { i, pack ->
-                // ignore client packs
-                if ("server" !in pack.tags) return@collectIndexed
-                // ignore core packs
-                if ("core" in pack.tags) return@collectIndexed
+    val configOptions = listOf(
+        "HOCON",
+        "YAML",
+        "none"
+    )
 
-                list.add(
-                    KtorPackTestCase(
-                        pack = pack,
-                        buildSystem = buildSystems[i % buildSystems.size],
-                        serverEngine = engines[i % engines.size],
-                    )
+    val allPacks = runBlocking {
+        repository.readAll().toList()
+    }.sortedBy { it.name }
+
+    val testCases = buildList {
+        allPacks.forEachIndexed { i, pack ->
+            // ignore client packs
+            if ("server" !in pack.tags) return@forEachIndexed
+            // ignore core packs
+            if ("core" in pack.tags) return@forEachIndexed
+
+            add(
+                KtorPackTestCase(
+                    pack = pack,
+                    buildSystem = buildSystems[i % buildSystems.size],
+                    serverEngine = engines[i % engines.size],
+                    configFormat = configOptions[i % configOptions.size],
                 )
-            }
+            )
         }
-    }.sortedBy {
-        it.pack.name
     }
 
     // Reuse the same wrappers so that Gradle can at least use the same daemon.
@@ -110,10 +119,11 @@ class TestSuite : FeatureSpec({
             // defaults to gradle when not compatible
             when (bs) {
                 maven if (testCase.isMultiModule() || testCase.isMultiPlatform()) -> gradle
-                amper if (!testCase.isCompatibleWithAmper()) -> gradle
+                amper if (!amperEnabled || !testCase.isCompatibleWithAmper()) -> gradle
                 else -> bs
             }
         }
+        val configFormat = testCase.configFormat
 
         feature(testCase.featureName) {
             val projectDir = outputDir.resolve(pack.id.toString()).also {
@@ -141,12 +151,16 @@ class TestSuite : FeatureSpec({
                         ProjectDescriptor(
                             name = "test-${pack.id.id}",
                             group = "io.ktor",
-                            properties = emptyMap(),
-                            packs = listOf(
-                                buildSystem,
-                                engine,
-                                pack.id,
+                            properties = mapOf(
+                                VariableId.parse("io.ktor/server-core/configFormat") to configFormat
                             ),
+                            packs = buildList {
+                                add(buildSystem)
+                                add(engine)
+                                add(pack.id)
+                                if (configFormat == "YAML")
+                                    add(PackId.parse("io.ktor/server-config-yaml"))
+                            },
                         )
                     ).export(projectDir)
                 } catch (e: Throwable) {
@@ -159,7 +173,7 @@ class TestSuite : FeatureSpec({
             /**
              * We can build and run tests on the generated project.
              */
-            scenario("builds (${buildSystem.id})").config(blockingTest = true) {
+            scenario("tests pass (${buildSystem.id}, $configFormat)").config(blockingTest = true) {
                 generated.join()
                 val projectPath = Paths.get(projectDir.toString())
                 require(projectPath.listDirectoryEntries().isNotEmpty()) { "Generate failed" }
@@ -177,6 +191,7 @@ data class KtorPackTestCase(
     val pack: PackDescriptor,
     val buildSystem: PackId,
     val serverEngine: PackId,
+    val configFormat: String,
 ) {
     val modules: List<SourceModule> get() = pack.sources.modules.modules
     val featureName: String get() = "${pack.name} (${pack.group?.id?.substringAfterLast('.') ?: "unknown group"})"

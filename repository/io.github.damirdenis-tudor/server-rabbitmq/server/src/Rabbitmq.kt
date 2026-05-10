@@ -4,6 +4,8 @@ import io.github.damir.denis.tudor.ktor.server.rabbitmq.RabbitMQ
 import io.github.damir.denis.tudor.ktor.server.rabbitmq.dsl.*
 import io.github.damir.denis.tudor.ktor.server.rabbitmq.rabbitMQ
 import io.ktor.server.application.*
+import io.ktor.server.config.property
+import io.ktor.server.config.propertyOrNull
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -12,12 +14,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
 fun Application.configureRabbitmq() {
+    val connectionUri: String = propertyOrNull("rabbitmq.uri") ?: run {
+        log.info("RabbitMQ disabled, no connection URI provided")
+        return@configureRabbitmq
+    }
+    val connectionName: String = property("rabbitmq.name")
     val exceptionHandler = CoroutineExceptionHandler { _, throwable -> log.error("ExceptionHandler got $throwable") }
     val rabbitMQScope = CoroutineScope(SupervisorJob() + exceptionHandler)
 
     install(RabbitMQ) {
-        uri = "amqp://guest:guest@localhost:5672"
-        defaultConnectionName = "default-connection"
+        uri = connectionUri
+        defaultConnectionName = connectionName
         dispatcherThreadPollSize = 4
         tlsEnabled = false
         scope = rabbitMQScope // custom scope, default is the one provided by Ktor

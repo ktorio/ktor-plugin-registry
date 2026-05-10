@@ -30,7 +30,7 @@ plugins {
     id("ktorsettings.cache-redirector")
 
     // Builds all template packs
-    id("org.jetbrains.kastle") version "0.1.3"
+    id("org.jetbrains.kastle") version "0.2.0"
 }
 
 dependencyResolutionManagement {
