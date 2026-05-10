@@ -23,7 +23,6 @@ import org.jetbrains.kastle.logging.LogLevel
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.attribute.PosixFilePermissions
-import java.util.concurrent.ConcurrentLinkedDeque
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.listDirectoryEntries
 
@@ -45,6 +44,8 @@ class TestSuite : FeatureSpec({
     val gradle = PackId("org.gradle", "gradle")
     val maven = PackId("org.apache", "maven")
     val amper = PackId("org.jetbrains", "amper")
+    // Amper can be disabled via the `enableAmper` system property (defaults to disabled in CI).
+    val amperEnabled = System.getProperty("enableAmper")?.toBoolean() == true
     // more gradle, less amper / maven, for performance
     val buildSystems = listOf(gradle, amper, maven, gradle, gradle)
     val executables = mutableMapOf<PackId, java.nio.file.Path>()
@@ -118,7 +119,7 @@ class TestSuite : FeatureSpec({
             // defaults to gradle when not compatible
             when (bs) {
                 maven if (testCase.isMultiModule() || testCase.isMultiPlatform()) -> gradle
-                amper if (!testCase.isCompatibleWithAmper()) -> gradle
+                amper if (!amperEnabled || !testCase.isCompatibleWithAmper()) -> gradle
                 else -> bs
             }
         }
