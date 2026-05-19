@@ -59,6 +59,6 @@ propertyValues:
     expression: if (_project.modules.any { it.path == "server" }) ":server:" else ""
 rootSources:
   - target: slot://org.gradle/gradle/versionCatalogs
-    text: create("ktorLibs").from("io.ktor:ktor-version-catalog:3.4.0")
+    text: create("ktorLibs").from("io.ktor:ktor-version-catalog:3.5.0")
   - target: file://README.md
     path: README.md.hbs
