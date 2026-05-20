@@ -1,5 +1,3 @@
-rootProject.name = _project.name
-
 pluginManagement {
     repositories {
         mavenCentral()
@@ -12,6 +10,11 @@ pluginManagement {
             }
         }
     }
+}
+
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+    _slots("gradleSettingsPlugins")
 }
 
 dependencyResolutionManagement {
@@ -32,10 +35,8 @@ dependencyResolutionManagement {
     }
 }
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-    _slots("gradleSettingsPlugins")
-}
+rootProject.name = _project.name
+
 _slots("gradleSettings")
 
 for (module in _project.modules) {
