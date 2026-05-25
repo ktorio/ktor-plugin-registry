@@ -53,7 +53,7 @@ koin-loggerSlf4j = { module = "io.insert-koin:koin-logger-slf4j", version.ref = 
 mongodb-driverCore = { module = "org.mongodb:mongodb-driver-core", version.ref = "mongodb" }
 mongodb-driverSync = { module = "org.mongodb:mongodb-driver-sync", version.ref = "mongodb" }
 mongodb-bson = { module = "org.mongodb:bson", version.ref = "mongodb" }
-postgresql = { module = "org.postgresql:postgresql", version = "42.7.10" }
+postgresql = { module = "org.postgresql:postgresql", version = "42.7.11" }
 kotlinx-rpc-core = { module = "org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-core", version.ref = "kotlinx-rpc" }
 kotlinx-rpc-serializationJson = { module = "org.jetbrains.kotlinx:kotlinx-rpc-krpc-serialization-json", version.ref = "kotlinx-rpc" }
 kotlinx-rpc-server = { module = "org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-server", version.ref = "kotlinx-rpc" }
