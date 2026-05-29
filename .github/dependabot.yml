@@ -10,7 +10,7 @@ updates:
         patterns:
           - "*"
     ignore:
-      # Gradle 9.4.x has a StackOverflowError regression in
+      # Gradle 9.5.x has a StackOverflowError regression in
       # CompositeDomainObjectSet (gradle/gradle#37498).
       # Re-enable once a fixed 9.5.x patch (or 9.6) ships.
       - dependency-name: "gradle"

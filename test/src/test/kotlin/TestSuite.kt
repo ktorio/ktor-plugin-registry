@@ -23,6 +23,7 @@ import org.jetbrains.kastle.logging.LogLevel
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.attribute.PosixFilePermissions
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.listDirectoryEntries
 
@@ -52,7 +53,7 @@ val AllPlugins by testSuite(
     val amperEnabled = System.getProperty("enableAmper")?.toBoolean() == true
     // more gradle, less amper / maven, for performance
     val buildSystems = listOf(gradle, amper, maven, gradle, gradle)
-    val executables = mutableMapOf<PackId, java.nio.file.Path>()
+    val executables = ConcurrentHashMap<PackId, java.nio.file.Path>()
 
     val engines = listOf(
         "server-netty",
@@ -100,7 +101,7 @@ val AllPlugins by testSuite(
         expectedOutput: String,
         vararg extraArgs: String,
     ) {
-        val wrapperExecutable = executables.getOrPut(buildSystemId) {
+        val wrapperExecutable = executables.computeIfAbsent(buildSystemId) {
             projectPath.resolve(fileName).also { executable ->
                 Files.setPosixFilePermissions(
                     executable,
