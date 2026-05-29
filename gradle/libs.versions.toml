@@ -13,11 +13,12 @@ mongodb = "5.7.0"
 koin = "4.2.1"
 kotlinx-rpc = "0.10.2"
 kotlinx-rpc-grpc = "0.11.0-grpc-187"
-kotest = "6.1.11"
 kotlinx-io = "0.9.0"
 opentelemetry = "1.62.0"
 opentelemetry-semconv = "1.41.1"
 opentelemetry-ktor = "2.28.1-alpha"
+testballoon = "1.0.0-K2.3.20"
+kastle = "0.2.1"
 
 [libraries]
 develocity = { module = "com.gradle:develocity-gradle-plugin", version.ref = "develocity" }
@@ -63,18 +64,19 @@ kotlinx-rpc-protobufCore = { module = "org.jetbrains.kotlinx:kotlinx-rpc-protobu
 kotlinx-rpc-grpc-ktorServer = { module = "org.jetbrains.kotlinx:kotlinx-rpc-grpc-ktor-server", version.ref = "kotlinx-rpc-grpc" }
 kotlinx-rpc-grpc-client = { module = "org.jetbrains.kotlinx:kotlinx-rpc-grpc-client", version.ref = "kotlinx-rpc-grpc" }
 grpc-netty = { module = "io.grpc:grpc-netty", version = "1.81.0" }
-kotest-framework = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
-kotest-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
-kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinx-io" }
 kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin" }
 opentelemetry-sdkAutoconfigure = { module = "io.opentelemetry:opentelemetry-sdk-extension-autoconfigure", version.ref = "opentelemetry" }
 opentelemetry-semconv = { module = "io.opentelemetry.semconv:opentelemetry-semconv", version.ref = "opentelemetry-semconv" }
 opentelemetry-exporterOtlp = { module = "io.opentelemetry:opentelemetry-exporter-otlp", version.ref = "opentelemetry" }
 opentelemetry-ktorInstrumentation = { module = "io.opentelemetry.instrumentation:opentelemetry-ktor-3.0", version.ref = "opentelemetry-ktor" }
+testBalloon-kotestAssertions = { module = "de.infix.testBalloon:testBalloon-integration-kotest-assertions", version.ref = "testballoon" }
+testBalloon-framework = { module = "de.infix.testBalloon:testBalloon-framework-core", version.ref = "testballoon" }
+kastle-core = { module = "org.jetbrains:kastle-core", version.ref="kastle" }
+kastle-local = { module = "org.jetbrains:kastle-local", version.ref="kastle" }
 
 [plugins]
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlinx-rpc = { id = "org.jetbrains.kotlinx.rpc.plugin", version.ref = "kotlinx-rpc" }
 kotlinx-rpc-grpc = { id = "org.jetbrains.kotlinx.rpc.plugin", version.ref = "kotlinx-rpc-grpc" }
-kotest = { id = "io.kotest", version.ref = "kotest" }
+testBalloon = { id = "de.infix.testBalloon", version.ref = "testballoon" }

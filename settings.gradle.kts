@@ -7,7 +7,6 @@ enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 
 pluginManagement {
     repositories {
-        mavenLocal()
         maven("https://packages.jetbrains.team/maven/p/kastle/maven")
         google {
             mavenContent {
@@ -36,7 +35,6 @@ plugins {
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
-        mavenLocal()
         maven("https://packages.jetbrains.team/maven/p/kastle/maven")
 
         // TODO pack repositories should be loaded automatically
