@@ -1,12 +1,12 @@
 package io.ktor.registry
 
-import io.kotest.common.ExperimentalKotest
-import io.kotest.core.spec.style.FeatureSpec
+import de.infix.testBalloon.framework.core.TestConfig
+import de.infix.testBalloon.framework.core.invocation
+import de.infix.testBalloon.framework.core.testSuite
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.io.files.FileSystem
@@ -23,11 +23,16 @@ import org.jetbrains.kastle.logging.LogLevel
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.attribute.PosixFilePermissions
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.listDirectoryEntries
 
-@OptIn(ExperimentalKotest::class)
-class TestSuite : FeatureSpec({
+// Run through every plugin and try building and running tests
+val AllPlugins by testSuite(
+    "All plugins",
+    testConfig = TestConfig
+        .invocation(TestConfig.Invocation.Concurrent)
+) {
     val fs = SystemFileSystem
     val outputDir = Path("../test-output").also {
         fs.deleteRecursively(it)
@@ -48,7 +53,7 @@ class TestSuite : FeatureSpec({
     val amperEnabled = System.getProperty("enableAmper")?.toBoolean() == true
     // more gradle, less amper / maven, for performance
     val buildSystems = listOf(gradle, amper, maven, gradle, gradle)
-    val executables = mutableMapOf<PackId, java.nio.file.Path>()
+    val executables = ConcurrentHashMap<PackId, java.nio.file.Path>()
 
     val engines = listOf(
         "server-netty",
@@ -96,7 +101,7 @@ class TestSuite : FeatureSpec({
         expectedOutput: String,
         vararg extraArgs: String,
     ) {
-        val wrapperExecutable = executables.getOrPut(buildSystemId) {
+        val wrapperExecutable = executables.computeIfAbsent(buildSystemId) {
             projectPath.resolve(fileName).also { executable ->
                 Files.setPosixFilePermissions(
                     executable,
@@ -125,7 +130,7 @@ class TestSuite : FeatureSpec({
         }
         val configFormat = testCase.configFormat
 
-        feature(testCase.featureName) {
+        testSuite(testCase.featureName) {
             val projectDir = outputDir.resolve(pack.id.toString()).also {
                 fs.createDirectories(it)
             }
@@ -134,7 +139,7 @@ class TestSuite : FeatureSpec({
             /**
              * There are some optional fields in KASTLE that are non-optional in the Ktor generator.
              */
-            scenario("validate") {
+            test("validate") {
                 pack.group?.name.shouldNotBeNull()
                 pack.group?.url.shouldNotBeNull()
                 val isClient = "client" in pack.tags
@@ -145,7 +150,7 @@ class TestSuite : FeatureSpec({
             /**
              * Ensures the project can be generated from this pack.
              */
-            scenario("generates") {
+            test("generates") {
                 try {
                     generator.generate(
                         ProjectDescriptor(
@@ -173,19 +178,27 @@ class TestSuite : FeatureSpec({
             /**
              * We can build and run tests on the generated project.
              */
-            scenario("tests pass (${buildSystem.id}, $configFormat)").config(blockingTest = true) {
+            test("tests pass (${buildSystem.id}, $configFormat)") {
                 generated.join()
                 val projectPath = Paths.get(projectDir.toString())
                 require(projectPath.listDirectoryEntries().isNotEmpty()) { "Generate failed" }
                 when (buildSystem) {
-                    gradle -> runWrapper(buildSystem, projectPath, "gradlew", "test", "BUILD SUCCESSFUL", "--no-configuration-cache")
+                    gradle -> runWrapper(
+                        buildSystem,
+                        projectPath,
+                        "gradlew",
+                        "test",
+                        "BUILD SUCCESSFUL",
+                        "--no-configuration-cache"
+                    )
+
                     amper -> runWrapper(buildSystem, projectPath, "amper", "test", "0 tests failed")
                     maven -> runWrapper(buildSystem, projectPath, "mvnw", "test", "BUILD SUCCESS")
                 }
             }
         }
     }
-})
+}
 
 data class KtorPackTestCase(
     val pack: PackDescriptor,
@@ -202,7 +215,7 @@ data class KtorPackTestCase(
         if (module.amper.isNotEmpty()) true
         else module.gradle.plugins.isEmpty()
                 && module.dependencies.values.flatten()
-                    .none { it is FunctionDependency || (it as? CatalogReference)?.let(::isMissingFromAmper) == true }
+            .none { it is FunctionDependency || (it as? CatalogReference)?.let(::isMissingFromAmper) == true }
     }
 }
 

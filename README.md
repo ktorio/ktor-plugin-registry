@@ -60,10 +60,10 @@ Here are a few examples to illustrate different techniques that you can apply fo
 
 ## Testing
 
-There is a [test](/test) module which contains a single Kotest suite that will iterate through all plugins and ensure 
+There is a [test](/test) module which contains a single test suite that will iterate through all plugins and ensure 
 that the resulting project builds successfully and its tests pass.
 
 To run the tests:
 ```bash
-./gradlew :test:kotest
+./gradlew :test:test
 ```

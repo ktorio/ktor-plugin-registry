@@ -1,9 +1,3 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
-  ],
-  "ignoreDeps": [
-    "io.ktor:ktor-server-test-host"
-  ]
+  "enabled": false
 }

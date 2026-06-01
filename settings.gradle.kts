@@ -7,7 +7,6 @@ enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 
 pluginManagement {
     repositories {
-        mavenLocal()
         maven("https://packages.jetbrains.team/maven/p/kastle/maven")
         google {
             mavenContent {
@@ -30,13 +29,12 @@ plugins {
     id("ktorsettings.cache-redirector")
 
     // Builds all template packs
-    id("org.jetbrains.kastle") version "0.2.0"
+    id("org.jetbrains.kastle") version "0.2.1"
 }
 
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
-        mavenLocal()
         maven("https://packages.jetbrains.team/maven/p/kastle/maven")
 
         // TODO pack repositories should be loaded automatically
