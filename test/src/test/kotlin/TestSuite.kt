@@ -175,6 +175,11 @@ val AllPlugins by testSuite(
                 generated.complete()
             }
 
+            // TODO skip Kafka plugin for now; it will fail on Maven due to KMP issue
+            //      waiting for fix in KASTLE
+            if (testCase.featureName.startsWith("Kafka"))
+                return@testSuite
+
             /**
              * We can build and run tests on the generated project.
              */
