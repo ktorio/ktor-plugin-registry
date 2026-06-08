@@ -1,79 +1,93 @@
 [versions]
-kotlin = "2.3.21"
-logback = "1.5.34"
-prometheus = "1.16.5"
-kotlinx-browser = "0.5.0"
-kotlinx-html = "0.12.0"
-koog = "0.8.0"
+cohort = "2.9.9"
+cotrin8672-ktorLineWebhookPlugin = "1.5.0"
+damirdenisTudor-ktorServerRabbitmq = "1.5.0"
 develocity = "4.3.2" # Should be compatible with our server: ge.jetbrains.com
 develocity-commonCustomUserData = "2.6.0"
 exposed = "1.3.0"
+flaxoos = "2.3.0"
+grpc-netty = "1.81.0"
 h2 = "2.4.240"
-mongodb = "5.8.0"
+h2-r2dbc = "1.1.0.RELEASE"
+hayden-khealth = "3.0.2"
+kastle = "0.3.2"
+kborowy-firebaseAuthProvider = "1.6.0"
 koin = "4.2.1"
+koog = "0.8.0"
+kotlin = "2.3.21"
+kotlinx-browser = "0.5.0"
+kotlinx-html = "0.12.0"
+kotlinx-io = "0.9.0"
 kotlinx-rpc = "0.10.2"
 kotlinx-rpc-grpc = "0.11.0-grpc-187"
-kotlinx-io = "0.9.0"
+logback = "1.5.34"
+mongodb = "5.8.0"
+openfolder-kotlinAsyncapiKtor = "3.2.2"
 opentelemetry = "1.62.0"
-opentelemetry-semconv = "1.41.1"
 opentelemetry-ktor = "2.28.1-alpha"
+opentelemetry-semconv = "1.41.1"
+postgresql = "42.7.11"
+prometheus = "1.16.5"
 testballoon = "1.0.0-K2.3.20"
-kastle = "0.2.1"
+ucasoft-ktorSimpleCache = "0.72.1"
+webjars-jquery = "4.0.0"
 
 [libraries]
+cohort-cohortKtor = { module = "com.sksamuel.cohort:cohort-ktor", version.ref = "cohort" }
+cotrin8672-ktorLineWebhookPlugin = { module = "io.github.cotrin8672:ktor-line-webhook-plugin", version.ref = "cotrin8672-ktorLineWebhookPlugin" }
+damirdenisTudor-ktorServerRabbitmq = { module = "io.github.damirdenis-tudor:ktor-server-rabbitmq", version.ref = "damirdenisTudor-ktorServerRabbitmq" }
 develocity = { module = "com.gradle:develocity-gradle-plugin", version.ref = "develocity" }
 develocity-commonCustomUserData = { module = "com.gradle:common-custom-user-data-gradle-plugin", version.ref = "develocity-commonCustomUserData" }
-logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
-micrometer-registryPrometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "prometheus" }
-webjars-jquery = { module = "org.webjars:jquery", version = "4.0.0" }
-kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinx-browser" }
-kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html", version.ref = "kotlinx-html" }
-koog-ktor = { module = "ai.koog:koog-ktor", version.ref = "koog" }
-kotlinx-kotlinxHtml = { module = "org.jetbrains.kotlinx:kotlinx-html", version.ref = "kotlinx-html" }
 exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
 exposed-r2dbc = { module = "org.jetbrains.exposed:exposed-r2dbc", version.ref = "exposed" }
+flaxoos-ktor-server-kafka = { module = "io.github.flaxoos:ktor-server-kafka", version.ref = "flaxoos" }
+flaxoos-ktor-server-rateLimiting = { module = "io.github.flaxoos:ktor-server-rate-limiting", version.ref = "flaxoos" }
+flaxoos-ktor-server-taskSchedulingCore = { module = "io.github.flaxoos:ktor-server-task-scheduling-core", version.ref = "flaxoos" }
+flaxoos-ktor-server-taskSchedulingJdbc = { module = "io.github.flaxoos:ktor-server-task-scheduling-jdbc", version.ref = "flaxoos" }
+flaxoos-ktor-server-taskSchedulingMongodb = { module = "io.github.flaxoos:ktor-server-task-scheduling-mongodb", version.ref = "flaxoos" }
+flaxoos-ktor-server-taskSchedulingRedis = { module = "io.github.flaxoos:ktor-server-task-scheduling-redis", version.ref = "flaxoos" }
+grpc-netty = { module = "io.grpc:grpc-netty", version.ref = "grpc-netty" }
 h2database-h2 = { module = "com.h2database:h2", version.ref = "h2" }
-h2database-r2dbc = { module = "io.r2dbc:r2dbc-h2", version = "1.1.0.RELEASE" }
-openfolder-kotlinAsyncapiKtor = { module = "org.openfolder:kotlin-asyncapi-ktor", version = "3.2.2" }
-kborowy-firebaseAuthProvider = { module = "com.kborowy:firebase-auth-provider", version = "1.6.0" }
-cohort-cohortKtor = { module = "com.sksamuel.cohort:cohort-ktor", version = "2.9.9" }
-ucasoft-ktorSimpleMemoryCache = { module = "com.ucasoft.ktor:ktor-simple-memory-cache", version = "0.72.1" }
-ucasoft-ktorSimpleCache = { module = "com.ucasoft.ktor:ktor-simple-cache", version = "0.72.1" }
-ucasoft-ktorSimpleRedisCache = { module = "com.ucasoft.ktor:ktor-simple-redis-cache", version = "0.72.1" }
-hayden-khealth = { module = "dev.hayden:khealth", version = "3.0.2" }
-cotrin8672-ktorLineWebhookPlugin = { module = "io.github.cotrin8672:ktor-line-webhook-plugin", version = "1.5.0" }
-damirdenisTudor-ktorServerRabbitmq = { module = "io.github.damirdenis-tudor:ktor-server-rabbitmq", version = "1.5.0" }
-flaxoos-ktor-server-taskSchedulingCore = { module = "io.github.flaxoos:ktor-server-task-scheduling-core", version = "2.3.0" }
-flaxoos-ktor-server-taskSchedulingRedis = { module = "io.github.flaxoos:ktor-server-task-scheduling-redis", version = "2.3.0" }
-flaxoos-ktor-server-taskSchedulingMongodb = { module = "io.github.flaxoos:ktor-server-task-scheduling-mongodb", version = "2.3.0" }
-flaxoos-ktor-server-taskSchedulingJdbc = { module = "io.github.flaxoos:ktor-server-task-scheduling-jdbc", version = "2.3.0" }
-flaxoos-ktor-server-rateLimiting = { module = "io.github.flaxoos:ktor-server-rate-limiting", version = "2.3.0" }
-flaxoos-ktor-server-kafka = { module = "io.github.flaxoos:ktor-server-kafka", version = "2.3.0" }
+h2database-r2dbc = { module = "io.r2dbc:r2dbc-h2", version.ref = "h2-r2dbc" }
+hayden-khealth = { module = "dev.hayden:khealth", version.ref = "hayden-khealth" }
+kastle-core = { module = "org.jetbrains:kastle-core", version.ref = "kastle" }
+kastle-local = { module = "org.jetbrains:kastle-local", version.ref = "kastle" }
+kborowy-firebaseAuthProvider = { module = "com.kborowy:firebase-auth-provider", version.ref = "kborowy-firebaseAuthProvider" }
 koin-ktor = { module = "io.insert-koin:koin-ktor", version.ref = "koin" }
 koin-loggerSlf4j = { module = "io.insert-koin:koin-logger-slf4j", version.ref = "koin" }
-mongodb-driverCore = { module = "org.mongodb:mongodb-driver-core", version.ref = "mongodb" }
-mongodb-driverSync = { module = "org.mongodb:mongodb-driver-sync", version.ref = "mongodb" }
-mongodb-bson = { module = "org.mongodb:bson", version.ref = "mongodb" }
-postgresql = { module = "org.postgresql:postgresql", version = "42.7.11" }
+koog-ktor = { module = "ai.koog:koog-ktor", version.ref = "koog" }
+kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
+kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinx-browser" }
+kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html", version.ref = "kotlinx-html" }
+kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinx-io" }
+kotlinx-kotlinxHtml = { module = "org.jetbrains.kotlinx:kotlinx-html", version.ref = "kotlinx-html" }
+kotlinx-rpc-client = { module = "org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-client", version.ref = "kotlinx-rpc" }
 kotlinx-rpc-core = { module = "org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-core", version.ref = "kotlinx-rpc" }
+kotlinx-rpc-grpc-client = { module = "org.jetbrains.kotlinx:kotlinx-rpc-grpc-client", version.ref = "kotlinx-rpc-grpc" }
+kotlinx-rpc-grpc-core = { module = "org.jetbrains.kotlinx:kotlinx-rpc-grpc-core", version.ref = "kotlinx-rpc-grpc" }
+kotlinx-rpc-grpc-ktorServer = { module = "org.jetbrains.kotlinx:kotlinx-rpc-grpc-ktor-server", version.ref = "kotlinx-rpc-grpc" }
+kotlinx-rpc-protobufCore = { module = "org.jetbrains.kotlinx:kotlinx-rpc-protobuf-core", version.ref = "kotlinx-rpc-grpc" }
 kotlinx-rpc-serializationJson = { module = "org.jetbrains.kotlinx:kotlinx-rpc-krpc-serialization-json", version.ref = "kotlinx-rpc" }
 kotlinx-rpc-server = { module = "org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-server", version.ref = "kotlinx-rpc" }
-kotlinx-rpc-client = { module = "org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-client", version.ref = "kotlinx-rpc" }
-kotlinx-rpc-grpc-core = { module = "org.jetbrains.kotlinx:kotlinx-rpc-grpc-core", version.ref = "kotlinx-rpc-grpc" }
-kotlinx-rpc-protobufCore = { module = "org.jetbrains.kotlinx:kotlinx-rpc-protobuf-core", version.ref = "kotlinx-rpc-grpc" }
-kotlinx-rpc-grpc-ktorServer = { module = "org.jetbrains.kotlinx:kotlinx-rpc-grpc-ktor-server", version.ref = "kotlinx-rpc-grpc" }
-kotlinx-rpc-grpc-client = { module = "org.jetbrains.kotlinx:kotlinx-rpc-grpc-client", version.ref = "kotlinx-rpc-grpc" }
-grpc-netty = { module = "io.grpc:grpc-netty", version = "1.81.0" }
-kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinx-io" }
-kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin" }
-opentelemetry-sdkAutoconfigure = { module = "io.opentelemetry:opentelemetry-sdk-extension-autoconfigure", version.ref = "opentelemetry" }
-opentelemetry-semconv = { module = "io.opentelemetry.semconv:opentelemetry-semconv", version.ref = "opentelemetry-semconv" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+micrometer-registryPrometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "prometheus" }
+mongodb-bson = { module = "org.mongodb:bson", version.ref = "mongodb" }
+mongodb-driverCore = { module = "org.mongodb:mongodb-driver-core", version.ref = "mongodb" }
+mongodb-driverSync = { module = "org.mongodb:mongodb-driver-sync", version.ref = "mongodb" }
+openfolder-kotlinAsyncapiKtor = { module = "org.openfolder:kotlin-asyncapi-ktor", version.ref = "openfolder-kotlinAsyncapiKtor" }
 opentelemetry-exporterOtlp = { module = "io.opentelemetry:opentelemetry-exporter-otlp", version.ref = "opentelemetry" }
 opentelemetry-ktorInstrumentation = { module = "io.opentelemetry.instrumentation:opentelemetry-ktor-3.0", version.ref = "opentelemetry-ktor" }
-testBalloon-kotestAssertions = { module = "de.infix.testBalloon:testBalloon-integration-kotest-assertions", version.ref = "testballoon" }
+opentelemetry-sdkAutoconfigure = { module = "io.opentelemetry:opentelemetry-sdk-extension-autoconfigure", version.ref = "opentelemetry" }
+opentelemetry-semconv = { module = "io.opentelemetry.semconv:opentelemetry-semconv", version.ref = "opentelemetry-semconv" }
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 testBalloon-framework = { module = "de.infix.testBalloon:testBalloon-framework-core", version.ref = "testballoon" }
-kastle-core = { module = "org.jetbrains:kastle-core", version.ref="kastle" }
-kastle-local = { module = "org.jetbrains:kastle-local", version.ref="kastle" }
+testBalloon-kotestAssertions = { module = "de.infix.testBalloon:testBalloon-integration-kotest-assertions", version.ref = "testballoon" }
+ucasoft-ktorSimpleCache = { module = "com.ucasoft.ktor:ktor-simple-cache", version.ref = "ucasoft-ktorSimpleCache" }
+ucasoft-ktorSimpleMemoryCache = { module = "com.ucasoft.ktor:ktor-simple-memory-cache", version.ref = "ucasoft-ktorSimpleCache" }
+ucasoft-ktorSimpleRedisCache = { module = "com.ucasoft.ktor:ktor-simple-redis-cache", version.ref = "ucasoft-ktorSimpleCache" }
+webjars-jquery = { module = "org.webjars:jquery", version.ref = "webjars-jquery" }
 
 [plugins]
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

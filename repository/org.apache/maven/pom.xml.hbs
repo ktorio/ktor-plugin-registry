@@ -42,6 +42,18 @@
         </dependency>
         {{/each}}
         {{/each}}
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test</artifactId>
+            <version>${kotlin_version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test-junit5</artifactId>
+            <version>${kotlin_version}</version>
+            <scope>test</scope>
+        </dependency>
         {{#each _module.testDependencies.entries}}
         {{#each value}}
         <dependency>

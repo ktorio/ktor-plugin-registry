@@ -5,14 +5,15 @@ import io.ktor.server.application.*
 import io.github.flaxoos.ktor.server.plugins.taskscheduling.*
 import io.github.flaxoos.ktor.server.plugins.taskscheduling.managers.lock.redis.*
 import io.github.flaxoos.ktor.server.plugins.taskscheduling.managers.lock.database.*
-import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.SchemaUtils
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 // The contents of the `install` function will be used for the project template
 fun Application.configureTaskScheduling() {
     // Configure your database connection here
     val myDatabase = runCatching {
-        org.jetbrains.exposed.sql.Database.connect(
+        Database.connect(
             url = "jdbc:postgresql://host:port",
             driver = "org.postgresql.Driver",
             user = "my_username",

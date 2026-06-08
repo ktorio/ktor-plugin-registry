@@ -8,7 +8,7 @@ For more information on the different Ktor engines, consult [the documentation](
 
 You can configure your server to use the provided main function:
 
-In Amper:
+In Kotlin Toolchain:
 
 ```yaml
 # module.yaml

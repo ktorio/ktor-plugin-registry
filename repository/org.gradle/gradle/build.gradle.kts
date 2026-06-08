@@ -116,9 +116,6 @@ if (_module.platform != "jvm") {
             for (e in _module.testDependencies.entries) {
                 if (e.value.isNotEmpty() || e.key == "common") {
                     _unsafe("${e.key}Test").dependencies {
-                        if (e.key == "common") {
-                            kotlin("test")
-                        }
                         for (dependency in e.value) {
                             when (dependency.type) {
                                 "maven" -> {

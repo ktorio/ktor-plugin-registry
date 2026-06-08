@@ -1,0 +1,31 @@
+id: org.jetbrains/kotlin-toolchain
+name: Kotlin Toolchain
+description: A simple Kotlin build system
+version: 1.0.0
+tags:
+  - core
+  - build-system
+rootSources:
+  - path: project.yaml.hbs
+    target: file:project.yaml
+    if: _project.modules.size > 1
+  - path: kotlin
+  - path: kotlin.bat
+  - path: libs.versions.toml.hbs
+    target: file:libs.versions.toml
+commonSources:
+  - path: module.yaml.hbs
+    target: file:module.yaml
+    if: _module.platforms.size > 0
+properties:
+  - key: isSinglePlatform
+    type: boolean
+    hidden: true
+  - key: isSingleModule
+    type: boolean
+    hidden: true
+propertyValues:
+  - key: isSinglePlatform
+    expression: _module.platforms.size == 1
+  - key: isSingleModule
+    expression: _project.modules.size == 1
