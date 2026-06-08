@@ -7,7 +7,7 @@ testDependencies:
 gradle:
   plugins:
     - ktorLibs.plugins.ktor
-amper:
+toolchain:
   ktor: enabled
 sources:
   - path: application.conf.hbs
@@ -18,7 +18,7 @@ sources:
     if: configFormat == "YAML"
   - path: src/Application.kt
     if: configFormat == "none"
-  - target: slot://org.jetbrains/amper/settings
+  - target: slot://org.jetbrains/kotlin-toolchain/settings
     text: "ktor: enabled"
   - path: src/Http.kt
     if: _slots.contains("http")

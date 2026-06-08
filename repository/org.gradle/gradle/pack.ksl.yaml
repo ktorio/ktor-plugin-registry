@@ -2,6 +2,7 @@ name: Gradle
 description: An extensible build system for JVM languages
 tags:
   - core
+  - build-system
 properties:
   - key: isExecutable
     type: boolean

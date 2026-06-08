@@ -2,6 +2,7 @@ name: Apache Maven
 description: XML-based build system for JVM languages
 tags:
   - core
+  - build-system
 properties:
   - key: includeWrapper
     type: boolean

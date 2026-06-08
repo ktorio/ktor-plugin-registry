@@ -48,11 +48,11 @@ val AllPlugins by testSuite(
     val generator = ProjectGenerator(repository, log = ConsoleLogger(level = LogLevel.INFO))
     val gradle = PackId("org.gradle", "gradle")
     val maven = PackId("org.apache", "maven")
-    val amper = PackId("org.jetbrains", "amper")
+    val toolchain = PackId("org.jetbrains", "kotlin-toolchain")
     // Amper can be disabled via the `enableAmper` system property (defaults to disabled in CI).
-    val amperEnabled = System.getProperty("enableAmper")?.toBoolean() == true
+    val toolchainEnabled = System.getProperty("enableAmper")?.toBoolean() == true
     // more gradle, less amper / maven, for performance
-    val buildSystems = listOf(gradle, amper, maven, gradle, gradle)
+    val buildSystems = listOf(gradle, toolchain, maven, gradle, gradle)
     val executables = ConcurrentHashMap<PackId, java.nio.file.Path>()
 
     val engines = listOf(
@@ -124,7 +124,7 @@ val AllPlugins by testSuite(
             // defaults to gradle when not compatible
             when (bs) {
                 maven if (testCase.isMultiModule() || testCase.isMultiPlatform()) -> gradle
-                amper if (!amperEnabled || !testCase.isCompatibleWithAmper()) -> gradle
+                toolchain if (!toolchainEnabled || !testCase.isCompatibleWithKotlinToolchain()) -> gradle
                 else -> bs
             }
         }
@@ -192,7 +192,7 @@ val AllPlugins by testSuite(
                         "--no-configuration-cache"
                     )
 
-                    amper -> runWrapper(buildSystem, projectPath, "amper", "test", "0 tests failed")
+                    toolchain -> runWrapper(buildSystem, projectPath, "kotlin", "test", "0 tests failed")
                     maven -> runWrapper(buildSystem, projectPath, "mvnw", "test", "BUILD SUCCESS")
                 }
             }
@@ -211,7 +211,7 @@ data class KtorPackTestCase(
 
     fun isMultiModule(): Boolean = pack.sources.modules is ProjectModules.Multi
     fun isMultiPlatform(): Boolean = modules.any { it.platforms.size > 1 }
-    fun isCompatibleWithAmper(): Boolean = modules.all { module ->
+    fun isCompatibleWithKotlinToolchain(): Boolean = modules.all { module ->
         if (module.amper.isNotEmpty()) true
         else module.gradle.plugins.isEmpty()
                 && module.dependencies.values.flatten()
