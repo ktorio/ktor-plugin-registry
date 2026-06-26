@@ -71,10 +71,10 @@ buildCache {
         }
     }
 
-    remote(develocity.buildCache) {
-        isPush = isCIRun
-        isEnabled = true
-    }
+//    remote(develocity.buildCache) {
+//        isPush = isCIRun
+//        isEnabled = true
+//    }
 }
 
 private fun BuildScanConfiguration.reportSyncMode(providers: ProviderFactory) {

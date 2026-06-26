@@ -29,7 +29,7 @@ plugins {
     id("ktorsettings.cache-redirector")
 
     // Builds all template packs
-    id("org.jetbrains.kastle") version "0.3.2"
+    id("org.jetbrains.kastle") version "0.4.0"
 }
 
 dependencyResolutionManagement {
@@ -44,7 +44,7 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("ktorLibs") {
-            from("io.ktor:ktor-version-catalog:3.5.0")
+            from("io.ktor:ktor-version-catalog:3.5.1")
         }
     }
 }
