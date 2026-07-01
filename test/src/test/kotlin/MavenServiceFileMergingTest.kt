@@ -28,7 +28,7 @@ import kotlin.io.path.listDirectoryEntries
 val MavenServiceFileMerging by testSuite("Maven service file merging") {
     val environment = setupTestEnvironment("maven-service-merge")
 
-    test("ConfigLoader service file has both HOCON and YAML entries in jar-with-dependencies") {
+    test("ConfigLoader service file has both HOCON and YAML entries in fat-jar") {
         val projectDir = environment.outputDir.resolve("project")
         SystemFileSystem.createDirectories(projectDir)
 
