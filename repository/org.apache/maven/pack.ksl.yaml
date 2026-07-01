@@ -24,3 +24,4 @@ rootSources:
     if: includeWrapper
 commonSources:
   - path: pom.xml.hbs
+  - path: src/main/assembly/fat-jar.xml

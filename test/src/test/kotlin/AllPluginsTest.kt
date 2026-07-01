@@ -9,22 +9,12 @@ import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
-import kotlinx.io.files.FileSystem
-import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import org.jetbrains.kastle.*
-import org.jetbrains.kastle.io.FileSystemPackRepository.Companion.export
 import org.jetbrains.kastle.io.export
-import org.jetbrains.kastle.io.isDirectory
-import org.jetbrains.kastle.io.readToml
 import org.jetbrains.kastle.io.resolve
-import org.jetbrains.kastle.logging.ConsoleLogger
-import org.jetbrains.kastle.logging.LogLevel
-import java.nio.file.Files
 import java.nio.file.Paths
-import java.nio.file.attribute.PosixFilePermissions
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.io.path.absolutePathString
 import kotlin.io.path.listDirectoryEntries
 
 // Run through every plugin and try building and running tests
@@ -33,19 +23,8 @@ val AllPlugins by testSuite(
     testConfig = TestConfig
         .invocation(TestConfig.Invocation.Concurrent)
 ) {
+    val environment = setupTestEnvironment("all-plugins")
     val fs = SystemFileSystem
-    val outputDir = Path("../test-output").also {
-        fs.deleteRecursively(it)
-        fs.createDirectories(it)
-    }
-    val ktorVersions = Path("../ktor-version-catalog.toml")
-        .readToml<VersionsCatalog>() ?: VersionsCatalog()
-    val repository = runBlocking {
-        LocalPackRepository(Path("../repository"))
-            .export(outputDir.resolve("repository"))
-            .also { it.catalogs(it.catalogs() + ktorVersions.copy(name = "ktorLibs")) }
-    }
-    val generator = ProjectGenerator(repository, log = ConsoleLogger(level = LogLevel.INFO))
     val gradle = PackId("org.gradle", "gradle")
     val maven = PackId("org.apache", "maven")
     val toolchain = PackId("org.jetbrains", "kotlin-toolchain")
@@ -71,7 +50,7 @@ val AllPlugins by testSuite(
     )
 
     val allPacks = runBlocking {
-        repository.readAll().toList()
+        environment.repository.readAll().toList()
     }.sortedBy { it.name }
 
     val testCases = buildList {
@@ -93,7 +72,7 @@ val AllPlugins by testSuite(
     }
 
     // Reuse the same wrappers so that Gradle can at least use the same daemon.
-    fun runWrapper(
+    fun runBuildWrapper(
         buildSystemId: PackId,
         projectPath: java.nio.file.Path,
         fileName: String,
@@ -101,19 +80,10 @@ val AllPlugins by testSuite(
         expectedOutput: String,
         vararg extraArgs: String,
     ) {
-        val wrapperExecutable = executables.computeIfAbsent(buildSystemId) {
-            projectPath.resolve(fileName).also { executable ->
-                Files.setPosixFilePermissions(
-                    executable,
-                    PosixFilePermissions.fromString("rwxr-xr-x")
-                )
-            }
+        val executable = executables.computeIfAbsent(buildSystemId) {
+            projectPath.resolve(fileName)
         }
-        val process = ProcessBuilder(listOf(wrapperExecutable.absolutePathString(), target, *extraArgs))
-            .directory(projectPath.toFile())
-            .redirectErrorStream(true)
-            .start()
-        val output = process.inputStream.bufferedReader().use { it.readText() }
+        val output = runWrapper(executable, projectPath, target, *extraArgs)
         output shouldContain expectedOutput
     }
 
@@ -131,7 +101,7 @@ val AllPlugins by testSuite(
         val configFormat = testCase.configFormat
 
         testSuite(testCase.featureName) {
-            val projectDir = outputDir.resolve(pack.id.toString()).also {
+            val projectDir = environment.outputDir.resolve(pack.id.toString()).also {
                 fs.createDirectories(it)
             }
             val generated = Job()
@@ -152,7 +122,7 @@ val AllPlugins by testSuite(
              */
             test("generates") {
                 try {
-                    generator.generate(
+                    environment.generator.generate(
                         ProjectDescriptor(
                             name = "test-${pack.id.id}",
                             group = "io.ktor",
@@ -188,7 +158,7 @@ val AllPlugins by testSuite(
                 val projectPath = Paths.get(projectDir.toString())
                 require(projectPath.listDirectoryEntries().isNotEmpty()) { "Generate failed" }
                 when (buildSystem) {
-                    gradle -> runWrapper(
+                    gradle -> runBuildWrapper(
                         buildSystem,
                         projectPath,
                         "gradlew",
@@ -197,8 +167,8 @@ val AllPlugins by testSuite(
                         "--no-configuration-cache"
                     )
 
-                    toolchain -> runWrapper(buildSystem, projectPath, "kotlin", "test", "0 tests failed")
-                    maven -> runWrapper(buildSystem, projectPath, "mvnw", "test", "BUILD SUCCESS")
+                    toolchain -> runBuildWrapper(buildSystem, projectPath, "kotlin", "test", "0 tests failed")
+                    maven -> runBuildWrapper(buildSystem, projectPath, "mvnw", "test", "BUILD SUCCESS")
                 }
             }
         }
@@ -229,15 +199,3 @@ fun isMissingFromAmper(library: CatalogReference) =
         "server.routingOpenapi",
         "server.di",
     )
-
-fun FileSystem.deleteRecursively(path: Path, visited: Set<Path> = mutableSetOf()) {
-    if (isDirectory(path)) {
-        val contents = list(path)
-        for (entry in contents - visited)
-            deleteRecursively(entry, visited + path)
-    }
-    // Delete the current file or empty directory
-    runCatching {
-        delete(path, mustExist = false)
-    }
-}
