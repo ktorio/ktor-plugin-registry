@@ -11,3 +11,7 @@ dependencies {
     testImplementation(libs.kastle.local)
     testImplementation(libs.kotlin.compiler)
 }
+
+tasks.named("processTestResources") {
+    dependsOn(":kslExportToCbor")
+}

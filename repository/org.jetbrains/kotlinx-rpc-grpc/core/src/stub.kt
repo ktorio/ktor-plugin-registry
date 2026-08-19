@@ -1,5 +1,7 @@
 package kastle
 
+import kotlinx.rpc.annotations.Rpc
+
 class ClientGreeting {
     var name: String = ""
 
@@ -16,6 +18,7 @@ class ServerGreeting {
 
 operator fun ServerGreeting.Companion.invoke(body: ServerGreeting.() -> Unit): ServerGreeting = ServerGreeting().apply(body)
 
+@Rpc
 interface SampleService {
     suspend fun greeting(name: ClientGreeting): ServerGreeting
 }
