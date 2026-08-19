@@ -1,7 +1,8 @@
 package kastle
 
-import io.ktor.server.engine.*
-import io.ktor.server.application.*
+import io.ktor.server.application.Application
+import io.ktor.server.engine.ApplicationEngineFactory
+import io.ktor.server.engine.embeddedServer
 
 private val configFormat: String by _properties
 private val engineClass: String by _properties

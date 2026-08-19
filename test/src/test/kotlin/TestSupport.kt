@@ -8,10 +8,13 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.io.files.FileSystem
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
+import kotlinx.serialization.ExperimentalSerializationApi
 import org.jetbrains.kastle.LocalPackRepository
 import org.jetbrains.kastle.MutablePackRepository
 import org.jetbrains.kastle.ProjectGenerator
 import org.jetbrains.kastle.VersionsCatalog
+import org.jetbrains.kastle.io.CborFilePackRepository
+import org.jetbrains.kastle.io.FileSystemPackRepository
 import org.jetbrains.kastle.io.FileSystemPackRepository.Companion.export
 import org.jetbrains.kastle.io.isDirectory
 import org.jetbrains.kastle.io.readToml
@@ -28,19 +31,14 @@ data class TestEnvironment(
     val generator: ProjectGenerator,
 )
 
+@OptIn(ExperimentalSerializationApi::class)
 fun setupTestEnvironment(outputDirName: String): TestEnvironment {
     val fs = SystemFileSystem
     val outputDir = Path("../test-output/$outputDirName").also {
         fs.deleteRecursively(it)
         fs.createDirectories(it)
     }
-    val ktorVersions = Path("../ktor-version-catalog.toml")
-        .readToml<VersionsCatalog>() ?: VersionsCatalog()
-    val repository = runBlocking {
-        LocalPackRepository(Path("../repository"))
-            .export(outputDir.resolve("repository"))
-            .also { it.catalogs(it.catalogs() + ktorVersions.copy(name = "ktorLibs")) }
-    }
+    val repository = CborFilePackRepository(Path("../export"))
     val generator = ProjectGenerator(repository, log = ConsoleLogger(level = LogLevel.INFO))
     return TestEnvironment(outputDir, repository, generator)
 }
