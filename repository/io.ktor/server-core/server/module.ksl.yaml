@@ -34,3 +34,5 @@ sources:
     path: build.gradle.kts.hbs
   - target: slot://org.gradle/gradle/kotlinRoot
     text: "jvmToolchain(21)"
+  - target: slot://org.apache/maven/plugins
+    path: maven-plugins.xml.hbs
