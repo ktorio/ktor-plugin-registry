@@ -7,7 +7,6 @@ enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 
 pluginManagement {
     repositories {
-        maven("https://packages.jetbrains.team/maven/p/kastle/maven")
         google {
             mavenContent {
                 includeGroupAndSubgroups("androidx")
@@ -15,9 +14,9 @@ pluginManagement {
                 includeGroupAndSubgroups("com.google")
             }
         }
-        maven("https://redirector.kotlinlang.org/maven/kxrpc-grpc")
-        mavenCentral()
         gradlePluginPortal()
+        maven("https://packages.jetbrains.team/maven/p/kastle/maven")
+        maven("https://redirector.kotlinlang.org/maven/kxrpc-grpc")
     }
 
     includeBuild("build-settings-logic")
