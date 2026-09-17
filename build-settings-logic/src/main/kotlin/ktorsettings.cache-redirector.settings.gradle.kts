@@ -35,6 +35,8 @@ val cacheMap: Map<String, String> = mapOf(
     "https://dl.google.com/dl/android/maven2" to "https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2",
     "https://redirector.kotlinlang.org/maven/ktor-eap" to "https://cache-redirector.jetbrains.com/redirector.kotlinlang.org/maven/ktor-eap",
     "https://redirector.kotlinlang.org/maven/dev" to "https://cache-redirector.jetbrains.com/redirector.kotlinlang.org/maven/dev",
+    "https://packages.confluent.io/maven" to "https://cache-redirector.jetbrains.com/packages.confluent.io/maven",
+    "https://jitpack.io" to "https://cache-redirector.jetbrains.com/jitpack.io",
     "https://services.gradle.org/distributions" to "https://cache-redirector.jetbrains.com/services.gradle.org/distributions",
     "https://registry.yarnpkg.com" to "https://cache-redirector.jetbrains.com/registry.yarnpkg.com",
     "https://nodejs.org/dist" to "https://cache-redirector.jetbrains.com/nodejs.org/dist",
