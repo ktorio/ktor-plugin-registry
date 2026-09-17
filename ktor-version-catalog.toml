@@ -1,5 +1,5 @@
 [versions]
-ktor = "3.5.0"
+ktor = "3.6.0"
 
 [libraries]
 bom = {group = "io.ktor", name = "ktor-bom", version.ref = "ktor" }
@@ -17,6 +17,7 @@ client-curl = {group = "io.ktor", name = "ktor-client-curl", version.ref = "ktor
 client-darwin = {group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
 client-darwin-legacy = {group = "io.ktor", name = "ktor-client-darwin-legacy", version.ref = "ktor" }
 client-encoding = {group = "io.ktor", name = "ktor-client-encoding", version.ref = "ktor" }
+client-engineDefaults = {group = "io.ktor", name = "ktor-client-engine-defaults", version.ref = "ktor" }
 client-gson = {group = "io.ktor", name = "ktor-client-gson", version.ref = "ktor" }
 client-ios = {group = "io.ktor", name = "ktor-client-ios", version.ref = "ktor" }
 client-jackson = {group = "io.ktor", name = "ktor-client-jackson", version.ref = "ktor" }
@@ -33,6 +34,7 @@ client-serialization = {group = "io.ktor", name = "ktor-client-serialization", v
 client-webrtc = {group = "io.ktor", name = "ktor-client-webrtc", version.ref = "ktor" }
 client-websockets = {group = "io.ktor", name = "ktor-client-websockets", version.ref = "ktor" }
 client-winhttp = {group = "io.ktor", name = "ktor-client-winhttp", version.ref = "ktor" }
+compilerPlugin = {group = "io.ktor", name = "ktor-compiler-plugin", version.ref = "ktor" }
 encodingZstd = {group = "io.ktor", name = "ktor-encoding-zstd", version.ref = "ktor" }
 events = {group = "io.ktor", name = "ktor-events", version.ref = "ktor" }
 gradlePlugin = {group = "io.ktor.plugin", name = "plugin", version.ref = "ktor" }
@@ -60,6 +62,7 @@ server-auth = {group = "io.ktor", name = "ktor-server-auth", version.ref = "ktor
 server-auth-apiKey = {group = "io.ktor", name = "ktor-server-auth-api-key", version.ref = "ktor" }
 server-auth-jwt = {group = "io.ktor", name = "ktor-server-auth-jwt", version.ref = "ktor" }
 server-auth-ldap = {group = "io.ktor", name = "ktor-server-auth-ldap", version.ref = "ktor" }
+server-auth-oidc = {group = "io.ktor", name = "ktor-server-auth-oidc", version.ref = "ktor" }
 server-autoHeadResponse = {group = "io.ktor", name = "ktor-server-auto-head-response", version.ref = "ktor" }
 server-bodyLimit = {group = "io.ktor", name = "ktor-server-body-limit", version.ref = "ktor" }
 server-cachingHeaders = {group = "io.ktor", name = "ktor-server-caching-headers", version.ref = "ktor" }
