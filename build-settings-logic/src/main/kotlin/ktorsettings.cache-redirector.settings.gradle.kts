@@ -210,6 +210,16 @@ fun Project.addCheckRepositoriesTask() {
     tasks.register("checkRepositories", CheckRepositoriesTask::class.java)
 }
 
+fun Project.configureTestTasks(useCacheRedirector: Provider<Boolean>) {
+    tasks.withType<Test>().configureEach {
+        systemProperty("ktorbuild.useCacheRedirector", useCacheRedirector.get())
+        systemProperty(
+            "ktorbuild.cacheRedirectorInitScript",
+            settingsDir.resolve("gradle/cache-redirector.init.gradle.kts").absolutePath,
+        )
+    }
+}
+
 // Main configuration
 
 if (useCacheRedirector.get()) {
@@ -224,6 +234,7 @@ if (useCacheRedirector.get()) {
         repositories.redirect()
         overrideNativeCompilerDownloadUrl()
         addCheckRepositoriesTask()
+        configureTestTasks(useCacheRedirector)
     }
 }
 

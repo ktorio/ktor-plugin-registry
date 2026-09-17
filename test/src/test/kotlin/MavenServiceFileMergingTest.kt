@@ -48,7 +48,8 @@ val MavenServiceFileMerging by testSuite("Maven service file merging") {
         ).export(projectDir)
 
         val projectPath = Paths.get(projectDir.toString())
-        val output = runWrapper(projectPath.resolve("mvnw"), projectPath, "package", "-DskipTests")
+        val arguments = listOf("package", "-DskipTests") + prepareMavenCacheRedirectorArguments(projectPath)
+        val output = runWrapper(projectPath.resolve("mvnw"), projectPath, arguments)
         output shouldContain "BUILD SUCCESS"
 
         val fatJar = projectPath.resolve("target")

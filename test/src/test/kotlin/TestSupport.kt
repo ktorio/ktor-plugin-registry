@@ -4,21 +4,14 @@
 
 package io.ktor.registry
 
-import kotlinx.coroutines.runBlocking
 import kotlinx.io.files.FileSystem
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.serialization.ExperimentalSerializationApi
-import org.jetbrains.kastle.LocalPackRepository
 import org.jetbrains.kastle.MutablePackRepository
 import org.jetbrains.kastle.ProjectGenerator
-import org.jetbrains.kastle.VersionsCatalog
 import org.jetbrains.kastle.io.CborFilePackRepository
-import org.jetbrains.kastle.io.FileSystemPackRepository
-import org.jetbrains.kastle.io.FileSystemPackRepository.Companion.export
 import org.jetbrains.kastle.io.isDirectory
-import org.jetbrains.kastle.io.readToml
-import org.jetbrains.kastle.io.resolve
 import org.jetbrains.kastle.logging.ConsoleLogger
 import org.jetbrains.kastle.logging.LogLevel
 import java.nio.file.Files
@@ -46,10 +39,10 @@ fun setupTestEnvironment(outputDirName: String): TestEnvironment {
 fun runWrapper(
     executable: java.nio.file.Path,
     workingDir: java.nio.file.Path,
-    vararg args: String,
+    args: List<String>,
 ): String {
     Files.setPosixFilePermissions(executable, PosixFilePermissions.fromString("rwxr-xr-x"))
-    val process = ProcessBuilder(listOf(executable.absolutePathString(), *args))
+    val process = ProcessBuilder(listOf(executable.absolutePathString()) + args)
         .directory(workingDir.toFile())
         .redirectErrorStream(true)
         .start()
