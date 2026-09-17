@@ -1,6 +1,5 @@
 pluginManagement {
     repositories {
-        mavenCentral()
         gradlePluginPortal()
         for (repository in _project.gradle.repositories) {
             if (repository.gradleFunction != null) {
