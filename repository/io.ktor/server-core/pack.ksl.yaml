@@ -64,6 +64,6 @@ propertyValues:
     expression: if (configFormat != "none") mainClass else "${_project.group}.MainKt"
 rootSources:
   - target: slot://org.gradle/gradle/versionCatalogs
-    text: create("ktorLibs").from("io.ktor:ktor-version-catalog:3.5.2")
+    text: create("ktorLibs").from("io.ktor:ktor-version-catalog:3.6.0")
   - target: file://README.md
     path: README.md.hbs
