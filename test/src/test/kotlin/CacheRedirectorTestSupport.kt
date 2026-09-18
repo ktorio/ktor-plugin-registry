@@ -9,16 +9,16 @@ import kotlin.io.path.absolute
 import kotlin.io.path.createDirectories
 import kotlin.io.path.writeText
 
-private val useCacheRedirector: Boolean by lazy { System.getProperty("ktorbuild.useCacheRedirector").toBoolean() }
-private val cacheRedirectorInitScript: String by lazy { System.getProperty("ktorbuild.cacheRedirectorInitScript") }
+private val isEnabled: Boolean by lazy { System.getProperty("ktorbuild.cacheRedirectorEnabled").toBoolean() }
+private val initScript: String by lazy { System.getProperty("ktorbuild.cacheRedirectorInitScript") }
 
 fun prepareGradleCacheRedirectorArguments(): List<String> = when {
-    useCacheRedirector -> listOf("--init-script", cacheRedirectorInitScript)
+    isEnabled -> listOf("--init-script", initScript)
     else -> emptyList()
 }
 
 fun prepareMavenCacheRedirectorArguments(workingDirectory: Path): List<String> {
-    if (!useCacheRedirector) return emptyList()
+    if (!isEnabled) return emptyList()
 
     val settingsFile = generateMavenSettings(workingDirectory)
     return listOf("--settings", settingsFile.toString())
