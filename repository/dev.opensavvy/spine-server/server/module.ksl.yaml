@@ -1,0 +1,3 @@
+platform: jvm
+dependencies:
+  - "dev.opensavvy.spine:server:0.12.1"
