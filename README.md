@@ -34,7 +34,7 @@ To add a new plugin, follow these easy steps:
                     └── <Plugin>.kt
     ```
    - You can include any number of source files for populating new projects.
-   - Information for the manifest files can be found in the [KASTLE documentation](https://github.com/ktorio/kastle/blob/main/docs/manifests.md).
+   - Information for the manifest files can be found in the [KASTLE documentation](https://github.com/ktorio/kastle/blob/main/docs/repositories.md).
    - Filtering in the project generator is done using the tags in the pack manifest, so it's important to have "server" or "client" in the tags, along with whichever category it belongs to.
    <br /><br />
    
