@@ -66,6 +66,8 @@ fun Project.overrideNativeCompilerDownloadUrl() {
 // Main configuration
 
 gradle.beforeSettings {
+    extensions.extraProperties["ktorbuild.cacheRedirectorEnabled"] = true
+
     logger.info("Redirecting repositories for settings in ${settingsDir.absolutePath}")
     pluginManagement.repositories.redirect()
     dependencyResolutionManagement.repositories.redirect()
