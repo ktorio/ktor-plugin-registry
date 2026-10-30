@@ -1,7 +1,6 @@
 platforms: [jvm, android, ios]
 dependencies:
   - $libs.kotlinx.rpc.grpc.core
-  - $libs.kotlinx.rpc.protobufCore
 gradle:
   plugins:
     - $libs.plugins.kotlinx.rpc.grpc

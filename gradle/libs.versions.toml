@@ -19,7 +19,7 @@ kotlinx-browser = "0.5.0"
 kotlinx-html = "0.12.0"
 kotlinx-io = "0.9.1"
 kotlinx-rpc = "0.10.4"
-kotlinx-rpc-grpc = "0.11.0-grpc-188"
+kotlinx-rpc-grpc = "0.11.0-grpc-190"
 logback = "1.6.3"
 mongodb = "5.12.0"
 openfolder-kotlinAsyncapiKtor = "3.2.4"
@@ -68,7 +68,6 @@ kotlinx-rpc-core = { module = "org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-core"
 kotlinx-rpc-grpc-client = { module = "org.jetbrains.kotlinx:kotlinx-rpc-grpc-client", version.ref = "kotlinx-rpc-grpc" }
 kotlinx-rpc-grpc-core = { module = "org.jetbrains.kotlinx:kotlinx-rpc-grpc-core", version.ref = "kotlinx-rpc-grpc" }
 kotlinx-rpc-grpc-ktorServer = { module = "org.jetbrains.kotlinx:kotlinx-rpc-grpc-ktor-server", version.ref = "kotlinx-rpc-grpc" }
-kotlinx-rpc-protobufCore = { module = "org.jetbrains.kotlinx:kotlinx-rpc-protobuf-core", version.ref = "kotlinx-rpc-grpc" }
 kotlinx-rpc-serializationJson = { module = "org.jetbrains.kotlinx:kotlinx-rpc-krpc-serialization-json", version.ref = "kotlinx-rpc" }
 kotlinx-rpc-server = { module = "org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-server", version.ref = "kotlinx-rpc" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
