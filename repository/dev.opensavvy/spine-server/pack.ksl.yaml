@@ -1,0 +1,13 @@
+name: Spine
+description: Share your Ktor endpoints between client and server, type-safely without magic
+license: Apache 2.0
+tags:
+  - server
+  - http
+links:
+  vcs: https://gitlab.com/opensavvy/groundwork/spine
+propertyValues:
+  - key: io.ktor/server-core/serverModules
+    value: {{PLUGIN_CLASS}}Kt.install{{PLUGIN_CLASS}}
+requires:
+  - io.ktor/server-core
