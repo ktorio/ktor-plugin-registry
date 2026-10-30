@@ -1,5 +1,5 @@
 [versions]
-ktor = "3.6.0"
+ktor = "3.6.1"
 
 [libraries]
 bom = {group = "io.ktor", name = "ktor-bom", version.ref = "ktor" }
