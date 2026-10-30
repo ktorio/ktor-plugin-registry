@@ -43,7 +43,7 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("ktorLibs") {
-            from("io.ktor:ktor-version-catalog:3.6.1")
+            from("io.ktor:ktor-version-catalog:${providers.gradleProperty("ktor.version").get()}")
         }
     }
 }
