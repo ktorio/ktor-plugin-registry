@@ -71,14 +71,6 @@ val AllPlugins by testSuite(
         }
     }
 
-    fun prepareCacheRedirectorArguments(buildSystemId: PackId, projectPath: java.nio.file.Path): List<String> {
-        return when (buildSystemId) {
-            gradle -> prepareGradleCacheRedirectorArguments()
-            maven -> prepareMavenCacheRedirectorArguments(projectPath)
-            else -> emptyList()
-        }
-    }
-
     // Reuse the same wrappers so that Gradle can at least use the same daemon.
     fun runBuildWrapper(
         buildSystemId: PackId,
@@ -91,7 +83,7 @@ val AllPlugins by testSuite(
         val executable = executables.computeIfAbsent(buildSystemId) {
             projectPath.resolve(fileName)
         }
-        val arguments = listOf(target) + prepareCacheRedirectorArguments(buildSystemId, projectPath) + extraArgs
+        val arguments = listOf(target) + extraArgs
         val output = runWrapper(executable, projectPath, arguments)
         output shouldContain expectedOutput
     }

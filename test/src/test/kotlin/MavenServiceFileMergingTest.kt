@@ -48,7 +48,7 @@ val MavenServiceFileMerging by testSuite("Maven service file merging") {
         ).export(projectDir)
 
         val projectPath = Paths.get(projectDir.toString())
-        val arguments = listOf("package", "-DskipTests") + prepareMavenCacheRedirectorArguments(projectPath)
+        val arguments = listOf("package", "-DskipTests")
         val output = runWrapper(projectPath.resolve("mvnw"), projectPath, arguments)
         output shouldContain "BUILD SUCCESS"
 
