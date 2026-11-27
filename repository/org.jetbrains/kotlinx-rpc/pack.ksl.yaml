@@ -6,6 +6,12 @@ tags:
   - frameworks
 links:
   vcs: https://github.com/Kotlin/kotlinx-rpc
+repositories:
+  - id: kotlinx-rpc-grpc
+    url: https://redirector.kotlinlang.org/maven/kxrpc-grpc
+pluginRepositories:
+  - id: kotlinx-rpc-grpc
+    url: https://redirector.kotlinlang.org/maven/kxrpc-grpc
 propertyValues:
   - key: io.ktor/server-core/serverModules
     value: RpcKt.configureRpc
